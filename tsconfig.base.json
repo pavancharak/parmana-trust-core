@@ -4,15 +4,37 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
 
-    "types": ["node"],
-
     "strict": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
 
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "declaration": true,
+
+    "baseUrl": ".",
+
+    "paths": {
+      "@parmana/contracts": [
+        "packages/contracts/src/index.ts"
+      ],
+      "@parmana/crypto": [
+        "packages/crypto/src/index.ts"
+      ],
+      "@parmana/attestation": [
+        "packages/attestation/src/index.ts"
+      ],
+      "@parmana/verifier": [
+        "packages/verifier/src/index.ts"
+      ],
+      "@parmana/evidence": [
+        "packages/evidence/src/index.ts"
+      ],
+      "@parmana/trust-anchor": [
+        "packages/trust-anchor/src/index.ts"
+      ],
+      "@parmana/bundle": [
+        "packages/bundle/src/index.ts"
+      ],
+      "@parmana/trust-profiles": [
+        "packages/trust-profiles/src/index.ts"
+      ]
+    }
   }
 }
