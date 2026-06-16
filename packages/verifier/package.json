@@ -4,6 +4,12 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "dependencies": {
+    "@parmana/contracts": "0.1.0",
+    "@parmana/attestation": "0.1.0",
+    "@parmana/trust-profiles": "0.1.0"
+  },
   "scripts": {
     "build": "tsc -p ."
   }
