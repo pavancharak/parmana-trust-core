@@ -1,3 +1,6 @@
+import rootRoute
+  from "./routes/root.js";
+
 import {
   app
 } from "./app.js";
@@ -17,6 +20,9 @@ import healthRoute
 import versionRoute
   from "./routes/version.js";
 
+app.use(
+  rootRoute
+);
 app.use(
   verifyRoute
 );
