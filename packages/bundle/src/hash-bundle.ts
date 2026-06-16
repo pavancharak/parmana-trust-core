@@ -4,13 +4,17 @@ import type {
   DecisionBundle
 } from "./types.js";
 
+import {
+  canonicalize
+} from "./canonicalize.js";
+
 export function hashBundle(
   bundle: DecisionBundle
 ): string {
 
   const canonical =
     JSON.stringify(
-      bundle
+      canonicalize(bundle)
     );
 
   return crypto

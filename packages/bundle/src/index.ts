@@ -21,3 +21,5 @@ export * from "./deserialize.js";
 export * from "./save-bundle.js";
 
 export * from "./load-bundle.js";
+
+export * from "./canonicalize.js";
