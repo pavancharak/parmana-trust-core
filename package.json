@@ -8,7 +8,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "test": "turbo run test",
+    "build": "tsc -p .",
+  "test": "vitest run",
     "lint": "turbo run lint",
     "verify": "tsx apps/cli/src/verify.ts",
     "receipt": "tsx apps/cli/src/receipt.ts",
@@ -21,6 +22,6 @@
     "tsx": "^4.19.0",
     "turbo": "^2.0.14",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.6"
   }
 }

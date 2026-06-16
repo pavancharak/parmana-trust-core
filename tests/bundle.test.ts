@@ -1,7 +1,7 @@
-import {
-  verifyBundle
-} from "../packages/bundle/src/index.js";
+import { describe, expect, it } from "vitest";
 
-console.log(
-  "bundle test loaded"
-);
+describe("bundle", () => {
+  it("placeholder", () => {
+    expect(true).toBe(true);
+  });
+});

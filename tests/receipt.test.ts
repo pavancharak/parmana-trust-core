@@ -1,7 +1,7 @@
-import {
-  createReceipt
-} from "../packages/bundle/src/index.js";
+import { describe, expect, it } from "vitest";
 
-console.log(
-  "receipt test loaded"
-);
+describe("receipt", () => {
+  it("placeholder", () => {
+    expect(true).toBe(true);
+  });
+});

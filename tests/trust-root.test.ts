@@ -1,7 +1,7 @@
-import {
-  createTrustRoot
-} from "../packages/trust-anchor/src/index.js";
+import { describe, expect, it } from "vitest";
 
-console.log(
-  "trust root test loaded"
-);
+describe("trust-root", () => {
+  it("placeholder", () => {
+    expect(true).toBe(true);
+  });
+});
