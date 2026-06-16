@@ -1,6 +1,6 @@
 import type {
   Signer
-} from "./signer";
+} from "./signer.js";
 
 export class SignerRegistry {
 
@@ -12,7 +12,7 @@ export class SignerRegistry {
 
   register(
     signer: Signer
-  ) {
+  ): void {
 
     this.signers.set(
       signer.algorithm(),
@@ -37,5 +37,21 @@ export class SignerRegistry {
     }
 
     return signer;
+  }
+
+  has(
+    algorithm: string
+  ): boolean {
+
+    return this.signers.has(
+      algorithm
+    );
+  }
+
+  list(): string[] {
+
+    return Array.from(
+      this.signers.keys()
+    );
   }
 }

@@ -1,3 +1,3 @@
-export * from "./signature-record";
-export * from "./trust-profile";
-export * from "./attestation-v2";
+export * from "./signature-record.js";
+export * from "./trust-profile.js";
+export * from "./attestation-v2.js";

@@ -1,6 +1,6 @@
 import type {
   SignatureRecord
-} from "./signature-record";
+} from "./signature-record.js";
 
 export interface AttestationV2 {
   schemaVersion: "2";

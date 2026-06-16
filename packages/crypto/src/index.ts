@@ -1,2 +1,2 @@
-export * from "./signer";
-export * from "./registry";
+export * from "./signer.js";
+export * from "./registry.js";

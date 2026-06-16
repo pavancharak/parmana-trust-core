@@ -12,7 +12,13 @@ Status: Accepted
 
 Parmana must support evolving cryptographic standards
 
-without changing business logic.
+without requiring changes to business logic.
+
+
+
+The trust layer should remain independent of any
+
+specific cryptographic implementation.
 
 
 
@@ -20,15 +26,27 @@ without changing business logic.
 
 
 
-Cryptographic algorithms shall be abstracted behind
+All cryptographic operations shall be implemented
 
-provider interfaces.
+through provider interfaces.
 
 
 
-Business systems shall not directly depend on
+Business logic must not depend directly on:
 
-Ed25519, ECDSA, ML-DSA, or any future algorithm.
+
+
+\- Ed25519
+
+\- ECDSA
+
+\- ML-DSA
+
+\- SLH-DSA
+
+
+
+or any future algorithm.
 
 
 
@@ -36,11 +54,11 @@ Ed25519, ECDSA, ML-DSA, or any future algorithm.
 
 
 
-\- Easier algorithm upgrades
+\- Easier cryptographic migration
 
 \- Post-quantum readiness
 
-\- Reduced migration risk
+\- Reduced operational risk
 
-\- Long-term trust preservation
+\- Long-term decision integrity
 
