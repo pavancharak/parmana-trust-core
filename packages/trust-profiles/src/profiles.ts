@@ -1,37 +1,74 @@
-export const TRUST_PROFILES = {
+import type {
+  TrustPolicy
+} from "./policy.js";
+
+export const TRUST_PROFILES:
+  Record<
+    string,
+    TrustPolicy
+  > = {
 
   default: {
-    algorithms: [
+
+    name:
+      "default",
+
+    requiredAlgorithms: [
       "ed25519"
-    ]
+    ],
+
+    minimumSignatures: 1
   },
 
   enterprise: {
-    algorithms: [
+
+    name:
+      "enterprise",
+
+    requiredAlgorithms: [
       "ed25519",
       "ecdsa-p256"
-    ]
+    ],
+
+    minimumSignatures: 2
   },
 
   regulated: {
-    algorithms: [
+
+    name:
+      "regulated",
+
+    requiredAlgorithms: [
       "ed25519",
       "ecdsa-p256"
-    ]
+    ],
+
+    minimumSignatures: 2
   },
 
   hybrid: {
-    algorithms: [
+
+    name:
+      "hybrid",
+
+    requiredAlgorithms: [
       "ed25519",
       "ecdsa-p256"
-    ]
+    ],
+
+    minimumSignatures: 2
   },
 
   "post-quantum": {
-    algorithms: [
+
+    name:
+      "post-quantum",
+
+    requiredAlgorithms: [
       "ed25519",
       "ml-dsa-65"
-    ]
-  }
+    ],
 
-} as const;
+    minimumSignatures: 2
+  }
+};

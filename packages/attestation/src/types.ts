@@ -30,4 +30,12 @@ export interface DecisionAttestation {
   signatures: SignatureSet;
 
   metadata: AttestationMetadata;
+  outcome: DecisionOutcome;
+}
+
+export interface DecisionOutcome {
+
+  result: string;
+
+  confidence?: number;
 }
