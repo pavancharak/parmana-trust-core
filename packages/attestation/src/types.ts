@@ -8,10 +8,6 @@ export interface EvidenceRecord {
   hashAlgorithm: string;
 }
 
-export interface AttestationChain {
-  chainId: string;
-  attestations: string[];
-}
 
 export interface AttestationMetadata {
   profile: string;

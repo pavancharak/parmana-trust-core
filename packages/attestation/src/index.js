@@ -18,3 +18,5 @@ __exportStar(require("./types.js"), exports);
 __exportStar(require("./create-attestation.js"), exports);
 __exportStar(require("./verify-attestation.js"), exports);
 __exportStar(require("./reattest.js"), exports);
+__exportStar(require("./chain.js"), exports);
+__exportStar(require("./append-chain.js"), exports);

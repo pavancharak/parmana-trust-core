@@ -16,3 +16,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./types.js"), exports);
 __exportStar(require("./hash.js"), exports);
+__exportStar(require("./merkle.js"), exports);
+__exportStar(require("./proof.js"), exports);
