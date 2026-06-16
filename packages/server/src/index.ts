@@ -1,15 +1,18 @@
-import rootRoute
-  from "./routes/root.js";
-
 import {
   app
 } from "./app.js";
+
+import rootRoute
+  from "./routes/root.js";
 
 import verifyRoute
   from "./routes/verify.js";
 
 import receiptRoute
   from "./routes/receipt.js";
+
+import receiptsRoute
+  from "./routes/receipts.js";
 
 import trustRootRoute
   from "./routes/trust-root.js";
@@ -23,12 +26,17 @@ import versionRoute
 app.use(
   rootRoute
 );
+
 app.use(
   verifyRoute
 );
 
 app.use(
   receiptRoute
+);
+
+app.use(
+  receiptsRoute
 );
 
 app.use(

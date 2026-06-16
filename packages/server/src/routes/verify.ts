@@ -1,3 +1,6 @@
+import crypto
+  from "node:crypto";
+
 import {
   Router
 } from "express";
@@ -5,6 +8,14 @@ import {
 import {
   verifyDecision
 } from "@parmana/verifier";
+
+import {
+  receipts
+} from "../store/receipt-store.js";
+
+import type {
+  VerificationReceipt
+} from "../types/verification-receipt.js";
 
 const router =
   Router();
@@ -33,15 +44,40 @@ router.post(
 
       const result =
         verifyDecision(
-
           req.body.attestation,
-
           req.body.policy
-
         );
 
+      const receipt:
+        VerificationReceipt = {
+
+        receiptId:
+          crypto.randomUUID(),
+
+        decisionId:
+          req.body.attestation.decisionId,
+
+        valid:
+          result.valid,
+
+        verifiedAlgorithms:
+          result.verifiedAlgorithms,
+
+        failedAlgorithms:
+          result.failedAlgorithms,
+
+        verifiedAt:
+          new Date()
+            .toISOString()
+      };
+
+      receipts.set(
+        receipt.receiptId,
+        receipt
+      );
+
       res.json(
-        result
+        receipt
       );
 
     } catch (error) {
@@ -49,12 +85,10 @@ router.post(
       res
         .status(400)
         .json({
-
           error:
             error instanceof Error
               ? error.message
               : "Unknown error"
-
         });
 
     }
