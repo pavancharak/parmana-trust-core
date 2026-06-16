@@ -1,26 +1,50 @@
-\# Parmana Quickstart
+\# Quickstart
 
 
 
-\## Create a Bundle
+\## Install
 
 
 
-Decision -> Bundle
+```bash
+
+npm install
+
+```
 
 
 
-\## Verify a Bundle
+\## Build
 
 
 
-parmana verify loan.bundle.json
+```bash
+
+npm run build
+
+```
 
 
 
-\## Generate a Receipt
+\## Verify Bundle
 
 
 
-parmana receipt loan.bundle.json
+```bash
+
+npx tsx apps/cli/src/verify.ts loan.bundle.json
+
+```
+
+
+
+\## Generate Receipt
+
+
+
+```bash
+
+npx tsx apps/cli/src/receipt.ts loan.bundle.json
+
+```
 

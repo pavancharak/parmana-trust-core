@@ -1,0 +1,1 @@
+{"version":3,"file":"attestation-v2.d.ts","sourceRoot":"","sources":["attestation-v2.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EACV,YAAY,EACb,MAAM,oBAAoB,CAAC;AAE5B,MAAM,WAAW,aAAa;IAE5B,aAAa,EAAE,GAAG,CAAC;IAEnB,UAAU,EAAE,MAAM,CAAC;IAEnB,UAAU,EAAE,YAAY,CAAC;IAEzB,QAAQ,CAAC,EAAE,MAAM,CACf,MAAM,EACN,OAAO,CACR,CAAC;CACH"}

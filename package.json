@@ -1,6 +1,7 @@
 {
   "name": "parmana-trust-core",
   "private": true,
+  "packageManager": "npm@10.8.2",
   "workspaces": [
     "packages/*"
   ],
@@ -8,12 +9,17 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "verify": "tsx apps/cli/src/verify.ts",
+    "receipt": "tsx apps/cli/src/receipt.ts",
+    "playground:bundle": "tsx apps/playground/bundle-roundtrip.ts",
+    "playground:verify": "tsx apps/playground/decision-test.ts",
+    "playground:trust-root": "tsx apps/playground/trust-root-test.ts"
   },
   "devDependencies": {
     "@types/node": "^25.9.3",
     "tsx": "^4.19.0",
-    "turbo": "^2.0.0",
+    "turbo": "^2.0.14",
     "typescript": "^5.9.3",
     "vitest": "^3.2.0"
   }
