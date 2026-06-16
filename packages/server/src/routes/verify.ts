@@ -16,18 +16,48 @@ router.post(
     res
   ) => {
 
-    const result =
-      verifyDecision(
+    try {
 
-        req.body.attestation,
+      if (
+        !req.body?.attestation ||
+        !req.body?.policy
+      ) {
 
-        req.body.policy
+        return res
+          .status(400)
+          .json({
+            error:
+              "attestation and policy are required"
+          });
+      }
 
+      const result =
+        verifyDecision(
+
+          req.body.attestation,
+
+          req.body.policy
+
+        );
+
+      res.json(
+        result
       );
 
-    res.json(
-      result
-    );
+    } catch (error) {
+
+      res
+        .status(400)
+        .json({
+
+          error:
+            error instanceof Error
+              ? error.message
+              : "Unknown error"
+
+        });
+
+    }
 
   }
 );

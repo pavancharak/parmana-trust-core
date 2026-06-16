@@ -1,0 +1,31 @@
+{
+  "attestation": {
+    "schemaVersion": "2",
+    "decisionId": "decision-001",
+    "evidence": [],
+    "signatures": {
+      "signatures": [
+        {
+          "algorithm": "ed25519",
+          "keyId": "key-1",
+          "value": "dummy-signature",
+          "createdAt": "2026-06-17T00:00:00Z"
+        }
+      ]
+    },
+    "metadata": {
+      "profile": "default",
+      "createdAt": "2026-06-17T00:00:00Z"
+    },
+    "outcome": {
+      "result": "approved"
+    }
+  },
+  "policy": {
+    "name": "default",
+    "requiredAlgorithms": [
+      "ed25519"
+    ],
+    "minimumSignatures": 1
+  }
+}
