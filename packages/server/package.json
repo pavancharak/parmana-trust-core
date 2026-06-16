@@ -1,0 +1,17 @@
+{
+  "name": "@parmana/server",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p .",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

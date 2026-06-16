@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createAttestation = createAttestation;
-function createAttestation(attestation) {
+export function createAttestation(attestation) {
     return attestation;
 }
+//# sourceMappingURL=create-attestation.js.map

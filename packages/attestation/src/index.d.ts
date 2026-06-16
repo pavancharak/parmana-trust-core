@@ -4,4 +4,4 @@ export * from "./verify-attestation.js";
 export * from "./reattest.js";
 export * from "./chain.js";
 export * from "./append-chain.js";
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.d.ts.map
