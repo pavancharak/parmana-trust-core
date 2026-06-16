@@ -1,252 +1,962 @@
-# Parmana Trust Core
+\# Parmana Trust Core
 
-**Cryptographically verifiable decision infrastructure.**
 
-`@parmanasystems/trust-core` is the foundational package of the Parmana SDK. It turns an automated decision — from a rules engine, workflow platform, or AI agent — into a tamper-evident, independently verifiable attestation bundle. Every step of that transformation is deterministic, typed, and auditable without access to the originating system.
 
----
+Parmana Trust Core is a TypeScript trust-verification framework for building auditable, cryptographically verifiable decision systems.
 
-## How it works
 
-A decision enters the pipeline as structured input. Trust Core transforms it through a defined sequence, producing a signed bundle that any authorized party can verify offline.
+
+It provides evidence tracking, decision attestations, trust policies, trust anchors, bundle packaging, receipt generation, and verification workflows.
+
+
+
+\---
+
+
+
+\# Features
+
+
+
+\* Evidence Records
+
+\* Decision Attestations
+
+\* Attestation Chains
+
+\* Trust Policies
+
+\* Trust Profiles
+
+\* Trust Anchors
+
+\* Trust Root Rotation
+
+\* Signature Verification
+
+\* Bundle Packaging
+
+\* Bundle Hashing
+
+\* Bundle Receipts
+
+\* CLI Verification
+
+\* Ed25519 Support
+
+\* ML-DSA-65 (Post-Quantum) Support
+
+\* End-to-End Verification Tests
+
+
+
+\---
+
+
+
+\# Architecture
+
+
+
+```text
+
+Evidence
+
+&#x20;   ↓
+
+Attestation
+
+&#x20;   ↓
+
+Trust Policy Validation
+
+&#x20;   ↓
+
+Trust Root
+
+&#x20;   ↓
+
+Bundle
+
+&#x20;   ↓
+
+Receipt
+
+&#x20;   ↓
+
+Verification
 
 ```
-Decision
-  └─ Evidence        canonical hash of inputs + policy context
-       └─ Attestation     Ed25519-signed record of the decision moment
-            └─ Trust Root       single anchor hash for the bundle
-                 └─ Trust Chain      sequential linkage across decisions
-                      └─ Decision Bundle  self-contained, portable artifact
-                           └─ Receipt          human-readable verification summary
-                                └─ Verification    pass / fail with full diff
+
+
+
+\---
+
+
+
+\# Repository Structure
+
+
+
+```text
+
+parmana-trust-core
+
+
+
+packages/
+
+├── contracts
+
+├── crypto
+
+├── evidence
+
+├── provenance
+
+├── attestation
+
+├── trust-profiles
+
+├── trust-anchor
+
+├── verifier
+
+└── bundle
+
+
+
+apps/
+
+├── cli
+
+└── playground
+
+
+
+tests/
+
 ```
 
-Each layer adds a discrete guarantee. Evidence proves *what* was captured. The Attestation proves *when* and *by what authority*. The Trust Chain proves the record hasn't been silently modified. The Bundle makes all of it portable and independently verifiable.
 
----
 
-## Installation
+\---
+
+
+
+\# Packages
+
+
+
+\## @parmana/contracts
+
+
+
+Core shared interfaces and schemas.
+
+
+
+```text
+
+SignatureRecord
+
+SignatureSet
+
+TrustProfile
+
+AttestationV2
+
+```
+
+
+
+\---
+
+
+
+\## @parmana/crypto
+
+
+
+Cryptographic providers and abstractions.
+
+
+
+```text
+
+Signer
+
+Registry
+
+Factory
+
+
+
+Ed25519
+
+ML-DSA-65
+
+```
+
+
+
+\---
+
+
+
+\## @parmana/evidence
+
+
+
+Evidence record definitions and hashing support.
+
+
+
+\---
+
+
+
+\## @parmana/provenance
+
+
+
+Provenance tracking primitives.
+
+
+
+\---
+
+
+
+\## @parmana/attestation
+
+
+
+Decision attestation generation and management.
+
+
+
+```text
+
+createAttestation()
+
+appendChain()
+
+reattest()
+
+```
+
+
+
+\---
+
+
+
+\## @parmana/trust-profiles
+
+
+
+Trust policies and profile definitions.
+
+
+
+```text
+
+TrustPolicy
+
+TrustProfile
+
+```
+
+
+
+\---
+
+
+
+\## @parmana/trust-anchor
+
+
+
+Trust root management.
+
+
+
+```text
+
+createTrustRoot()
+
+rotateTrustRoot()
+
+verifyChain()
+
+```
+
+
+
+\---
+
+
+
+\## @parmana/verifier
+
+
+
+Verification engine.
+
+
+
+```text
+
+verifySignatureSet()
+
+verifyPolicy()
+
+verifyDecision()
+
+```
+
+
+
+\---
+
+
+
+\## @parmana/bundle
+
+
+
+Bundle packaging and verification.
+
+
+
+```text
+
+createBundle()
+
+verifyBundle()
+
+
+
+serializeBundle()
+
+deserializeBundle()
+
+
+
+hashBundle()
+
+
+
+createReceipt()
+
+
+
+signBundle()
+
+verifyBundleSignature()
+
+
+
+saveBundle()
+
+loadBundle()
+
+```
+
+
+
+\---
+
+
+
+\# Installation
+
+
+
+Clone the repository:
+
+
 
 ```bash
-npm install @parmanasystems/trust-core
+
+git clone <repository-url>
+
+
+
+cd parmana-trust-core
+
 ```
 
-Requires Node.js 18+. The package ships ESM and CJS builds with full TypeScript declarations.
 
----
 
-## Quickstart
+Install dependencies:
 
-```ts
-import { attest, bundle, verify } from '@parmanasystems/trust-core'
 
-// 1. Attest a decision
-const attestation = await attest({
-  decisionId: 'loan-application-7829',
-  policyVersion: '2024-11-01',
-  inputs: {
-    applicantId: 'usr_4482',
-    requestedAmount: 50000,
-    creditScore: 714,
-  },
-  outcome: 'approved',
-  authorizedBy: 'policy:auto-approve-tier-2',
-})
-
-// 2. Bundle for distribution or storage
-const decisionBundle = await bundle(attestation)
-
-// 3. Verify — no SDK connection required
-const result = await verify(decisionBundle)
-
-console.log(result.verified)    // true
-console.log(result.receipt)     // full human-readable summary
-```
-
----
-
-## CLI
-
-The CLI operates entirely independently of Parmana infrastructure. Pass it a `.bundle.json` file and a public key — it verifies without any network call.
-
-**Verify a bundle:**
 
 ```bash
-npx tsx apps/cli/src/verify.ts loan.bundle.json
-```
 
-```
-✓  Signature      valid (Ed25519)
-✓  Evidence hash  matches bundle inputs
-✓  Trust chain    intact — no gaps or modifications detected
-✓  Policy version 2024-11-01 at time of decision
-
-Decision ID   loan-application-7829
-Outcome       approved
-Attested at   2024-11-14T09:31:02.441Z
-```
-
-**Generate a human-readable receipt:**
-
-```bash
-npx tsx apps/cli/src/receipt.ts loan.bundle.json
-```
-
-Writes `loan.receipt.json` with a structured summary suitable for audit submission, regulatory export, or counsel review.
-
----
-
-## API reference
-
-### `attest(decision)`
-
-Captures the decision moment and produces a signed `Attestation`.
-
-| Field | Type | Description |
-|---|---|---|
-| `decisionId` | `string` | Unique identifier for this decision |
-| `policyVersion` | `string` | The policy version in effect at execution time |
-| `inputs` | `Record<string, unknown>` | Complete input state — hashed into evidence |
-| `outcome` | `string` | The decision result |
-| `authorizedBy` | `string` | Policy rule or authority that authorized the outcome |
-
-Returns `Promise<Attestation>`.
-
----
-
-### `bundle(attestation)`
-
-Wraps an `Attestation` (or array of attestations) into a portable `DecisionBundle` with a computed Trust Root and sequential chain linkage.
-
-```ts
-const decisionBundle = await bundle(attestation)
-// or batch:
-const batchBundle = await bundle([attestation1, attestation2, attestation3])
-```
-
-Returns `Promise<DecisionBundle>`.
-
----
-
-### `verify(bundle, options?)`
-
-Verifies a `DecisionBundle` entirely offline. Checks signature validity, evidence hash integrity, and Trust Chain continuity.
-
-```ts
-const result = await verify(decisionBundle, {
-  publicKey: '...',   // optional — defaults to key embedded in bundle
-  strict: true,       // fail on any chain gap (default: true)
-})
-```
-
-Returns `Promise<VerificationResult>`:
-
-```ts
-{
-  verified: boolean
-  receipt: VerificationReceipt
-  failures: VerificationFailure[]   // empty if verified === true
-}
-```
-
----
-
-### `buildMerkleTree(leaves)`
-
-Constructs a Merkle tree from an array of evidence hashes. Useful for batch decision bundles where you need a single Trust Root across many attestations.
-
-```ts
-import { buildMerkleTree } from '@parmanasystems/trust-core'
-
-const tree = buildMerkleTree(attestations.map(a => a.evidenceHash))
-console.log(tree.root)   // deterministic root hash
-```
-
----
-
-## Core concepts
-
-**Evidence hashing** — inputs are canonicalized and SHA-256 hashed before signing. The hash covers the complete input state: fields, values, and ordering. Changing any input field produces a different hash, which invalidates the attestation signature.
-
-**Attestation** — an Ed25519-signed record binding the evidence hash to the decision outcome, policy version, and timestamp. The signing key is never required for verification — only the corresponding public key.
-
-**Trust Root** — a single Merkle root derived from one or more attestation hashes. Provides a compact, auditable anchor for a set of decisions.
-
-**Trust Chain** — sequential linkage of attestations through chained hashes. Gaps, deletions, or insertions are structurally detectable. There is no silent modification path.
-
-**Decision Bundle** — a self-contained JSON artifact containing the attestation(s), Trust Root, chain metadata, and embedded public key. Verifiable by any party with the `verify` function or the CLI — no Parmana infrastructure required.
-
-**Verification Receipt** — a structured summary of a verification result, formatted for human review, audit submission, or regulatory export.
-
----
-
-## Build
-
-```bash
 npm install
+
+```
+
+
+
+\---
+
+
+
+\# Build
+
+
+
+Build all packages:
+
+
+
+```bash
+
 npm run build
+
 ```
 
-Outputs to `dist/`. The build runs `tsc` with strict mode and generates both ESM and CJS entry points.
 
-**Run tests:**
+
+\---
+
+
+
+\# Test
+
+
+
+Run the complete test suite:
+
+
 
 ```bash
+
 npm test
+
 ```
 
-**Type check only:**
+
+
+\---
+
+
+
+\# Quick Example
+
+
+
+Create a trust root, generate a receipt, and verify the trust chain.
+
+
+
+```ts
+
+import {
+
+&#x20; createTrustRoot,
+
+&#x20; verifyChain
+
+} from "@parmana/trust-anchor";
+
+
+
+import {
+
+&#x20; createReceipt
+
+} from "@parmana/bundle";
+
+
+
+const trustRoot =
+
+&#x20; createTrustRoot(
+
+&#x20;   "root-1",
+
+&#x20;   \[],
+
+&#x20;   "v1"
+
+&#x20; );
+
+
+
+const bundle = {
+
+&#x20; bundleId: "bundle-001",
+
+&#x20; trustRoot
+
+};
+
+
+
+const receipt =
+
+&#x20; createReceipt(
+
+&#x20;   bundle as any
+
+&#x20; );
+
+
+
+const chainResult =
+
+&#x20; verifyChain(\[
+
+&#x20;   trustRoot
+
+&#x20; ]);
+
+
+
+console.log(receipt);
+
+
+
+console.log(chainResult);
+
+```
+
+
+
+Example output:
+
+
+
+```text
+
+{
+
+&#x20; bundleId: 'bundle-001',
+
+&#x20; bundleHash: '...',
+
+&#x20; trustRootId: 'root-1',
+
+&#x20; trustRootVersion: 'v1',
+
+&#x20; createdAt: '...'
+
+}
+
+
+
+{
+
+&#x20; valid: true,
+
+&#x20; versions: \['v1'],
+
+&#x20; errors: \[]
+
+}
+
+```
+
+
+
+\---
+
+
+
+\# Verification Example
+
+
+
+```ts
+
+import {
+
+&#x20; verifyPolicy
+
+} from "@parmana/verifier";
+
+
+
+const result =
+
+&#x20; verifyPolicy(
+
+&#x20;   \[
+
+&#x20;     {
+
+&#x20;       algorithm: "ed25519"
+
+&#x20;     }
+
+&#x20;   ] as any,
+
+&#x20;   {
+
+&#x20;     requiredAlgorithms: \[
+
+&#x20;       "ed25519"
+
+&#x20;     ]
+
+&#x20;   } as any
+
+&#x20; );
+
+
+
+console.log(result.valid);
+
+```
+
+
+
+Output:
+
+
+
+```text
+
+true
+
+```
+
+
+
+\---
+
+
+
+\# CLI Usage
+
+
+
+Verify a bundle:
+
+
 
 ```bash
-npm run typecheck
+
+npx tsx apps/cli/src/verify.ts loan.bundle.json
+
 ```
 
----
 
-## Bundle format
 
-Decision bundles are plain JSON. An example `loan.bundle.json`:
+Generate a receipt:
 
-```json
-{
-  "version": "1.0",
-  "decisionId": "loan-application-7829",
-  "evidenceHash": "sha256:e3b0c44298fc1c149afb...",
-  "attestation": {
-    "signature": "Ed25519:...",
-    "publicKey": "Ed25519:...",
-    "policyVersion": "2024-11-01",
-    "outcome": "approved",
-    "attestedAt": "2024-11-14T09:31:02.441Z"
-  },
-  "trustRoot": "sha256:a1b2c3d4...",
-  "chainIndex": 0,
-  "previousHash": null
-}
+
+
+```bash
+
+npx tsx apps/cli/src/receipt.ts
+
 ```
 
-The format is stable across minor versions. Breaking changes to the bundle schema increment the major version and are documented in [CHANGELOG.md](./CHANGELOG.md).
 
----
 
-## Package scope
+\---
 
-`trust-core` provides the cryptographic primitives and pipeline. It has no opinion about storage, transport, or policy evaluation. Those concerns are handled by other packages in the `@parmanasystems/*` ecosystem:
 
-| Package | Responsibility |
-|---|---|
-| `@parmanasystems/policy` | Policy definition and evaluation |
-| `@parmanasystems/audit-db` | Persistent storage for bundles and receipts |
-| `@parmanasystems/provenance` | `GovernedSignal<T>` and signal trust levels |
-| `@parmanasystems/verifier-cli` | Standalone CLI for bundle verification |
-| `@parmanasystems/dashboard` | Audit dashboard and receipt browser |
 
----
+\# Test Coverage
 
-## License
 
-Apache 2.0. See [LICENSE](./LICENSE).
 
----
+Current test coverage includes:
 
-*Part of the [Parmana Systems](https://manthan.systems) open-source SDK.*
+
+
+```text
+
+Bundle Creation
+
+Bundle Serialization
+
+Bundle Roundtrip
+
+
+
+Receipt Generation
+
+
+
+Trust Root Creation
+
+Trust Root Rotation
+
+Trust Chain Verification
+
+
+
+Policy Verification
+
+Decision Verification
+
+
+
+Signature Verification
+
+
+
+End-to-End Trust Flow
+
+```
+
+
+
+\---
+
+
+
+\# Security
+
+
+
+Parmana Trust Core supports:
+
+
+
+```text
+
+Ed25519
+
+ML-DSA-65
+
+```
+
+
+
+ML-DSA-65 provides a foundation for post-quantum migration strategies.
+
+
+
+Future releases will support:
+
+
+
+```text
+
+Hybrid Signatures
+
+Threshold Signatures
+
+Transparency Logs
+
+Trust Federation
+
+```
+
+
+
+\---
+
+
+
+\# Roadmap
+
+
+
+\## v0.2
+
+
+
+\### Hybrid Cryptography
+
+
+
+```text
+
+Ed25519 + ML-DSA-65
+
+```
+
+
+
+\### Threshold Trust
+
+
+
+```text
+
+2-of-3 approvals
+
+3-of-5 approvals
+
+```
+
+
+
+\### Trust Federation
+
+
+
+```text
+
+Multiple trust roots
+
+Cross-root validation
+
+```
+
+
+
+\### Transparency Logs
+
+
+
+```text
+
+Append-only audit logs
+
+Merkle proofs
+
+```
+
+
+
+\### Policy Engine v2
+
+
+
+```text
+
+Threshold rules
+
+Algorithm requirements
+
+Expiration checks
+
+Issuer restrictions
+
+```
+
+
+
+\---
+
+
+
+\# Development
+
+
+
+Build:
+
+
+
+```bash
+
+npm run build
+
+```
+
+
+
+Test:
+
+
+
+```bash
+
+npm test
+
+```
+
+
+
+Run playground examples:
+
+
+
+```bash
+
+npm run playground:bundle
+
+
+
+npm run playground:verify
+
+
+
+npm run playground:trust-root
+
+```
+
+
+
+\---
+
+
+
+\# Release Status
+
+
+
+Current target:
+
+
+
+```text
+
+v0.1.0
+
+```
+
+
+
+Project status:
+
+
+
+```text
+
+Build System       ✓
+
+Monorepo           ✓
+
+Crypto             ✓
+
+Evidence           ✓
+
+Attestation        ✓
+
+Trust Profiles     ✓
+
+Trust Anchors      ✓
+
+Verifier           ✓
+
+Bundles            ✓
+
+Receipts           ✓
+
+CLI                ✓
+
+Unit Tests         ✓
+
+Integration Tests  ✓
+
+End-to-End Tests   ✓
+
+```
+
+
+
+\---
+
+
+
+\# License
+
+
+
+MIT License.
+
+
+
