@@ -4,18 +4,15 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
 
+    "types": ["node"],
+
     "strict": true,
-
     "declaration": true,
-
     "declarationMap": true,
-
     "sourceMap": true,
 
     "esModuleInterop": true,
-
     "forceConsistentCasingInFileNames": true,
-
     "skipLibCheck": true
   }
 }

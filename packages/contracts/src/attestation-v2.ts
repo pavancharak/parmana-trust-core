@@ -1,13 +1,14 @@
 import type {
-  SignatureRecord
-} from "./signature-record.js";
+  SignatureSet
+} from "./signature-set.js";
 
 export interface AttestationV2 {
+
   schemaVersion: "2";
 
   decisionId: string;
 
-  signatures: SignatureRecord[];
+  signatures: SignatureSet;
 
   metadata?: Record<
     string,

@@ -15,9 +15,16 @@ export function reattest(
 
     ...existing,
 
-    signatures: [
+    signatures: {
+
       ...existing.signatures,
-      signature
-    ]
+
+      signatures: [
+
+        ...existing.signatures.signatures,
+
+        signature
+      ]
+    }
   };
 }

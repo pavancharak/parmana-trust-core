@@ -1,0 +1,46 @@
+import crypto from "node:crypto";
+
+import type {
+  Signer
+} from "../signer.js";
+
+export class Ed25519Signer
+  implements Signer {
+
+  constructor(
+    private readonly privateKey:
+      crypto.KeyObject,
+
+    private readonly publicKey:
+      crypto.KeyObject
+  ) {}
+
+  algorithm(): string {
+
+    return "ed25519";
+  }
+
+  async sign(
+    payload: Uint8Array
+  ): Promise<Uint8Array> {
+
+    return crypto.sign(
+      null,
+      payload,
+      this.privateKey
+    );
+  }
+
+  async verify(
+    payload: Uint8Array,
+    signature: Uint8Array
+  ): Promise<boolean> {
+
+    return crypto.verify(
+      null,
+      payload,
+      this.publicKey,
+      signature
+    );
+  }
+}

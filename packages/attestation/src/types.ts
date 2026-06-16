@@ -1,4 +1,6 @@
-import type { SignatureRecord } from "@parmana/contracts";
+import type {
+  SignatureSet
+} from "@parmana/contracts";
 
 export interface EvidenceRecord {
   id: string;
@@ -18,9 +20,14 @@ export interface AttestationMetadata {
 }
 
 export interface DecisionAttestation {
+
   schemaVersion: "2";
+
   decisionId: string;
+
   evidence: EvidenceRecord[];
-  signatures: SignatureRecord[];
+
+  signatures: SignatureSet;
+
   metadata: AttestationMetadata;
 }
