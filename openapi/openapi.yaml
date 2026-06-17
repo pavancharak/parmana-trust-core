@@ -1,0 +1,191 @@
+openapi: 3.1.0
+
+info:
+  title: Parmana Trust Core API
+  version: 0.1.0
+  description: >
+    Parmana evaluates trusted signals against policy before execution.
+    Every decision becomes attestable, verifiable, auditable,
+    and transparently published.
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+
+  /evaluate:
+    post:
+      summary: Evaluate a task against policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluateRequest'
+      responses:
+        '200':
+          description: Evaluation result
+
+  /attest:
+    post:
+      summary: Create attestation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluateRequest'
+      responses:
+        '200':
+          description: Attestation created
+
+  /verify-attestation:
+    post:
+      summary: Verify attestation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attestation'
+      responses:
+        '200':
+          description: Verification result
+
+  /receipt:
+    post:
+      summary: Generate verification receipt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attestation'
+      responses:
+        '200':
+          description: Verification receipt
+
+  /transparency:
+    post:
+      summary: Append transparency entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransparencyRequest'
+      responses:
+        '200':
+          description: Transparency entry created
+
+  /transparency/{receiptId}:
+    get:
+      summary: Get transparency entry
+      parameters:
+        - name: receiptId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transparency entry
+
+  /transparency/proof/{receiptId}:
+    get:
+      summary: Get transparency proof
+      parameters:
+        - name: receiptId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Inclusion proof
+
+  /trust-root/current:
+    get:
+      summary: Get current trust root
+      responses:
+        '200':
+          description: Current trust root
+
+  /trust-root/publish:
+    post:
+      summary: Publish trust root
+      responses:
+        '200':
+          description: Published trust root
+
+components:
+
+  schemas:
+
+    EvaluateRequest:
+      type: object
+      properties:
+        task:
+          type: string
+        signals:
+          type: object
+
+    Attestation:
+      type: object
+      properties:
+        schemaVersion:
+          type: string
+        decisionId:
+          type: string
+        taskId:
+          type: string
+        policyId:
+          type: string
+        policyVersion:
+          type: string
+
+    VerificationReceipt:
+      type: object
+      properties:
+        receiptId:
+          type: string
+        decisionId:
+          type: string
+        valid:
+          type: boolean
+        verifiedAlgorithms:
+          type: array
+          items:
+            type: string
+        failedAlgorithms:
+          type: array
+          items:
+            type: string
+        verifiedAt:
+          type: string
+          format: date-time
+        receiptHash:
+          type: string
+
+    TransparencyRequest:
+      type: object
+      properties:
+        receiptId:
+          type: string
+        receiptHash:
+          type: string
+
+    TrustRoot:
+      type: object
+      properties:
+        rootId:
+          type: string
+        algorithm:
+          type: string
+        receiptCount:
+          type: integer
+        rootHash:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
