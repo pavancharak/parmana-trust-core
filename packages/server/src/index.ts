@@ -36,7 +36,8 @@ import trustRootPublishRoute
   from "./routes/trust-root-publish.js";
 import versionRoute
   from "./routes/version.js";
-
+import swaggerRoute
+  from "./routes/swagger.js";
 app.use(
   rootRoute
 );
@@ -57,6 +58,9 @@ app.use(
 );
 app.use(
   attestRoute
+);
+app.use(
+  swaggerRoute
 );
 app.use(
   verifyAttestationRoute

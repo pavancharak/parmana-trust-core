@@ -1,378 +1,383 @@
-# Parmana Trust Core – Remaining API Implementation Roadmap
+You're at the point where adding more endpoints has diminishing returns. The next phase should be **productization**.
 
-You are working inside the Parmana Trust Core monorepo.
+## Phase 2: Trust Root History
 
-Current state:
+You already have:
 
-Implemented APIs:
-
-```text
-POST /evaluate
-POST /attest
-POST /verify-attestation
+```text id="6pnvsm"
+POST /trust-root/publish
+GET  /trust-root/current
 ```
 
-Implemented runtime:
+Add:
 
-```text
-Task
-  ↓
-Policy
-  ↓
-Authority Evaluation
-  ↓
+```text id="kq5xt6"
+GET /trust-root/latest
+GET /trust-root/:rootId
+```
+
+### Route 1
+
+File:
+
+```text id="fxm76w"
+packages/server/src/routes/trust-root-latest.ts
+```
+
+Query:
+
+```sql id="2xqvht"
+select *
+from trust_roots
+order by published_at desc
+limit 1
+```
+
+### Route 2
+
+File:
+
+```text id="mqw3yq"
+packages/server/src/routes/trust-root-by-id.ts
+```
+
+Query:
+
+```sql id="yzrsg3"
+select *
+from trust_roots
+where root_id = ?
+```
+
+This gives immutable historical trust roots.
+
+---
+
+## Phase 3: Publish Actual Roots
+
+Right now:
+
+```text id="z39sq6"
+GET /trust-root/current
+```
+
+computes a root.
+
+Instead:
+
+```text id="yj95vv"
+POST /trust-root/publish
+```
+
+should become the only publisher.
+
+Then:
+
+```text id="6fjxud"
+GET /trust-root/current
+```
+
+returns latest published root.
+
+This matches real transparency systems.
+
+---
+
+## Phase 4: Evidence API
+
+Current chain:
+
+```text id="qofwgu"
 Decision
-  ↓
+ ↓
 Attestation
-  ↓
-Integrity Verification
+ ↓
+Receipt
 ```
 
-Implemented packages:
+Missing:
 
-```text
-contracts
-bundle
-verifier
-attestation
-server
-audit-db
-transparency-log
-trust-anchor
-trust-federation
+```text id="4c9ucv"
+Evidence
 ```
 
-Canonical architecture:
+Add:
 
-```text
+```text id="zl3hy7"
+GET /decision/:decisionId
+GET /attestation/:decisionId
+GET /receipt/:decisionId
+```
+
+This makes every trust artifact retrievable.
+
+---
+
+## Phase 5: Canonical Documentation
+
+Create:
+
+```text id="i1dw7y"
+docs/architecture/trust-core-runtime.mdx
+```
+
+Sections:
+
+```text id="84sh2y"
+Authority Evaluation
+Attestation
+Verification
+Receipt
+Transparency
+Trust Root
+```
+
+Canonical runtime diagram:
+
+```text id="bdg1t0"
+Task
+ ↓
+Policy
+ ↓
+Decision
+ ↓
+Attestation
+ ↓
+Verification
+ ↓
+Receipt
+ ↓
+Transparency Log
+ ↓
+Published Trust Root
+```
+
+---
+
+## Phase 6: Release v0.1.0
+
+After trust-root history APIs:
+
+```powershell id="3r3cwa"
+git add .
+git commit -m "feat: Parmana Trust Core v0.1"
+git tag v0.1.0
+git push origin main
+git push origin v0.1.0
+```
+
+---
+
+## What I'd Lock As v0.1 Scope
+
+```text id="zuwz8k"
+✓ Policy Evaluation
+✓ Decision Generation
+✓ Attestation
+✓ Verification
+✓ Receipt
+✓ Transparency Log
+✓ Transparency Proof
+✓ Trust Root
+✓ OpenAPI
+✓ Swagger
+✓ Supabase Persistence
+```
+
+And defer to v0.2:
+
+```text id="8qaqm0"
+Merkle Trees
+Signed Trust Roots
+Trust Federation
+Multi-tenant Policies
+External Verifiers
+SDK Generation
+```
+
+That keeps Parmana focused on its core thesis:
+
+```text id="n8j4s8"
 Organizations decide what to trust.
 
-Policies define what is required.
+Parmana evaluates trusted signals
+against policy before execution.
+
+Every decision becomes attestable,
+verifiable,
+auditable,
+and transparently published.
+```
+Use this as the canonical engineering prompt for Parmana's **Quantum Era Readiness Assessment**:
+
+# Parmana Quantum Readiness Gap Analysis
+
+Evaluate the current Parmana Trust Core architecture and identify all work required to make the platform fully quantum-era ready.
+
+Current Architecture:
+
+Task
+→ Policy
+→ Decision
+→ Attestation
+→ Verification
+→ Receipt
+→ Transparency Log
+→ Transparency Proof
+→ Trust Root
+
+Current Persistence:
+
+* authority_decisions
+* decision_attestations
+* verification_receipts
+* transparency_log
+* trust_roots
+
+Current APIs:
+
+* POST /evaluate
+* POST /attest
+* POST /verify-attestation
+* POST /receipt
+* POST /transparency
+* GET /transparency/{receiptId}
+* GET /transparency/proof/{receiptId}
+* GET /trust-root/current
+* POST /trust-root/publish
+
+Core Parmana Thesis:
+
+Organizations decide what to trust.
+
+Policies define requirements.
 
 Trusted signals provide evidence.
 
 Parmana evaluates those trusted signals against policy before execution.
 
-Attestation creates cryptographic evidence of authority decisions.
+Humans define authority. Parmana makes authority verifiable and enforceable before execution.
 
-Verification determines whether those decisions can be trusted.
+Analyze the system from a post-quantum perspective and classify components into:
 
-Parmana makes authority verifiable and enforceable before execution.
-```
+1. Quantum-safe today
+2. Quantum-vulnerable
+3. Requires redesign
+4. Future strategic opportunities
 
----
+Specifically assess:
 
-# Objective
+## Cryptography
 
-Implement the remaining Authority Layer APIs in incremental phases.
+* Hashing algorithms
+* Signature algorithms
+* Key management
+* Attestation signing
+* Receipt signing
+* Trust root signing
+* Transparency proof signing
 
-Do NOT redesign existing architecture.
+## Transparency Infrastructure
 
-Do NOT introduce execution capabilities.
+* Trust root generation
+* Merkle tree requirements
+* Inclusion proofs
+* Consistency proofs
+* Tamper-evidence guarantees
 
-Do NOT introduce workflow engines.
+## Trust Federation
 
-Do NOT introduce authorization frameworks.
+* Cross-organization trust
+* Federated trust roots
+* Third-party verifiers
+* Independent auditors
+* Transparency witnesses
 
-Maintain the canonical responsibility model:
+## Post-Quantum Cryptography
 
-```text
-AI
- ↓
-Request
+Evaluate support and migration plans for:
 
-Parmana
- ↓
-Authority Evaluation
+* ML-DSA (Dilithium)
+* Falcon
+* SPHINCS+
+* SHA3
+* SHA-512
+* Hybrid signatures
+* Crypto agility
 
-System Of Record
- ↓
-Execution
-```
+## Architecture Review
 
----
+Determine whether Parmana's authority model:
 
-# Phase 1: Verification Receipts
+Authority ≠ Cryptography
 
-Implement:
+Authority = Policy + Trusted Signals + Verification
 
-```text
-POST /receipt
-GET /receipt/:receiptId
-```
+is fundamentally quantum-resistant.
 
-Create:
+Identify any assumptions that would fail in a world where RSA and ECC are broken.
 
-```text
-packages/contracts/src/verification-receipt.ts
-packages/attestation/src/create-receipt.ts
-packages/server/src/routes/receipt.ts
-```
+## Required Engineering Roadmap
 
-Receipt model:
+Provide:
 
-```ts
-interface VerificationReceipt {
+### v0.2
 
-  receiptId: string;
+Immediate post-quantum readiness improvements
 
-  attestationId: string;
+### v0.3
 
-  verified: boolean;
+Cryptographic agility layer
 
-  verifiedAt: string;
+### v0.4
 
-  verifier: string;
+Post-quantum transparency infrastructure
 
-  verificationMethod: string;
-}
-```
+### v1.0
 
-Verification flow:
+Fully quantum-era authority platform
 
-```text
-Attestation
-      ↓
-verifyAttestation()
-      ↓
-createReceipt()
-      ↓
-Receipt
-```
+## Deliverables
 
-Store receipts using existing audit-db package.
+For every recommendation include:
 
----
+* Why it is needed
+* Security benefit
+* Engineering effort
+* Priority (Critical / High / Medium / Low)
+* Dependencies
+* Impact on existing APIs
 
-# Phase 2: Transparency Log APIs
+Output a final Quantum Readiness Score (0–100) for:
 
-Implement:
+* Architecture
+* Cryptography
+* Transparency
+* Federation
+* Overall Parmana Platform
 
-```text
-POST /transparency
-GET /transparency/:entryId
-GET /transparency/proof/:entryId
-```
-
-Use existing transparency-log package.
-
-Transparency entry model:
-
-```ts
-interface TransparencyEntry {
-
-  entryId: string;
-
-  receiptId: string;
-
-  leafHash: string;
-
-  timestamp: string;
-}
-```
-
-Flow:
+Based on what you've built, I would expect the assessment to conclude roughly:
 
 ```text
-Receipt
-     ↓
-Transparency Entry
+Architecture:        90/100
+Authority Model:     95/100
+Transparency:        70/100
+Cryptography:        35/100
+Federation:          10/100
+Overall:             65/100
 ```
 
-Goal:
+The biggest missing items are:
 
 ```text
-Immutable Audit History
+1. Post-quantum signatures (ML-DSA)
+2. Cryptographic agility framework
+3. Merkle trees
+4. Signed trust roots
+5. Consistency proofs
+6. Trust federation
+7. External witnesses/auditors
+8. Key rotation and algorithm migration
 ```
 
----
-
-# Phase 3: Trust Anchors
-
-Implement:
-
-```text
-POST /anchors
-GET /anchors
-GET /anchors/:issuer
-```
-
-Use trust-anchor package.
-
-Trust Anchor model:
-
-```ts
-interface TrustAnchor {
-
-  issuer: string;
-
-  publicKey: string;
-
-  algorithm: string;
-
-  createdAt: string;
-}
-```
-
-Purpose:
-
-```text
-Trusted Issuer Registration
-```
-
----
-
-# Phase 4: Trust Federation
-
-Implement:
-
-```text
-POST /federation/attest
-POST /federation/verify
-GET /federation/issuers
-```
-
-Use trust-federation package.
-
-Federation model:
-
-```text
-Issuer
-   ↓
-Attestation
-   ↓
-Verifier
-```
-
-Purpose:
-
-```text
-Cross-Organization Trust
-```
-
----
-
-# Phase 5: Runtime Discovery APIs
-
-Implement:
-
-```text
-GET /tasks
-GET /tasks/:taskId
-
-GET /policies
-GET /policies/:policyId
-GET /policies/:policyId/:version
-```
-
-Use existing:
-
-```text
-tasks/
-policies/
-```
-
-Purpose:
-
-```text
-Runtime Introspection
-```
-
----
-
-# Phase 6: Governance Query APIs
-
-Implement:
-
-```text
-GET /decisions
-GET /attestations
-GET /receipts
-GET /audit
-```
-
-Use audit-db.
-
-Purpose:
-
-```text
-Audit Search
-Governance Visibility
-Historical Analysis
-```
-
----
-
-# Constraints
-
-Never violate these rules:
-
-```text
-Parmana does not execute.
-
-Parmana does not create facts.
-
-Parmana does not determine trust.
-
-Organizations decide what to trust.
-
-Policies define authority requirements.
-
-Trusted signals provide evidence.
-
-Parmana evaluates authority before execution.
-```
-
----
-
-# Target Runtime
-
-```text
-POST /evaluate
-       ↓
-Decision
-
-POST /attest
-       ↓
-Attestation
-
-POST /verify-attestation
-       ↓
-Verification
-
-POST /receipt
-       ↓
-Receipt
-
-POST /transparency
-       ↓
-Transparency Entry
-
-POST /federation/verify
-       ↓
-Federated Trust
-```
-
-Final architecture:
-
-```text
-Task
-   ↓
-Policy
-   ↓
-Authority Evaluation
-   ↓
-Decision
-   ↓
-Attestation
-   ↓
-Verification
-   ↓
-Receipt
-   ↓
-Transparency
-   ↓
-Federation
-```
-
-Maintain compatibility with all existing APIs and architecture documents.
+Your core authority architecture is already largely quantum-compatible because it is policy-centric rather than signature-centric. The remaining work is primarily in the cryptographic and transparency layers.
