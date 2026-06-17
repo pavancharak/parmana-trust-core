@@ -1,0 +1,418 @@
+# Task → Policy Runtime Architecture (Part 3)
+
+## Policy as the Unit of Authority
+
+A Task is a business action.
+
+A Policy is an authority contract.
+
+The Policy is the unit that determines:
+
+```text
+What signals are required?
+What conditions must be satisfied?
+What outcome is produced?
+```
+
+A policy does not execute actions.
+
+A policy evaluates authority requirements.
+
+---
+
+## Signal-Centric Architecture
+
+Traditional systems are identity-centric.
+
+Example:
+
+```text
+User
+ ↓
+Role
+ ↓
+Permission
+ ↓
+Action
+```
+
+Parmana is signal-centric.
+
+Example:
+
+```text
+Trusted Signals
+ ↓
+Policy Evaluation
+ ↓
+Authority Decision
+```
+
+Authority is determined from evidence.
+
+Not assumptions.
+
+Not hardcoded roles.
+
+---
+
+## Signals Are Facts
+
+Signals represent verified facts.
+
+Examples:
+
+```text
+identity_verified = true
+
+beneficiary_verified = true
+
+balance_available = true
+
+fraud_score = 20
+
+transfer_amount = 1000
+```
+
+Policies operate on facts.
+
+Policies never operate on speculation.
+
+---
+
+## Trusted Signal Sources
+
+Signals may originate from many systems.
+
+Examples:
+
+```text
+Identity Providers
+
+Banking Systems
+
+Fraud Platforms
+
+Risk Engines
+
+Human Approvers
+
+ERP Systems
+
+CRM Systems
+
+AI Systems
+```
+
+Organizations decide which sources are trusted.
+
+Parmana does not decide trust.
+
+Parmana evaluates trusted evidence.
+
+---
+
+## Human Authority Model
+
+Parmana separates intelligence from authority.
+
+Intelligence answers:
+
+```text
+What should happen?
+```
+
+Authority answers:
+
+```text
+What is allowed?
+```
+
+Example:
+
+```text
+AI
+ ↓
+Suggest payment
+
+Policy
+ ↓
+Evaluate authority
+
+Decision
+ ↓
+Approve or Reject
+```
+
+The AI may be intelligent.
+
+The policy determines authority.
+
+---
+
+## Authority Is Evidence-Based
+
+Authority is established through evidence.
+
+Example:
+
+```text
+Identity Verified
++
+Beneficiary Verified
++
+Balance Available
++
+Fraud Score Acceptable
+=
+Authority Granted
+```
+
+Without evidence there is no authority.
+
+---
+
+## Policy Evaluation Lifecycle
+
+```text
+Collect Signals
+       ↓
+Validate Signals
+       ↓
+Load Policy
+       ↓
+Evaluate Rules
+       ↓
+Generate Outcome
+       ↓
+Create Decision
+```
+
+Every decision can be reproduced later using the same:
+
+```text
+Policy Version
+Signal Set
+Evaluation Logic
+```
+
+This creates deterministic governance.
+
+---
+
+## Deterministic Decisions
+
+A decision should always be reproducible.
+
+Example:
+
+```text
+Policy Version:
+1.0.0
+
+Signals:
+fraud_score = 20
+
+Result:
+approve
+```
+
+Future evaluations using the same policy and signals should produce the same result.
+
+---
+
+## Explainable Governance
+
+Every outcome should have a reason.
+
+Example:
+
+```json
+{
+  "action": "approve",
+  "reason": "payment_authorized"
+}
+```
+
+Or:
+
+```json
+{
+  "action": "reject",
+  "reason": "fraud_score_exceeded_threshold"
+}
+```
+
+This creates explainability.
+
+---
+
+## Override Model
+
+Not every decision is binary.
+
+Some decisions require escalation.
+
+Example:
+
+```json
+{
+  "action": "approve",
+  "requires_override": true,
+  "reason": "high_value_transfer_requires_approval"
+}
+```
+
+This allows:
+
+```text
+Policy
+ ↓
+Human Review
+ ↓
+Execution
+```
+
+instead of immediate execution.
+
+---
+
+## Decision Object
+
+A decision is the result of policy evaluation.
+
+Example:
+
+```json
+{
+  "action": "approve",
+  "requires_override": false,
+  "reason": "payment_authorized"
+}
+```
+
+A decision is not execution.
+
+A decision is authority evaluation output.
+
+---
+
+## Attestation Model
+
+Decisions may be attested.
+
+An attestation proves:
+
+```text
+A decision existed
+A policy was evaluated
+A result was produced
+```
+
+Attestations create cryptographic accountability.
+
+---
+
+## Verification Model
+
+Verification determines whether a decision can be trusted.
+
+Verification evaluates:
+
+```text
+Signatures
+Trust Profiles
+Threshold Requirements
+Algorithms
+```
+
+Verification does not re-evaluate policy.
+
+Verification validates trust.
+
+---
+
+## Receipt Model
+
+A receipt is the audit artifact produced after verification.
+
+Example:
+
+```json
+{
+  "receiptId": "...",
+  "decisionId": "...",
+  "valid": true
+}
+```
+
+Receipts provide:
+
+```text
+Auditability
+Traceability
+Evidence
+Compliance
+```
+
+---
+
+## Transparency Model
+
+Receipts may be anchored in transparency logs.
+
+Transparency logs provide:
+
+```text
+Tamper Evidence
+Historical Proof
+Independent Verification
+```
+
+This allows third parties to verify decision history.
+
+---
+
+## Canonical Parmana Runtime
+
+```text
+Task
+ ↓
+Policy
+ ↓
+Signals Schema
+ ↓
+Trusted Signals
+ ↓
+Policy Evaluation
+ ↓
+Decision
+ ↓
+Attestation
+ ↓
+Verification
+ ↓
+Receipt
+ ↓
+Transparency Log
+```
+
+This is the canonical Trust Core runtime architecture.
+
+---
+
+## Canonical Parmana Thesis
+
+AI has intelligence.
+
+Humans have authority.
+
+Organizations decide what to trust.
+
+Policies define what is required.
+
+Trusted signals provide evidence.
+
+Parmana evaluates those trusted signals against policy before execution.
+
+Parmana makes authority verifiable and enforceable before execution.

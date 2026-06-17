@@ -1,0 +1,417 @@
+# Evaluate API Specification
+
+## Status
+
+Implemented
+
+Version:
+
+```text
+v1
+```
+
+Endpoint:
+
+```http
+POST /evaluate
+```
+
+---
+
+## Purpose
+
+The Evaluate API is the primary entry point into the Parmana Trust Core runtime.
+
+It evaluates a business task against a policy using organization-designated trusted signals.
+
+The API produces an authority decision.
+
+The API does not execute actions.
+
+The API does not perform side effects.
+
+The API evaluates authority requirements before execution.
+
+---
+
+## Runtime Flow
+
+```text
+Client
+  ↓
+POST /evaluate
+  ↓
+Task Resolution
+  ↓
+Policy Resolution
+  ↓
+Policy Evaluation
+  ↓
+Decision
+```
+
+Implementation flow:
+
+```text
+POST /evaluate
+        ↓
+evaluateTask()
+        ↓
+resolveTask()
+        ↓
+loadTask()
+        ↓
+loadPolicy()
+        ↓
+evaluatePolicy()
+        ↓
+Decision
+```
+
+---
+
+## Request
+
+### Content Type
+
+```http
+Content-Type: application/json
+```
+
+### Schema
+
+```json
+{
+  "task": "string",
+  "signals": {}
+}
+```
+
+### Fields
+
+| Field   | Type   | Required | Description                         |
+| ------- | ------ | -------- | ----------------------------------- |
+| task    | string | Yes      | Task identifier                     |
+| signals | object | Yes      | Trusted signals used for evaluation |
+
+---
+
+## Example Request
+
+```json
+{
+  "task": "payment-release",
+  "signals": {
+    "amount": 1000,
+    "currency": "USD",
+    "recipient": "acct-123"
+  }
+}
+```
+
+---
+
+## Task Resolution
+
+The runtime resolves the task definition.
+
+Example:
+
+```json
+{
+  "taskId": "payment.release",
+  "name": "Release Payment",
+  "policy": {
+    "policyId": "payment-release",
+    "policyVersion": "1.0.0"
+  }
+}
+```
+
+Location:
+
+```text
+tasks/
+└── payment-release/
+    └── task.json
+```
+
+---
+
+## Policy Resolution
+
+The runtime resolves the policy referenced by the task.
+
+Example:
+
+```json
+{
+  "policyId": "payment-release",
+  "policyVersion": "1.0.0"
+}
+```
+
+Location:
+
+```text
+policies/
+└── payment-release/
+    └── 1.0.0/
+        └── policy.json
+```
+
+---
+
+## Signal Evaluation
+
+Signals are evaluated against policy rules.
+
+Example signals:
+
+```json
+{
+  "amount": 1000,
+  "currency": "USD",
+  "recipient": "acct-123"
+}
+```
+
+The runtime evaluates policy conditions and determines an outcome.
+
+---
+
+## Response
+
+### Success Response
+
+HTTP Status:
+
+```http
+200 OK
+```
+
+Example:
+
+```json
+{
+  "task": {
+    "taskId": "payment.release",
+    "name": "Release Payment",
+    "policy": {
+      "policyId": "payment-release",
+      "policyVersion": "1.0.0"
+    }
+  },
+  "policy": {
+    "policyId": "payment-release",
+    "policyVersion": "1.0.0"
+  },
+  "decision": {
+    "action": "approve",
+    "requires_override": false,
+    "reason": "payment_authorized"
+  }
+}
+```
+
+---
+
+## Decision Object
+
+The decision object represents the result of authority evaluation.
+
+Example:
+
+```json
+{
+  "action": "approve",
+  "requires_override": false,
+  "reason": "payment_authorized"
+}
+```
+
+### Fields
+
+| Field             | Type    | Description                      |
+| ----------------- | ------- | -------------------------------- |
+| action            | string  | approve or reject                |
+| requires_override | boolean | Indicates escalation requirement |
+| reason            | string  | Policy outcome reason            |
+
+---
+
+## Error Responses
+
+### Missing Task
+
+HTTP:
+
+```http
+400 Bad Request
+```
+
+Response:
+
+```json
+{
+  "error": "task is required"
+}
+```
+
+---
+
+### Unknown Task
+
+HTTP:
+
+```http
+400 Bad Request
+```
+
+Response:
+
+```json
+{
+  "error": "Task not found"
+}
+```
+
+---
+
+### Missing Policy
+
+HTTP:
+
+```http
+400 Bad Request
+```
+
+Response:
+
+```json
+{
+  "error": "Policy not found"
+}
+```
+
+---
+
+### Invalid Policy
+
+HTTP:
+
+```http
+400 Bad Request
+```
+
+Response:
+
+```json
+{
+  "error": "Policy evaluation failed"
+}
+```
+
+---
+
+## Execution Boundary
+
+The Evaluate API never executes actions.
+
+Responsibility model:
+
+```text
+AI
+ ↓
+Request
+
+Parmana
+ ↓
+Authority Evaluation
+
+System Of Record
+ ↓
+Execution
+```
+
+Examples:
+
+```text
+Payment System
+ERP
+CRM
+HR Platform
+Cloud Platform
+```
+
+Execution is always performed outside Parmana.
+
+---
+
+## Security Model
+
+The Evaluate API assumes incoming signals originate from trusted sources.
+
+Parmana does not determine trust.
+
+Organizations determine trust.
+
+Parmana evaluates organization-designated trusted signals against policy.
+
+---
+
+## Auditability
+
+Every evaluation is deterministic.
+
+The same:
+
+```text
+Task
+Policy Version
+Signal Set
+```
+
+must produce the same decision.
+
+This guarantees reproducibility and auditability.
+
+---
+
+## Future Extensions
+
+The Evaluate API is the first stage of the Trust Core runtime.
+
+Future flow:
+
+```text
+POST /evaluate
+       ↓
+Decision
+       ↓
+POST /attest
+       ↓
+Attestation
+       ↓
+POST /verify
+       ↓
+Verification
+       ↓
+Receipt
+       ↓
+Transparency Log
+```
+
+---
+
+## Canonical Statement
+
+Organizations decide what to trust.
+
+Policies define what is required.
+
+Trusted signals provide evidence.
+
+Parmana evaluates those trusted signals against policy before execution.
+
+Parmana makes authority verifiable and enforceable before execution.

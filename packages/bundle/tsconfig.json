@@ -1,9 +1,27 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "./dist"
   },
   "include": [
     "src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../attestation"
+    },
+    {
+      "path": "../contracts"
+    },
+    {
+      "path": "../evidence"
+    },
+    {
+      "path": "../trust-anchor"
+    },
+    {
+      "path": "../crypto"
+    }
   ]
 }

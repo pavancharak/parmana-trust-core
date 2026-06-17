@@ -1,0 +1,396 @@
+# Task → Policy Runtime Architecture (Part 2)
+
+## Why Tasks Exist
+
+Policies are governance artifacts.
+
+Tasks are business actions.
+
+A policy answers:
+
+```text
+What authority requirements must be satisfied?
+```
+
+A task answers:
+
+```text
+What action is being requested?
+```
+
+Example:
+
+```text
+Task
+payment.release
+
+Policy
+payment-release
+```
+
+The application should think in terms of business actions.
+
+The runtime should think in terms of governance requirements.
+
+Tasks separate those concerns.
+
+---
+
+## Why Policies Are External Artifacts
+
+Policies are stored outside application code.
+
+Example:
+
+```text
+policies/
+└── payment-release/
+    └── 1.0.0/
+        └── policy.json
+```
+
+This provides:
+
+```text
+Versioning
+Reviewability
+Auditability
+Change Control
+Signing
+Distribution
+```
+
+Organizations can update policy without modifying application code.
+
+---
+
+## Policy Versioning
+
+Policies are immutable.
+
+Example:
+
+```text
+payment-release
+├── 1.0.0
+├── 1.1.0
+└── 2.0.0
+```
+
+A task references a specific version.
+
+Example:
+
+```json
+{
+  "taskId": "payment.release",
+  "policy": {
+    "policyId": "payment-release",
+    "policyVersion": "1.0.0"
+  }
+}
+```
+
+This guarantees deterministic evaluation.
+
+---
+
+## Policy Lifecycle
+
+```text
+Author Policy
+      ↓
+Review Policy
+      ↓
+Approve Policy
+      ↓
+Sign Policy Bundle
+      ↓
+Publish Policy
+      ↓
+Evaluate Decisions
+```
+
+Policy changes become auditable events.
+
+---
+
+## Trust Profiles
+
+Trust Profiles define cryptographic trust requirements.
+
+Example:
+
+```text
+default
+enterprise
+regulated
+post-quantum
+```
+
+Trust Profiles are not business policies.
+
+Trust Profiles answer:
+
+```text
+How do we trust evidence?
+```
+
+Policies answer:
+
+```text
+What evidence is required?
+```
+
+---
+
+## Separation of Responsibilities
+
+### Task
+
+Defines:
+
+```text
+Business Action
+```
+
+Example:
+
+```text
+payment.release
+```
+
+---
+
+### Policy
+
+Defines:
+
+```text
+Required Signals
+Authority Requirements
+Decision Logic
+```
+
+---
+
+### Trust Profile
+
+Defines:
+
+```text
+Required Algorithms
+Signature Thresholds
+Verification Requirements
+```
+
+---
+
+### Verifier
+
+Determines:
+
+```text
+Can this decision be trusted?
+```
+
+---
+
+## Policy Evaluation Model
+
+Evaluation is signal-driven.
+
+Input:
+
+```json
+{
+  "amount": 1000,
+  "currency": "USD",
+  "recipient": "acct-123"
+}
+```
+
+Policy:
+
+```json
+{
+  "signal": "amount",
+  "greater_than": 0
+}
+```
+
+Result:
+
+```json
+{
+  "action": "approve"
+}
+```
+
+The runtime evaluates facts.
+
+The runtime does not infer facts.
+
+The runtime does not generate facts.
+
+---
+
+## Trusted Signal Model
+
+Organizations define trusted signal sources.
+
+Examples:
+
+```text
+Identity Provider
+ERP
+Banking System
+Fraud Engine
+Risk Engine
+Human Approval
+AI Agent
+```
+
+Parmana does not determine trust.
+
+Parmana consumes trusted signals and evaluates policy.
+
+---
+
+## Authority Evaluation
+
+Authority is not identity.
+
+Authority is not intelligence.
+
+Authority is permission under policy.
+
+Example:
+
+```text
+User Identity
+        +
+Required Approval
+        +
+Risk Evaluation
+        +
+Transfer Limits
+        =
+Authority
+```
+
+Parmana evaluates authority before execution.
+
+---
+
+## Execution Boundary
+
+Parmana never executes.
+
+Responsibility model:
+
+```text
+AI
+ ↓
+Request
+
+Parmana
+ ↓
+Authority Evaluation
+
+System Of Record
+ ↓
+Execution
+```
+
+Examples:
+
+```text
+Bank executes payment
+ERP creates vendor
+HR system updates employee
+Cloud platform provisions resource
+```
+
+Execution belongs to the system of record.
+
+---
+
+## Future Runtime APIs
+
+### Resolve Task
+
+```http
+GET /tasks/:taskId
+```
+
+Returns:
+
+```json
+{
+  "taskId": "payment.release",
+  "policy": {
+    "policyId": "payment-release",
+    "policyVersion": "1.0.0"
+  }
+}
+```
+
+---
+
+### Evaluate Task
+
+```http
+POST /evaluate
+```
+
+Request:
+
+```json
+{
+  "task": "payment.release",
+  "signals": {}
+}
+```
+
+Response:
+
+```json
+{
+  "decision": {}
+}
+```
+
+---
+
+### Verify Decision
+
+```http
+POST /verify
+```
+
+Verifies attested decisions.
+
+---
+
+### Retrieve Receipt
+
+```http
+GET /receipt/:receiptId
+```
+
+Returns verification evidence.
+
+---
+
+## Canonical Parmana Statement
+
+Organizations decide what to trust.
+
+Policies define what is required.
+
+Trusted signals provide evidence.
+
+Parmana evaluates those trusted signals against policy before execution.
+
+Parmana makes authority verifiable and enforceable before execution.

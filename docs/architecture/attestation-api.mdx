@@ -1,0 +1,457 @@
+# Attestation API Specification
+
+## Status
+
+Planned
+
+Version:
+
+```text
+v1
+```
+
+Endpoint:
+
+```http
+POST /attest
+```
+
+---
+
+## Purpose
+
+The Attestation API converts an authority decision into a cryptographically verifiable artifact.
+
+Evaluation determines:
+
+```text
+What was decided?
+```
+
+Attestation proves:
+
+```text
+What was decided?
+Who signed it?
+What policy produced it?
+When was it produced?
+```
+
+The Attestation API establishes cryptographic accountability.
+
+---
+
+## Runtime Position
+
+```text
+POST /evaluate
+        ↓
+Decision
+        ↓
+POST /attest
+        ↓
+Attestation
+```
+
+Evaluation determines authority.
+
+Attestation creates trust evidence.
+
+---
+
+## Responsibility
+
+The Attestation API:
+
+```text
+Creates signed attestations
+Generates cryptographic signatures
+Records signing algorithms
+Produces verifiable evidence
+```
+
+The Attestation API does not:
+
+```text
+Execute actions
+Evaluate policy
+Verify trust
+Generate receipts
+```
+
+---
+
+## Request
+
+### Content Type
+
+```http
+Content-Type: application/json
+```
+
+### Schema
+
+```json
+{
+  "decision": {}
+}
+```
+
+---
+
+## Example Request
+
+```json
+{
+  "decision": {
+    "action": "approve",
+    "requires_override": false,
+    "reason": "payment_authorized"
+  },
+
+  "task": {
+    "taskId": "payment.release"
+  },
+
+  "policy": {
+    "policyId": "payment-release",
+    "policyVersion": "1.0.0"
+  }
+}
+```
+
+---
+
+## Attestation Structure
+
+An attestation contains:
+
+```text
+Decision
+Policy Reference
+Task Reference
+Timestamp
+Signature Set
+```
+
+Example:
+
+```json
+{
+  "attestationId": "att-123",
+
+  "taskId": "payment.release",
+
+  "policyId": "payment-release",
+
+  "policyVersion": "1.0.0",
+
+  "decision": {
+    "action": "approve",
+    "requires_override": false,
+    "reason": "payment_authorized"
+  },
+
+  "createdAt": "2026-06-17T12:00:00Z",
+
+  "signatures": []
+}
+```
+
+---
+
+## Signing Model
+
+Attestations are signed.
+
+Example:
+
+```text
+Decision
+     ↓
+Canonical Serialization
+     ↓
+Hash
+     ↓
+Signature
+```
+
+The signature proves integrity.
+
+Any modification invalidates the signature.
+
+---
+
+## Signature Record
+
+Example:
+
+```json
+{
+  "algorithm": "ed25519",
+  "signature": "...",
+  "publicKeyId": "key-001"
+}
+```
+
+---
+
+## Supported Algorithms
+
+Current:
+
+```text
+ed25519
+ecdsa-p256
+```
+
+Future:
+
+```text
+ml-dsa
+slh-dsa
+hybrid-signatures
+```
+
+Algorithm support is governed by Trust Profiles.
+
+---
+
+## Signature Set
+
+An attestation may contain multiple signatures.
+
+Example:
+
+```json
+{
+  "signatures": [
+    {
+      "algorithm": "ed25519"
+    },
+    {
+      "algorithm": "ecdsa-p256"
+    }
+  ]
+}
+```
+
+This enables:
+
+```text
+Multi-party Trust
+Threshold Trust
+Post-Quantum Migration
+Federated Verification
+```
+
+---
+
+## Response
+
+HTTP:
+
+```http
+200 OK
+```
+
+Example:
+
+```json
+{
+  "attestationId": "att-123",
+
+  "taskId": "payment.release",
+
+  "policyId": "payment-release",
+
+  "policyVersion": "1.0.0",
+
+  "decision": {
+    "action": "approve",
+    "requires_override": false,
+    "reason": "payment_authorized"
+  },
+
+  "createdAt": "2026-06-17T12:00:00Z",
+
+  "signatures": [
+    {
+      "algorithm": "ed25519"
+    }
+  ]
+}
+```
+
+---
+
+## Error Responses
+
+### Missing Decision
+
+```http
+400 Bad Request
+```
+
+```json
+{
+  "error": "decision is required"
+}
+```
+
+---
+
+### Unsupported Algorithm
+
+```http
+400 Bad Request
+```
+
+```json
+{
+  "error": "unsupported signing algorithm"
+}
+```
+
+---
+
+### Signing Failure
+
+```http
+500 Internal Server Error
+```
+
+```json
+{
+  "error": "attestation signing failed"
+}
+```
+
+---
+
+## Canonical Attestation Flow
+
+```text
+Decision
+      ↓
+Serialize
+      ↓
+Hash
+      ↓
+Sign
+      ↓
+Attestation
+```
+
+---
+
+## Relationship To Verification
+
+Attestation creates trust evidence.
+
+Verification evaluates trust evidence.
+
+Flow:
+
+```text
+Decision
+      ↓
+Attestation
+      ↓
+Verification
+```
+
+The Attestation API never verifies signatures.
+
+Verification is performed separately.
+
+---
+
+## Relationship To Receipts
+
+Attestations are inputs to verification.
+
+Verification produces receipts.
+
+```text
+Attestation
+      ↓
+POST /verify
+      ↓
+Receipt
+```
+
+---
+
+## Relationship To Transparency Logs
+
+Attestations may be anchored.
+
+Flow:
+
+```text
+Attestation
+      ↓
+Verification
+      ↓
+Receipt
+      ↓
+Transparency Log
+```
+
+Transparency logs provide tamper evidence.
+
+---
+
+## Future Trust Profile Integration
+
+Future requests may specify:
+
+```json
+{
+  "trustProfile": "enterprise"
+}
+```
+
+Trust Profiles determine:
+
+```text
+Required Algorithms
+Minimum Signature Counts
+Verification Rules
+Trust Requirements
+```
+
+---
+
+## Runtime Artifact Chain
+
+```text
+Task
+ ↓
+Policy
+ ↓
+Signals
+ ↓
+Decision
+ ↓
+Attestation
+ ↓
+Verification
+ ↓
+Receipt
+ ↓
+Transparency Log
+```
+
+---
+
+## Canonical Parmana Statement
+
+Authority evaluation determines what is allowed.
+
+Attestation creates cryptographic evidence of that decision.
+
+Verification determines whether that evidence can be trusted.
+
+Parmana makes authority verifiable and enforceable before execution.

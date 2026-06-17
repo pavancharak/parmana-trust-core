@@ -1,19 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AnchorStore = void 0;
-var AnchorStore = /** @class */ (function () {
-    function AnchorStore() {
-        this.anchors = new Map();
-    }
-    AnchorStore.prototype.add = function (anchor) {
+export class AnchorStore {
+    anchors = new Map();
+    add(anchor) {
         this.anchors.set(anchor.id, anchor);
-    };
-    AnchorStore.prototype.get = function (id) {
+    }
+    get(id) {
         return this.anchors.get(id);
-    };
-    AnchorStore.prototype.list = function () {
+    }
+    list() {
         return Array.from(this.anchors.values());
-    };
-    return AnchorStore;
-}());
-exports.AnchorStore = AnchorStore;
+    }
+}
+//# sourceMappingURL=anchor-store.js.map

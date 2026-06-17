@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTrustRoot = createTrustRoot;
-function createTrustRoot(id, anchors, version, previousVersion) {
-    if (version === void 0) { version = "v1"; }
+export function createTrustRoot(id, anchors, version = "v1", previousVersion) {
     return {
-        id: id,
-        version: version,
-        previousVersion: previousVersion,
-        anchors: anchors,
+        id,
+        version,
+        previousVersion,
+        anchors,
         createdAt: new Date()
             .toISOString()
     };
 }
+//# sourceMappingURL=trust-root.js.map

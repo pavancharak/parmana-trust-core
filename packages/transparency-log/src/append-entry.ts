@@ -1,19 +1,32 @@
-import type {
-  LogEntry
-} from "./types.js";
+import { supabase }
+  from "@parmana/audit-db";
 
-export function appendEntry(
+export async function appendEntry(
 
-  entries: LogEntry[],
+  receiptId: string,
 
-  entry: LogEntry
+  receiptHash: string
 
-): LogEntry[] {
+): Promise<void> {
 
-  return [
+  const { error } =
+    await supabase
 
-    ...entries,
+      .from(
+        "transparency_log"
+      )
 
-    entry
-  ];
+      .insert({
+
+        receipt_id:
+          receiptId,
+
+        receipt_hash:
+          receiptHash
+      });
+
+  if (error) {
+
+    throw error;
+  }
 }

@@ -1,0 +1,350 @@
+# Task → Policy Runtime Architecture
+
+## Overview
+
+Parmana Trust Core is an authority evaluation runtime.
+
+Its responsibility is to evaluate trusted signals against organizational policy before execution.
+
+The runtime does not execute actions.
+
+The runtime does not make business decisions.
+
+Organizations define policy.
+
+Organizations decide which signals are trusted.
+
+Parmana evaluates those trusted signals against policy and returns a decision.
+
+---
+
+## Core Principle
+
+Organizations decide what to trust.
+
+Parmana ensures those trusted signals satisfy policy before execution.
+
+---
+
+## Runtime Flow
+
+```text
+Task
+ ↓
+Policy
+ ↓
+Signals Schema
+ ↓
+Trusted Signals
+ ↓
+Policy Evaluation
+ ↓
+Decision
+ ↓
+Attestation
+ ↓
+Verification
+ ↓
+Receipt
+```
+
+---
+
+## Task
+
+A Task represents a business action.
+
+Examples:
+
+```text
+payment.release
+vendor.create
+invoice.approve
+agent.tool.execute
+```
+
+Tasks are customer-facing concepts.
+
+Applications request evaluation of a task.
+
+Example:
+
+```json
+{
+  "task": "payment.release"
+}
+```
+
+---
+
+## Policy
+
+A Policy defines authority requirements for a task.
+
+Policies are versioned artifacts stored outside application code.
+
+Example:
+
+```text
+policies/
+└── payment-release/
+    └── 1.0.0/
+        └── policy.json
+```
+
+Policy bundles are customer-owned governance artifacts.
+
+---
+
+## Signals Schema
+
+A policy declares the signals required for evaluation.
+
+Example:
+
+```json
+{
+  "signalsSchema": {
+    "amount": {
+      "type": "integer"
+    },
+    "currency": {
+      "type": "string"
+    },
+    "recipient": {
+      "type": "string"
+    }
+  }
+}
+```
+
+The schema defines required facts.
+
+It does not define where those facts originate.
+
+---
+
+## Trusted Signals
+
+Signals may originate from:
+
+```text
+Humans
+Identity Systems
+ERP Systems
+Payment Systems
+Risk Engines
+Fraud Platforms
+AI Systems
+Workflow Engines
+```
+
+Parmana does not determine trust.
+
+Organizations determine trust.
+
+Parmana evaluates trusted signals.
+
+---
+
+## Policy Evaluation
+
+Policies contain rules.
+
+Example:
+
+```json
+{
+  "signal": "amount",
+  "greater_than": 0
+}
+```
+
+The runtime evaluates incoming signals against policy conditions.
+
+Evaluation produces an outcome.
+
+---
+
+## Decision
+
+Example:
+
+```json
+{
+  "action": "approve",
+  "requires_override": false,
+  "reason": "payment_authorized"
+}
+```
+
+The decision represents the result of policy evaluation.
+
+The decision is not execution.
+
+---
+
+## Attestation
+
+Decisions may be attested.
+
+Attestations create cryptographic evidence that:
+
+```text
+A policy was evaluated
+A decision was produced
+The decision was signed
+```
+
+---
+
+## Verification
+
+Verifiers validate:
+
+```text
+Signatures
+Algorithms
+Threshold Requirements
+Trust Profiles
+```
+
+Verification determines whether a decision can be trusted.
+
+---
+
+## Receipt
+
+Every verified decision produces a receipt.
+
+Example:
+
+```json
+{
+  "receiptId": "...",
+  "decisionId": "...",
+  "valid": true
+}
+```
+
+Receipts provide auditability and traceability.
+
+---
+
+## Current Runtime Components
+
+### Tasks
+
+```text
+tasks/
+└── payment-release/
+    └── task.json
+```
+
+### Policies
+
+```text
+policies/
+└── payment-release/
+    └── 1.0.0/
+        └── policy.json
+```
+
+### Contracts
+
+```text
+packages/contracts
+```
+
+Contains:
+
+```text
+TaskDefinition
+PolicyDefinition
+```
+
+### Bundle Layer
+
+```text
+packages/bundle
+```
+
+Provides:
+
+```text
+loadTask()
+loadPolicy()
+resolveTask()
+```
+
+### Verifier Layer
+
+```text
+packages/verifier
+```
+
+Provides:
+
+```text
+evaluatePolicy()
+evaluateTask()
+verifyDecision()
+verifyThreshold()
+```
+
+---
+
+## Example Runtime Flow
+
+Request:
+
+```json
+{
+  "task": "payment.release",
+  "signals": {
+    "amount": 1000,
+    "currency": "USD",
+    "recipient": "acct-123"
+  }
+}
+```
+
+Runtime:
+
+```text
+resolveTask()
+ ↓
+loadPolicy()
+ ↓
+evaluatePolicy()
+ ↓
+decision
+```
+
+Response:
+
+```json
+{
+  "action": "approve",
+  "requires_override": false,
+  "reason": "payment_authorized"
+}
+```
+
+---
+
+## Authority Model
+
+AI may generate requests.
+
+Humans define authority.
+
+Policies define authority requirements.
+
+Parmana evaluates whether trusted signals satisfy those authority requirements before execution.
+
+Execution is performed by downstream systems.
+
+Parmana does not execute actions.
+
+Parmana makes authority verifiable and enforceable before execution.

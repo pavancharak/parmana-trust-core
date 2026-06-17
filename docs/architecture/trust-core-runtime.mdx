@@ -1,0 +1,1525 @@
+# Trust Core Runtime
+
+## Overview
+
+Parmana Trust Core is an Authority Evaluation Runtime.
+
+Its purpose is to evaluate trusted signals against organizational policy before execution.
+
+The runtime sits between:
+
+```text
+Intelligence
+      ↓
+Authority
+      ↓
+Execution
+```
+
+Parmana does not execute actions.
+
+Parmana evaluates authority.
+
+---
+
+## Core Runtime Flow
+
+```text
+Task
+   ↓
+Policy Resolution
+   ↓
+Authority Evaluation
+   ↓
+Decision
+   ↓
+Attestation
+   ↓
+Verification
+```
+
+Each stage produces a distinct governance artifact.
+
+---
+
+## Runtime Components
+
+```text
+tasks/
+policies/
+bundle/
+verifier/
+attestation/
+server/
+```
+
+Responsibilities:
+
+```text
+tasks
+    Business Actions
+
+policies
+    Governance Requirements
+
+bundle
+    Resolution Layer
+
+verifier
+    Authority Evaluation
+
+attestation
+    Authority Evidence
+
+server
+    Runtime APIs
+```
+
+---
+
+## Task Layer
+
+Tasks represent business actions.
+
+Example:
+
+```json
+{
+  "taskId": "payment.release",
+  "name": "Release Payment",
+  "policy": {
+    "policyId": "payment-release",
+    "policyVersion": "1.0.0"
+  }
+}
+```
+
+Tasks do not contain authority logic.
+
+Tasks map business actions to policies.
+
+---
+
+## Policy Layer
+
+Policies define authority requirements.
+
+Example:
+
+```json
+{
+  "policyId": "payment-release",
+  "version": "1.0.0"
+}
+```
+
+Policies are external governance artifacts.
+
+Benefits:
+
+```text
+Versioning
+Reviewability
+Auditability
+Distribution
+Signing
+Change Control
+```
+
+---
+
+## Resolution Layer
+
+The Bundle package resolves runtime dependencies.
+
+Flow:
+
+```text
+Task
+   ↓
+loadTask()
+   ↓
+resolveTask()
+   ↓
+loadPolicy()
+```
+
+Output:
+
+```text
+Task Definition
++
+Policy Definition
+```
+
+---
+
+## Authority Evaluation Layer
+
+Authority evaluation is performed by the Verifier package.
+
+Flow:
+
+```text
+Task
+   ↓
+Policy
+   ↓
+Trusted Signals
+   ↓
+evaluatePolicy()
+```
+
+Output:
+
+```json
+{
+  "action": "approve",
+  "requires_override": false,
+  "reason": "payment_authorized"
+}
+```
+
+Authority evaluation determines what is allowed.
+
+It does not execute actions.
+
+---
+
+## Evaluate API
+
+Endpoint:
+
+```http
+POST /evaluate
+```
+
+Request:
+
+```json
+{
+  "task": "payment-release",
+  "signals": {
+    "amount": 1000,
+    "currency": "USD",
+    "recipient": "acct-123"
+  }
+}
+```
+
+Response:
+
+```json
+{
+  "task": {
+    "taskId": "payment.release"
+  },
+  "policy": {
+    "policyId": "payment-release",
+    "policyVersion": "1.0.0"
+  },
+  "decision": {
+    "action": "approve"
+  }
+}
+```
+
+This endpoint produces an authority decision.
+
+---
+
+## Attestation Layer
+
+Attestations create portable authority evidence.
+
+Flow:
+
+```text
+Decision
+    ↓
+createAttestation()
+    ↓
+Attestation
+```
+
+Attestations contain:
+
+```text
+Decision Metadata
+Policy Metadata
+Integrity Evidence
+Outcome
+```
+
+Example:
+
+```json
+{
+  "decisionId": "uuid",
+  "taskId": "payment.release",
+  "policyId": "payment-release",
+  "policyVersion": "1.0.0"
+}
+```
+
+---
+
+## Integrity Evidence
+
+Every attestation includes an integrity hash.
+
+Current algorithm:
+
+```text
+SHA-256
+```
+
+Input:
+
+```text
+taskId
+policyId
+policyVersion
+outcome
+createdAt
+```
+
+Output:
+
+```json
+{
+  "id": "attestation-hash",
+  "hashAlgorithm": "sha256"
+}
+```
+
+This creates tamper-evident authority evidence.
+
+---
+
+## Attest API
+
+Endpoint:
+
+```http
+POST /attest
+```
+
+Flow:
+
+```text
+Task
+   ↓
+Decision
+   ↓
+Attestation
+```
+
+Response:
+
+```json
+{
+  "decisionId": "...",
+  "taskId": "payment.release",
+  "policyId": "payment-release",
+  "policyVersion": "1.0.0",
+  "evidence": [
+    {
+      "id": "attestation-hash",
+      "hash": "...",
+      "hashAlgorithm": "sha256"
+    }
+  ]
+}
+```
+
+---
+
+## Verification Layer
+
+Verification establishes trust in authority evidence.
+
+Flow:
+
+```text
+Attestation
+      ↓
+Recompute Hash
+      ↓
+Compare Evidence
+      ↓
+Valid / Invalid
+```
+
+Verification determines whether an attestation has been modified after issuance.
+
+---
+
+## Verify Attestation API
+
+Endpoint:
+
+```http
+POST /verify-attestation
+```
+
+Request:
+
+```json
+{
+  "decisionId": "...",
+  "taskId": "payment.release"
+}
+```
+
+Response:
+
+```json
+{
+  "valid": true
+}
+```
+
+Verification fails if protected fields have been modified.
+
+---
+
+## Current Runtime Lifecycle
+
+Implemented lifecycle:
+
+```text
+Task
+   ↓
+Policy
+   ↓
+Authority Evaluation
+   ↓
+Decision
+   ↓
+Attestation
+   ↓
+Integrity Verification
+```
+
+This is the first complete verifiable authority flow in Parmana Trust Core.
+
+---
+
+## Responsibility Model
+
+Parmana does not execute actions.
+
+Responsibility separation:
+
+```text
+AI
+ ↓
+Request
+
+Parmana
+ ↓
+Authority Evaluation
+
+System Of Record
+ ↓
+Execution
+```
+
+Examples:
+
+```text
+Bank executes payment
+
+ERP creates vendor
+
+HR system updates employee
+
+Cloud platform provisions resource
+```
+
+Execution belongs to the system of record.
+
+---
+
+## Canonical Authority Flow
+
+```text
+Organizations decide what to trust.
+
+Policies define what is required.
+
+Trusted signals provide evidence.
+
+Parmana evaluates those trusted signals against policy before execution.
+
+Attestation creates cryptographic evidence of authority decisions.
+
+Verification determines whether those decisions can be trusted.
+
+Parmana makes authority verifiable and enforceable before execution.
+```
+
+---
+
+## Next Runtime Capability
+
+Current:
+
+```text
+Evaluate
+    ↓
+Attest
+    ↓
+Verify
+```
+
+Next:
+
+```text
+Evaluate
+    ↓
+Attest
+    ↓
+Verify
+    ↓
+Receipt
+```
+
+Receipts introduce durable audit evidence and prepare the runtime for:
+
+```text
+Transparency Logs
+Trust Federation
+External Verification
+Regulatory Auditability
+```
+
+## Runtime Maturity Model
+
+Parmana evolves through progressively stronger authority guarantees.
+
+### Phase 1 — Authority Evaluation
+
+Implemented:
+
+```text
+Task
+   ↓
+Policy
+   ↓
+Authority Evaluation
+   ↓
+Decision
+```
+
+Capabilities:
+
+```text
+Task Resolution
+Policy Resolution
+Trusted Signal Evaluation
+Authority Decisions
+```
+
+Artifacts:
+
+```text
+Decision
+```
+
+---
+
+### Phase 2 — Authority Evidence
+
+Implemented:
+
+```text
+Decision
+    ↓
+Attestation
+```
+
+Capabilities:
+
+```text
+Decision Serialization
+Authority Metadata
+Integrity Evidence
+Portable Artifacts
+```
+
+Artifacts:
+
+```text
+Decision
+Attestation
+```
+
+---
+
+### Phase 3 — Integrity Verification
+
+Implemented:
+
+```text
+Attestation
+      ↓
+Verification
+```
+
+Capabilities:
+
+```text
+Hash Validation
+Tamper Detection
+Evidence Validation
+Trust Determination
+```
+
+Artifacts:
+
+```text
+Decision
+Attestation
+Verification Result
+```
+
+---
+
+### Phase 4 — Verification Receipts
+
+Planned:
+
+```text
+Attestation
+      ↓
+Verification
+      ↓
+Receipt
+```
+
+Capabilities:
+
+```text
+Verification Recording
+Audit Evidence
+Historical Verification
+Verification Provenance
+```
+
+Artifacts:
+
+```text
+Decision
+Attestation
+Receipt
+```
+
+---
+
+### Phase 5 — Transparency
+
+Planned:
+
+```text
+Receipt
+    ↓
+Transparency Log
+```
+
+Capabilities:
+
+```text
+Immutable History
+Public Auditability
+Tamper Detection
+Historical Integrity
+```
+
+Artifacts:
+
+```text
+Decision
+Attestation
+Receipt
+Transparency Entry
+```
+
+---
+
+### Phase 6 — Trust Federation
+
+Planned:
+
+```text
+Issuer
+   ↓
+Attestation
+   ↓
+Verifier
+```
+
+Capabilities:
+
+```text
+Cross-Organization Trust
+Shared Trust Anchors
+Federated Verification
+Portable Governance
+```
+
+Artifacts:
+
+```text
+Federated Attestations
+Federated Receipts
+Trust Chains
+```
+
+---
+
+## Authority Layer Architecture
+
+Traditional enterprise architecture:
+
+```text
+Identity
+      ↓
+Authentication
+      ↓
+Authorization
+      ↓
+Execution
+```
+
+Parmana introduces:
+
+```text
+Identity
+      ↓
+Authentication
+      ↓
+Authorization
+      ↓
+Authority
+      ↓
+Execution
+```
+
+Authority becomes a first-class runtime concern.
+
+---
+
+## The Authority Layer
+
+The Authority Layer determines:
+
+```text
+What is allowed?
+```
+
+before execution occurs.
+
+Inputs:
+
+```text
+Policy
+Trusted Signals
+Approvals
+Risk Signals
+Constraints
+```
+
+Output:
+
+```text
+Decision
+```
+
+Evidence:
+
+```text
+Attestation
+```
+
+Trust:
+
+```text
+Verification
+```
+
+Auditability:
+
+```text
+Receipt
+```
+
+Integrity:
+
+```text
+Transparency Log
+```
+
+Federation:
+
+```text
+Trust Network
+```
+
+---
+
+## Long-Term Runtime Vision
+
+Target runtime:
+
+```text
+AI Request
+      ↓
+
+Task
+      ↓
+
+Policy
+      ↓
+
+Authority Evaluation
+      ↓
+
+Decision
+      ↓
+
+Attestation
+      ↓
+
+Verification
+      ↓
+
+Receipt
+      ↓
+
+Transparency Log
+      ↓
+
+Trust Federation
+      ↓
+
+Execution
+```
+
+In this model:
+
+```text
+AI generates actions.
+
+Humans define authority.
+
+Policies express authority.
+
+Trusted signals provide evidence.
+
+Parmana evaluates authority.
+
+Attestations provide proof.
+
+Verification establishes trust.
+
+Receipts provide auditability.
+
+Transparency provides integrity.
+
+Federation enables interoperability.
+```
+
+---
+
+## Canonical Trust Core Statement
+
+```text
+Organizations decide what to trust.
+
+Policies define what is required.
+
+Trusted signals provide evidence.
+
+Parmana evaluates those trusted signals against policy before execution.
+
+Attestation creates cryptographic evidence of authority decisions.
+
+Verification determines whether those decisions can be trusted.
+
+Receipts create durable audit evidence.
+
+Transparency logs provide historical integrity.
+
+Trust federation enables portable governance across organizations.
+
+Parmana makes authority verifiable and enforceable before execution.
+```
+## Runtime Design Principles
+
+The Trust Core runtime is designed around a small number of architectural principles.
+
+These principles are intended to remain stable even as implementation details evolve.
+
+---
+
+## Principle 1: Authority Is Externalized
+
+Authority does not live in application code.
+
+Authority is defined through:
+
+```text
+Policies
+Trust Profiles
+Governance Processes
+```
+
+Applications request actions.
+
+Policies determine whether those actions are allowed.
+
+This separation enables:
+
+```text
+Auditability
+Versioning
+Governance
+Change Control
+```
+
+without requiring application changes.
+
+---
+
+## Principle 2: Tasks Are Business Actions
+
+Tasks represent business intent.
+
+Examples:
+
+```text
+payment.release
+
+vendor.create
+
+employee.terminate
+
+resource.provision
+```
+
+Tasks should be understandable by business operators.
+
+Tasks should not contain policy logic.
+
+Tasks map actions to policies.
+
+---
+
+## Principle 3: Policies Define Authority
+
+Policies answer:
+
+```text
+What must be true before execution?
+```
+
+Policies define:
+
+```text
+Required Signals
+
+Required Approvals
+
+Constraints
+
+Decision Logic
+```
+
+Policies do not execute actions.
+
+Policies define authority requirements.
+
+---
+
+## Principle 4: Signals Are Evidence
+
+Signals represent facts.
+
+Examples:
+
+```text
+Identity Verified
+
+Transfer Amount
+
+Fraud Score
+
+Human Approval
+
+Bank Confirmation
+
+AI Recommendation
+```
+
+Signals are evidence.
+
+Signals are not decisions.
+
+The runtime evaluates evidence.
+
+The runtime does not create evidence.
+
+---
+
+## Principle 5: Organizations Decide Trust
+
+Parmana does not decide what is trusted.
+
+Organizations determine:
+
+```text
+Trusted Sources
+
+Trusted Systems
+
+Trusted Authorities
+
+Trusted Evidence
+```
+
+Examples:
+
+```text
+Identity Provider
+
+ERP
+
+Bank
+
+Risk Engine
+
+Human Approver
+
+AI Agent
+```
+
+Parmana evaluates trusted signals supplied by those sources.
+
+---
+
+## Principle 6: Authority Precedes Execution
+
+Execution must occur after authority evaluation.
+
+Flow:
+
+```text
+Request
+    ↓
+Authority Evaluation
+    ↓
+Execution
+```
+
+Authority evaluation is a prerequisite for execution.
+
+---
+
+## Principle 7: Attestations Are Evidence
+
+Decisions are ephemeral.
+
+Attestations are durable.
+
+Attestations provide:
+
+```text
+Integrity
+
+Traceability
+
+Portability
+
+Auditability
+```
+
+Attestations become the canonical representation of authority decisions.
+
+---
+
+## Principle 8: Verification Establishes Trust
+
+Attestations alone are insufficient.
+
+Trust requires verification.
+
+Verification answers:
+
+```text
+Can this authority decision be trusted?
+```
+
+Verification is separate from decision generation.
+
+This separation supports independent validation.
+
+---
+
+## Principle 9: Execution Remains External
+
+Parmana never executes.
+
+Execution belongs to systems of record.
+
+Examples:
+
+```text
+Banks
+
+ERP Systems
+
+HR Platforms
+
+Cloud Providers
+
+Payment Networks
+```
+
+Responsibility model:
+
+```text
+AI
+ ↓
+Request
+
+Parmana
+ ↓
+Authority Evaluation
+
+System Of Record
+ ↓
+Execution
+```
+
+---
+
+## Principle 10: Authority Must Be Verifiable
+
+Future autonomous systems require:
+
+```text
+Verifiable Authority
+```
+
+rather than:
+
+```text
+Implicit Authority
+```
+
+Every authority decision should be:
+
+```text
+Evaluated
+
+Attested
+
+Verified
+
+Auditable
+```
+
+This principle guides the long-term evolution of the Trust Core runtime.
+
+---
+
+## Runtime Philosophy
+
+The runtime is intentionally simple:
+
+```text
+Task
+    ↓
+Policy
+    ↓
+Evidence
+    ↓
+Authority Evaluation
+    ↓
+Decision
+    ↓
+Attestation
+    ↓
+Verification
+```
+
+Each layer has a single responsibility.
+
+Each artifact has a clear purpose.
+
+Each decision can be independently verified.
+
+This simplicity is a foundational requirement for trustworthy autonomous systems.
+
+---
+
+## Canonical Runtime Thesis
+
+```text
+AI has intelligence.
+
+Humans have authority.
+
+Intelligence generates actions.
+
+Authority determines what is allowed.
+
+Policies define authority requirements.
+
+Trusted signals provide evidence.
+
+Parmana evaluates those trusted signals against policy before execution.
+
+Attestation creates cryptographic evidence of authority decisions.
+
+Verification determines whether those decisions can be trusted.
+
+Parmana makes authority verifiable and enforceable before execution.
+```
+## Non-Goals
+
+The Trust Core runtime intentionally focuses on authority evaluation.
+
+Many adjacent capabilities exist within enterprise systems.
+
+Parmana does not attempt to replace those systems.
+
+---
+
+## Not An Identity Provider
+
+Parmana does not manage identities.
+
+Examples:
+
+```text id="kvd9zo"
+Users
+
+Groups
+
+Roles
+
+Accounts
+```
+
+Identity systems remain responsible for identity lifecycle management.
+
+Examples:
+
+```text id="r5s07v"
+Okta
+
+Azure AD
+
+Google Identity
+
+Auth0
+```
+
+Parmana consumes identity evidence.
+
+Parmana does not create identity evidence.
+
+---
+
+## Not An Authentication System
+
+Parmana does not authenticate users.
+
+Examples:
+
+```text id="nwl2jd"
+Passwords
+
+MFA
+
+Biometrics
+
+Passkeys
+```
+
+Authentication systems establish identity.
+
+Parmana evaluates authority.
+
+---
+
+## Not A Workflow Engine
+
+Parmana does not orchestrate business workflows.
+
+Examples:
+
+```text id="0w3ks3"
+Approval Chains
+
+Business Processes
+
+State Machines
+
+Task Routing
+```
+
+Workflow systems determine process execution.
+
+Parmana determines authority.
+
+---
+
+## Not A Rules Engine
+
+Rules engines answer:
+
+```text id="zdxk0m"
+What should happen?
+```
+
+Parmana answers:
+
+```text id="b81vde"
+What is allowed?
+```
+
+The distinction is critical.
+
+Rules engines automate behavior.
+
+Authority systems govern behavior.
+
+---
+
+## Not A Risk Engine
+
+Risk systems evaluate risk.
+
+Examples:
+
+```text id="z8gc2m"
+Fraud Models
+
+Risk Scores
+
+AML Systems
+
+Threat Detection
+```
+
+Parmana can consume risk signals.
+
+Parmana does not generate risk signals.
+
+---
+
+## Not A Policy Authoring Tool
+
+Policies may be authored using:
+
+```text id="1zh1xh"
+Governance Platforms
+
+Policy Management Systems
+
+Internal Tooling
+```
+
+Parmana evaluates policies.
+
+Parmana does not prescribe how policies are authored.
+
+---
+
+## Not A Database
+
+Parmana does not exist to store business data.
+
+Examples:
+
+```text id="2jhj7u"
+Customers
+
+Transactions
+
+Employees
+
+Invoices
+```
+
+Systems of record remain responsible for business state.
+
+Parmana evaluates authority against trusted evidence.
+
+---
+
+## Not A System Of Record
+
+Execution belongs elsewhere.
+
+Examples:
+
+```text id="0t8m5g"
+Banking Platform
+
+ERP
+
+HRIS
+
+Cloud Provider
+```
+
+Parmana never executes actions.
+
+Parmana never becomes the source of business truth.
+
+---
+
+## Not An AI System
+
+AI systems generate actions.
+
+Examples:
+
+```text id="ejj31f"
+Agents
+
+Copilots
+
+LLMs
+
+Automation Systems
+```
+
+Parmana does not generate actions.
+
+Parmana evaluates whether actions are allowed.
+
+---
+
+## Not A Governance Dashboard
+
+Governance dashboards provide visibility.
+
+Examples:
+
+```text id="wzjwph"
+Reporting
+
+Analytics
+
+Monitoring
+
+Compliance Views
+```
+
+Parmana produces governance artifacts.
+
+Other systems may visualize them.
+
+---
+
+## Relationship To Existing Systems
+
+Parmana complements existing enterprise infrastructure.
+
+Examples:
+
+```text id="jpk5vl"
+Identity Provider
+        ↓
+Authentication
+        ↓
+Risk Engine
+        ↓
+Parmana
+        ↓
+System Of Record
+```
+
+Each system retains a clear responsibility.
+
+---
+
+## Architectural Boundary
+
+Parmana's responsibility begins at:
+
+```text id="1k6wbn"
+Authority Evaluation
+```
+
+and ends at:
+
+```text id="pm3rjc"
+Authority Evidence
+```
+
+Everything before authority evaluation is evidence generation.
+
+Everything after authority evaluation is execution.
+
+---
+
+## The Scope Of Trust Core
+
+Trust Core exists to answer a single question:
+
+```text id="6a1v84"
+Is this action authorized?
+```
+
+using:
+
+```text id="22r4x5"
+Policies
+
+Trusted Signals
+
+Authority Evaluation
+```
+
+and to produce:
+
+```text id="4vbqag"
+Decisions
+
+Attestations
+
+Verification Results
+
+Receipts
+```
+
+Everything else is intentionally outside the scope of the runtime.
+
+---
+
+## Canonical Boundary Statement
+
+```text id="s0x95j"
+AI generates actions.
+
+Systems generate facts.
+
+Organizations define authority.
+
+Policies express authority.
+
+Parmana evaluates authority.
+
+Systems of record execute actions.
+
+Parmana does not replace identity systems, workflow systems, risk engines, policy authoring tools, databases, or execution platforms.
+
+Parmana exists to make authority verifiable and enforceable before execution.
+```

@@ -1,30 +1,65 @@
+import express from "express";
+
 import {
-  Router
-} from "express";
+  verifyAttestation
+} from "@parmana/attestation";
 
 import {
   createReceipt
-} from "@parmana/bundle";
+} from "@parmana/attestation";
+
+import {
+  saveReceipt
+} from "@parmana/audit-db";
 
 const router =
-  Router();
+  express.Router();
 
 router.post(
   "/receipt",
-  (
-    req,
-    res
-  ) => {
+  async (req, res) => {
 
-    const receipt =
-      createReceipt(
-        req.body
+    try {
+
+      const attestation =
+        req.body;
+
+      const verified =
+        verifyAttestation(
+          attestation
+        );
+
+      const receipt =
+        createReceipt(
+          attestation.decisionId,
+          verified
+        );
+
+      await saveReceipt(
+        receipt
       );
 
-    res.json(
-      receipt
-    );
+      res.json(
+        receipt
+      );
+
+    } catch (error) {
+
+  console.error(
+    "RECEIPT ERROR:",
+    error
+  );
+
+  res.status(500)
+    .json({
+      error:
+        error instanceof Error
+          ? error.message
+          : String(error)
+    });
+
+}
   }
 );
 
-export default router;
+export default router;	

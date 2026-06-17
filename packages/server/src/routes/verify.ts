@@ -1,5 +1,16 @@
 import crypto
   from "node:crypto";
+import {
+  AuditDbClient
+} from "@parmana/audit-db";
+
+import {
+  hashReceipt
+} from "@parmana/crypto";
+
+import {
+  appendEntry
+} from "@parmana/transparency-log";
 
 import {
   Router
@@ -16,17 +27,17 @@ import {
 import type {
   VerificationReceipt
 } from "../types/verification-receipt.js";
-
+const auditDb =
+  new AuditDbClient();
 const router =
   Router();
 
 router.post(
   "/verify",
-  (
+  async (
     req,
     res
   ) => {
-
     try {
 
       if (
@@ -75,10 +86,27 @@ router.post(
         receipt.receiptId,
         receipt
       );
+     await auditDb
+  .recordVerificationReceipt(
+    receipt
+  );
+const receiptHash =
+  hashReceipt(
+    receipt
+  );
 
-      res.json(
-        receipt
-      );
+await appendEntry(
+
+  receipt.receiptId,
+
+  receiptHash
+);
+    res.json({
+
+  ...receipt,
+
+  receiptHash
+});
 
     } catch (error) {
 

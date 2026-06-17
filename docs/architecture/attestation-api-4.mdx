@@ -1,0 +1,467 @@
+# Attestation API Specification (Part 4)
+
+## The Role of Attestation in Autonomous Systems
+
+Traditional software assumes:
+
+```text id="4m0m1y"
+Decision
+     ↓
+Execution
+```
+
+The decision and execution occur inside the same trust boundary.
+
+AI systems change this assumption.
+
+Example:
+
+```text id="m0q2i7"
+AI
+ ↓
+Request
+
+Authority Runtime
+ ↓
+Decision
+
+External System
+ ↓
+Execution
+```
+
+The decision may be evaluated by one system and executed by another.
+
+Attestation creates portable trust between those systems.
+
+---
+
+## Cross-System Trust
+
+Example:
+
+```text id="s12i7w"
+AI Agent
+       ↓
+Parmana
+       ↓
+Attestation
+       ↓
+Bank
+```
+
+The bank may never trust the AI.
+
+The bank may never trust the application.
+
+The bank can verify the attestation.
+
+This shifts trust from:
+
+```text id="z4jq2r"
+System Trust
+```
+
+to:
+
+```text id="t7u3qf"
+Evidence Trust
+```
+
+---
+
+## Trust Without Shared Infrastructure
+
+Attestations enable verification without shared databases.
+
+Example:
+
+```text id="7jv1zv"
+Company A
+      ↓
+Produces Attestation
+
+Company B
+      ↓
+Verifies Attestation
+```
+
+No direct network connection is required.
+
+No shared database is required.
+
+Only trust evidence is required.
+
+---
+
+## Evidence-Centric Architecture
+
+Traditional systems are:
+
+```text id="wn4aq6"
+Application-Centric
+```
+
+Parmana is:
+
+```text id="e5v6bh"
+Evidence-Centric
+```
+
+The primary artifact becomes:
+
+```text id="v4ibmk"
+Attestation
+```
+
+rather than:
+
+```text id="j53krx"
+Database Record
+```
+
+---
+
+## Why Attestation Precedes Verification
+
+Verification requires evidence.
+
+Without attestation:
+
+```text id="spgojq"
+Nothing To Verify
+```
+
+Therefore:
+
+```text id="6a72z5"
+Decision
+    ↓
+Attestation
+    ↓
+Verification
+```
+
+is a mandatory sequence.
+
+Verification never operates directly on policy decisions.
+
+Verification operates on signed evidence.
+
+---
+
+## Attestation and Non-Repudiation
+
+Attestations support non-repudiation.
+
+Example:
+
+```text id="r39pyt"
+Decision Created
+      ↓
+Signed
+      ↓
+Stored
+```
+
+Later:
+
+```text id="5ax35g"
+Signer
+   ↓
+"I never approved this."
+```
+
+Verification can prove:
+
+```text id="ddtlsh"
+The signature exists.
+
+The signature was valid.
+
+The attestation was not modified.
+```
+
+---
+
+## Separation of Trust Domains
+
+Trust Core separates:
+
+### Authority Domain
+
+```text id="9hr5sd"
+Task
+
+Policy
+
+Signals
+
+Decision
+```
+
+---
+
+### Trust Domain
+
+```text id="4cgx8u"
+Attestation
+
+Verification
+
+Receipt
+
+Transparency
+```
+
+Authority answers:
+
+```text id="kvh7m0"
+Should this happen?
+```
+
+Trust answers:
+
+```text id="l48g4v"
+Can this decision be trusted?
+```
+
+---
+
+## Evidence Durability
+
+Evidence must survive runtime failures.
+
+Example:
+
+```text id="tgbfdl"
+Runtime Deleted
+
+Database Rebuilt
+
+Application Rewritten
+```
+
+Evidence should remain verifiable.
+
+Attestations are designed for long-term preservation.
+
+---
+
+## Minimal Attestation Principle
+
+An attestation should contain only what is required to verify trust.
+
+Required:
+
+```text id="6vq2zh"
+Decision
+
+Task
+
+Policy
+
+Timestamp
+
+Signatures
+```
+
+Not required:
+
+```text id="6d5x4g"
+UI State
+
+Application Logs
+
+Temporary Runtime Metadata
+```
+
+Attestations should remain compact and portable.
+
+---
+
+## Verification Independence
+
+Verification must not require:
+
+```text id="0axfdg"
+Original Runtime
+
+Original Application
+
+Original Database
+```
+
+Verification should require only:
+
+```text id="tr3ixk"
+Attestation
+
+Trust Anchors
+
+Verification Rules
+```
+
+This property enables independent audits.
+
+---
+
+## Trust Core Evidence Philosophy
+
+Trust Core does not ask consumers to trust Parmana.
+
+Trust Core asks consumers to verify evidence.
+
+Model:
+
+```text id="l5h8n8"
+Trust Me
+```
+
+becomes:
+
+```text id="bwuboi"
+Verify This
+```
+
+This distinction is foundational.
+
+---
+
+## Runtime Evolution
+
+Current implementation:
+
+```text id="vb97pr"
+Task
+ ↓
+Policy
+ ↓
+Decision
+```
+
+Next implementation:
+
+```text id="krwlr7"
+Task
+ ↓
+Policy
+ ↓
+Decision
+ ↓
+Attestation
+```
+
+Future implementation:
+
+```text id="tx4n6q"
+Task
+ ↓
+Policy
+ ↓
+Decision
+ ↓
+Attestation
+ ↓
+Verification
+```
+
+Long-term implementation:
+
+```text id="7r2r2k"
+Task
+ ↓
+Policy
+ ↓
+Decision
+ ↓
+Attestation
+ ↓
+Verification
+ ↓
+Receipt
+ ↓
+Transparency Log
+ ↓
+Trust Federation
+```
+
+---
+
+## Authority Layer Mapping
+
+Within the Authority Layer architecture:
+
+```text id="a26mb8"
+Tasks
+      ↓
+Business Intent
+
+Policies
+      ↓
+Authority Requirements
+
+Signals
+      ↓
+Evidence
+
+Decision
+      ↓
+Authority Result
+
+Attestation
+      ↓
+Trust Evidence
+```
+
+Attestation is the first artifact that leaves the authority domain and enters the trust domain.
+
+---
+
+## The Core Insight
+
+Most governance systems produce logs.
+
+Most compliance systems produce reports.
+
+Parmana produces verifiable trust artifacts.
+
+That distinction enables:
+
+```text id="rq1dzl"
+Independent Verification
+
+Cross-Organization Trust
+
+Federated Governance
+
+AI Accountability
+
+Machine-Readable Authority
+```
+
+---
+
+## Canonical Parmana Trust Statement
+
+```text id="9g6m8h"
+Organizations decide what to trust.
+
+Tasks represent business actions.
+
+Policies define authority requirements.
+
+Trusted signals provide evidence.
+
+Parmana evaluates those trusted signals against policy before execution.
+
+Attestation creates cryptographic evidence of authority decisions.
+
+Verification validates trust evidence.
+
+Receipts provide audit evidence.
+
+Transparency logs provide tamper evidence.
+
+Parmana makes authority verifiable and enforceable before execution.
+```

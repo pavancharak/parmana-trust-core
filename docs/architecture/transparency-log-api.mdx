@@ -1,0 +1,640 @@
+# Transparency Log API Specification
+
+## Status
+
+Planned
+
+Version:
+
+```text
+v1
+```
+
+Endpoint:
+
+```http
+POST /transparency-log
+```
+
+---
+
+## Purpose
+
+The Transparency Log API creates tamper-evident history for trust artifacts.
+
+Evaluation determines:
+
+```text
+What was allowed?
+```
+
+Attestation determines:
+
+```text
+What was signed?
+```
+
+Verification determines:
+
+```text
+Can it be trusted?
+```
+
+Receipt determines:
+
+```text
+What evidence exists?
+```
+
+Transparency Logs determine:
+
+```text
+Can history itself be trusted?
+```
+
+---
+
+## Runtime Position
+
+```text
+POST /evaluate
+        ↓
+Decision
+        ↓
+POST /attest
+        ↓
+Attestation
+        ↓
+POST /verify
+        ↓
+Verification
+        ↓
+POST /receipt
+        ↓
+Receipt
+        ↓
+POST /transparency-log
+        ↓
+Transparency Record
+```
+
+---
+
+## Purpose of Transparency
+
+Trust evidence can be modified.
+
+Trust evidence can be deleted.
+
+Trust evidence can be hidden.
+
+Transparency logs make these actions detectable.
+
+---
+
+## Core Principle
+
+Transparency logs do not prevent tampering.
+
+Transparency logs make tampering visible.
+
+This distinction is fundamental.
+
+---
+
+## Request
+
+### Content Type
+
+```http
+Content-Type: application/json
+```
+
+### Schema
+
+```json
+{
+  "receiptId": "string",
+  "receiptHash": "string"
+}
+```
+
+---
+
+## Example Request
+
+```json
+{
+  "receiptId": "rcpt-001",
+  "receiptHash": "sha256:abc123..."
+}
+```
+
+---
+
+## Transparency Record
+
+Example:
+
+```json
+{
+  "logEntryId": "log-001",
+
+  "receiptId": "rcpt-001",
+
+  "receiptHash": "sha256:abc123...",
+
+  "previousHash": "sha256:def456...",
+
+  "createdAt": "2026-06-17T12:05:00Z"
+}
+```
+
+---
+
+## Append-Only Principle
+
+Transparency logs are append-only.
+
+Records cannot be:
+
+```text
+Updated
+
+Rewritten
+
+Deleted
+```
+
+Only:
+
+```text
+Appended
+```
+
+This creates immutable history.
+
+---
+
+## Hash Chain Model
+
+Each record references the previous record.
+
+Example:
+
+```text
+Record 1
+   ↓
+Hash
+
+Record 2
+   ↓
+Previous Hash
+
+Record 3
+   ↓
+Previous Hash
+```
+
+This forms a cryptographic chain.
+
+---
+
+## Tamper Detection
+
+Example:
+
+```text
+Record A
+    ↓
+Hash
+
+Record B
+    ↓
+References A
+
+Record C
+    ↓
+References B
+```
+
+If Record A changes:
+
+```text
+Hash Changes
+      ↓
+Chain Breaks
+      ↓
+Verification Fails
+```
+
+Tampering becomes visible.
+
+---
+
+## Transparency Entry Lifecycle
+
+```text
+Receipt
+   ↓
+Hash
+   ↓
+Append
+   ↓
+Transparency Record
+```
+
+The receipt becomes permanently anchored.
+
+---
+
+## Response
+
+### Success
+
+```http
+200 OK
+```
+
+Example:
+
+```json
+{
+  "logEntryId": "log-001",
+
+  "receiptId": "rcpt-001",
+
+  "receiptHash": "sha256:abc123...",
+
+  "createdAt": "2026-06-17T12:05:00Z"
+}
+```
+
+---
+
+## Verification
+
+Future endpoint:
+
+```http
+POST /transparency-log/verify
+```
+
+Example:
+
+```json
+{
+  "valid": true
+}
+```
+
+Purpose:
+
+```text
+Verify Chain Integrity
+```
+
+---
+
+## Log Integrity Verification
+
+Verification process:
+
+```text
+Entry N
+   ↓
+Previous Hash
+
+Entry N-1
+   ↓
+Hash Match?
+
+Continue
+```
+
+If every link matches:
+
+```text
+Chain Valid
+```
+
+Otherwise:
+
+```text
+Chain Invalid
+```
+
+---
+
+## Relationship to Receipts
+
+Receipts prove trust decisions.
+
+Transparency logs prove receipt history.
+
+Example:
+
+```text
+Receipt
+    ↓
+Trust Evidence
+
+Transparency Log
+    ↓
+Historical Evidence
+```
+
+---
+
+## Relationship to Verification
+
+Verification answers:
+
+```text
+Can this evidence be trusted?
+```
+
+Transparency answers:
+
+```text
+Can this evidence history be trusted?
+```
+
+Different questions.
+
+Different artifacts.
+
+---
+
+## Independent Auditability
+
+Auditors should be able to answer:
+
+```text
+Did this receipt exist?
+
+When was it created?
+
+Was it modified?
+
+Was it removed?
+
+Was history rewritten?
+```
+
+Transparency logs make these questions answerable.
+
+---
+
+## Public vs Private Transparency
+
+### Private Transparency
+
+Example:
+
+```text
+Enterprise Internal Log
+```
+
+Only authorized parties can inspect entries.
+
+---
+
+### Public Transparency
+
+Example:
+
+```text
+Public Audit Log
+```
+
+Anyone can verify history.
+
+---
+
+## Federation and Transparency
+
+Future federated deployments may maintain:
+
+```text
+Organization A Log
+
+Organization B Log
+
+Organization C Log
+```
+
+Verification may require checking:
+
+```text
+Multiple Transparency Logs
+```
+
+across organizations.
+
+---
+
+## Transparency and Trust Federation
+
+Federation requires:
+
+```text
+Portable Evidence
+
+Portable Verification
+
+Portable History
+```
+
+Transparency logs provide portable history.
+
+---
+
+## Long-Term Evidence Preservation
+
+Example:
+
+```text
+2026
+Receipt Created
+
+2036
+Receipt Audited
+```
+
+Transparency logs provide proof that:
+
+```text
+The Receipt Existed
+```
+
+throughout that period.
+
+---
+
+## Transparency and the Authority Layer
+
+Authority evaluation determines:
+
+```text
+What is allowed?
+```
+
+Verification determines:
+
+```text
+Can authority evidence be trusted?
+```
+
+Transparency determines:
+
+```text
+Can authority history be trusted?
+```
+
+This is the final layer of trust preservation.
+
+---
+
+## Transparency Artifact Model
+
+```text
+Decision
+    ↓
+
+Attestation
+    ↓
+
+Verification
+    ↓
+
+Receipt
+    ↓
+
+Transparency Record
+```
+
+Each artifact increases trust durability.
+
+---
+
+## Runtime Trust Chain
+
+```text
+Task
+ ↓
+
+Policy
+ ↓
+
+Trusted Signals
+ ↓
+
+Decision
+ ↓
+
+Attestation
+ ↓
+
+Verification
+ ↓
+
+Receipt
+ ↓
+
+Transparency Log
+```
+
+This is the complete Trust Core evidence chain.
+
+---
+
+## Why Transparency Logs Matter
+
+Without transparency:
+
+```text
+Trust Exists
+```
+
+But history can be rewritten.
+
+With transparency:
+
+```text
+Trust Exists
+
+History Is Verifiable
+```
+
+Transparency turns trust evidence into durable trust history.
+
+---
+
+## Canonical Transparency Statement
+
+Policies define authority.
+
+Trusted signals provide evidence.
+
+Evaluation produces decisions.
+
+Attestation creates cryptographic evidence.
+
+Verification validates trust evidence.
+
+Receipts preserve trust evidence.
+
+Transparency logs preserve trust history.
+
+Parmana makes authority verifiable, auditable, tamper-evident, and enforceable before execution.
+
+---
+
+## Future Runtime Flow
+
+```text
+POST /evaluate
+      ↓
+Decision
+      ↓
+POST /attest
+      ↓
+Attestation
+      ↓
+POST /verify
+      ↓
+Verification
+      ↓
+POST /receipt
+      ↓
+Receipt
+      ↓
+POST /transparency-log
+      ↓
+Transparency Record
+```
+
+---
+
+## Next Document
+
+```text
+docs/architecture/trust-federation-api.mdx
+```
+
+This document defines:
+
+```text
+Attestation
+      ↓
+Verification
+      ↓
+Receipt
+      ↓
+Transparency
+      ↓
+Federation
+```
+
+which completes the multi-organization trust architecture of Parmana Trust Core.

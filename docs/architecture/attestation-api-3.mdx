@@ -1,0 +1,535 @@
+# Attestation API Specification (Part 3)
+
+## Attestation as a Trust Artifact
+
+A decision is an authority artifact.
+
+An attestation is a trust artifact.
+
+Difference:
+
+```text
+Decision
+    ↓
+What was allowed?
+
+Attestation
+    ↓
+Can that decision be trusted?
+```
+
+Authority and trust are separate concerns.
+
+Parmana intentionally separates them.
+
+---
+
+## Decision vs Attestation
+
+### Decision
+
+Produced by policy evaluation.
+
+Example:
+
+```json
+{
+  "action": "approve",
+  "reason": "payment_authorized"
+}
+```
+
+Answers:
+
+```text
+What did policy determine?
+```
+
+---
+
+### Attestation
+
+Produced by signing.
+
+Example:
+
+```json
+{
+  "attestationId": "...",
+  "signatures": []
+}
+```
+
+Answers:
+
+```text
+Can the decision be trusted?
+```
+
+---
+
+## Why Cryptographic Evidence Matters
+
+Without attestation:
+
+```text
+Decision
+```
+
+exists only as application data.
+
+With attestation:
+
+```text
+Decision
+      ↓
+Signed Evidence
+```
+
+exists as independently verifiable proof.
+
+This enables:
+
+```text
+Auditors
+
+Regulators
+
+Customers
+
+Partners
+
+Third-Party Verifiers
+```
+
+to validate decisions independently.
+
+---
+
+## Independent Verification Principle
+
+Trust Core assumes verification may occur outside Parmana.
+
+Example:
+
+```text
+Organization A
+      ↓
+Creates Attestation
+
+Organization B
+      ↓
+Verifies Attestation
+
+Organization C
+      ↓
+Audits Attestation
+```
+
+Trust does not require access to the original runtime.
+
+---
+
+## Canonical Serialization
+
+Attestation signing requires deterministic serialization.
+
+Example:
+
+```text
+Attestation
+      ↓
+Canonical JSON
+      ↓
+Hash
+      ↓
+Signature
+```
+
+Identical attestations must produce identical hashes.
+
+This guarantees:
+
+```text
+Deterministic Verification
+```
+
+across environments.
+
+---
+
+## Hashing Model
+
+Signing operates on hashes.
+
+Example:
+
+```text
+Attestation
+      ↓
+SHA-256
+      ↓
+Digest
+      ↓
+Signature
+```
+
+Benefits:
+
+```text
+Efficiency
+Integrity
+Interoperability
+```
+
+---
+
+## Signature Lifecycle
+
+```text
+Attestation
+      ↓
+Hash
+      ↓
+Sign
+      ↓
+Store
+      ↓
+Verify
+```
+
+The signature lifecycle is independent of policy evaluation.
+
+---
+
+## Signature Metadata
+
+Every signature should include:
+
+```json
+{
+  "algorithm": "ed25519",
+  "keyId": "key-001"
+}
+```
+
+Purpose:
+
+```text
+Algorithm Identification
+
+Key Identification
+
+Verification Routing
+```
+
+---
+
+## Key Rotation Support
+
+Organizations rotate keys.
+
+Example:
+
+```text
+2026
+ key-001
+
+2027
+ key-002
+
+2028
+ key-003
+```
+
+Attestations remain valid because they reference the signing key.
+
+Example:
+
+```json
+{
+  "keyId": "key-001"
+}
+```
+
+Verification retrieves the correct public key.
+
+---
+
+## Trust Anchors
+
+Verification depends on trust anchors.
+
+Examples:
+
+```text
+Public Keys
+
+Certificate Chains
+
+Federated Trust Stores
+
+Organization Registries
+```
+
+Trust anchors determine whether signatures are accepted.
+
+---
+
+## Trust Anchor Resolution
+
+Verification flow:
+
+```text
+Attestation
+      ↓
+Signature
+      ↓
+Key ID
+      ↓
+Trust Anchor
+      ↓
+Verification
+```
+
+Trust anchors establish signer identity.
+
+---
+
+## Evidence Portability
+
+Attestations should be portable.
+
+An attestation should remain verifiable:
+
+```text
+Across Organizations
+
+Across Clouds
+
+Across Databases
+
+Across Vendors
+```
+
+Portability is a core design principle.
+
+---
+
+## Evidence Preservation
+
+Attestations should survive:
+
+```text
+Policy Updates
+
+Software Upgrades
+
+Database Migrations
+
+Infrastructure Changes
+```
+
+Evidence must outlive runtime implementations.
+
+---
+
+## Long-Term Validation
+
+Future verification may occur years later.
+
+Example:
+
+```text
+2026
+ Decision Produced
+
+2031
+ Attestation Verified
+```
+
+Therefore attestations must contain sufficient information for future trust evaluation.
+
+---
+
+## Audit Readiness
+
+Attestations create audit-ready evidence.
+
+Auditors should be able to answer:
+
+```text
+Which policy was used?
+
+Which task was evaluated?
+
+Which decision was produced?
+
+Who signed it?
+
+When was it signed?
+
+Can it be verified?
+```
+
+without access to internal systems.
+
+---
+
+## Regulatory Alignment
+
+Attestations support:
+
+```text
+Financial Controls
+
+AI Governance
+
+Operational Risk Controls
+
+Approval Workflows
+
+Compliance Reviews
+```
+
+by providing verifiable evidence rather than system assertions.
+
+---
+
+## Future Runtime Flow
+
+Current:
+
+```text
+POST /evaluate
+      ↓
+Decision
+```
+
+Next:
+
+```text
+POST /evaluate
+      ↓
+Decision
+      ↓
+POST /attest
+      ↓
+Attestation
+```
+
+Future:
+
+```text
+POST /evaluate
+      ↓
+Decision
+      ↓
+POST /attest
+      ↓
+Attestation
+      ↓
+POST /verify
+      ↓
+Verification
+      ↓
+Receipt
+```
+
+Target:
+
+```text
+POST /evaluate
+      ↓
+Decision
+      ↓
+POST /attest
+      ↓
+Attestation
+      ↓
+POST /verify
+      ↓
+Receipt
+      ↓
+Transparency Log
+      ↓
+Trust Anchor
+```
+
+---
+
+## Parmana Trust Chain
+
+The complete trust chain is:
+
+```text
+Task
+ ↓
+Policy
+ ↓
+Trusted Signals
+ ↓
+Authority Evaluation
+ ↓
+Decision
+ ↓
+Attestation
+ ↓
+Verification
+ ↓
+Receipt
+ ↓
+Transparency Evidence
+```
+
+Each layer answers a different question:
+
+```text
+Task
+What action?
+
+Policy
+What requirements?
+
+Signals
+What evidence?
+
+Decision
+What was allowed?
+
+Attestation
+What was signed?
+
+Verification
+Can it be trusted?
+
+Receipt
+What was verified?
+
+Transparency Log
+Can history be proven?
+```
+
+---
+
+## Canonical Parmana Trust Thesis
+
+Authority determines what is allowed.
+
+Trust determines whether authority decisions can be relied upon.
+
+Policies define authority.
+
+Trusted signals provide evidence.
+
+Evaluation produces decisions.
+
+Attestation creates cryptographic evidence.
+
+Verification validates trust.
+
+Receipts provide audit evidence.
+
+Transparency logs provide tamper evidence.
+
+Parmana makes authority verifiable and enforceable before execution.

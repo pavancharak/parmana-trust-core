@@ -1,0 +1,533 @@
+# Attestation API Specification (Part 5)
+
+## Attestation as the Foundation of Machine-Readable Trust
+
+Historically, trust has been human-readable.
+
+Examples:
+
+```text id="3a2z8q"
+Approval Email
+
+Signed PDF
+
+Audit Report
+
+Compliance Document
+```
+
+These artifacts require human interpretation.
+
+Attestations are different.
+
+Attestations are:
+
+```text id="6zv9f1"
+Machine Readable
+
+Cryptographically Verifiable
+
+Portable
+
+Deterministic
+```
+
+Trust becomes executable.
+
+---
+
+## From Human Trust to Machine Trust
+
+Traditional approval:
+
+```text id="0vqk1w"
+Manager Approves
+       ↓
+Email Sent
+       ↓
+Action Taken
+```
+
+Trust is implicit.
+
+Parmana model:
+
+```text id="0dh4ps"
+Authority Evaluation
+          ↓
+Attestation
+          ↓
+Verification
+          ↓
+Execution
+```
+
+Trust becomes explicit.
+
+---
+
+## Why AI Systems Need Attestation
+
+Human workflows rely on observation.
+
+AI workflows require evidence.
+
+Example:
+
+```text id="tp7rkr"
+AI Agent
+     ↓
+Requests Payment
+```
+
+The system must answer:
+
+```text id="sq7h5s"
+Who authorized this?
+
+Under what policy?
+
+Using what evidence?
+
+Can the authorization be verified?
+```
+
+Attestations answer these questions.
+
+---
+
+## Authority Without Trust Is Insufficient
+
+Example:
+
+```text id="0q8b3s"
+Decision
+ ↓
+Approve
+```
+
+This establishes authority.
+
+But it does not establish:
+
+```text id="bnx4kw"
+Integrity
+
+Authenticity
+
+Non-Repudiation
+```
+
+Attestation establishes those properties.
+
+---
+
+## Trust Without Authority Is Dangerous
+
+Example:
+
+```text id="z0jz2s"
+Valid Signature
+```
+
+does not imply:
+
+```text id="vw9q0r"
+Correct Authorization
+```
+
+A signed decision may still violate policy.
+
+Therefore:
+
+```text id="l0n6xv"
+Authority
+     +
+Trust
+```
+
+are both required.
+
+---
+
+## Complete Trust Core Principle
+
+```text id="n0my9v"
+Policy
+     ↓
+Authority
+
+Attestation
+     ↓
+Trust
+```
+
+Together:
+
+```text id="c1v6yx"
+Trusted Authority
+```
+
+---
+
+## Attestation Portability Principle
+
+An attestation should be portable across:
+
+```text id="1yovv0"
+Applications
+
+Organizations
+
+Cloud Providers
+
+Vendors
+
+Databases
+```
+
+Trust must not depend on infrastructure.
+
+Trust must depend on evidence.
+
+---
+
+## Vendor Independence
+
+Attestations should remain verifiable even if:
+
+```text id="6dtixh"
+Parmana No Longer Exists
+```
+
+Verification should still be possible.
+
+Evidence must outlive vendors.
+
+This is a foundational design principle.
+
+---
+
+## Long-Term Evidence Preservation
+
+Example:
+
+```text id="2m95sl"
+2026
+Decision Produced
+
+2036
+Decision Audited
+```
+
+Verification should still succeed.
+
+Attestations are designed to support long-term evidence preservation.
+
+---
+
+## Receipts Depend on Attestations
+
+Receipts are derived artifacts.
+
+Example:
+
+```text id="d2w4n9"
+Attestation
+      ↓
+Verification
+      ↓
+Receipt
+```
+
+Receipts summarize verification.
+
+Attestations contain the original trust evidence.
+
+---
+
+## Transparency Logs Depend on Attestations
+
+Transparency systems anchor evidence.
+
+Example:
+
+```text id="2yd6ys"
+Attestation
+      ↓
+Hash
+      ↓
+Transparency Log
+```
+
+Transparency logs prove:
+
+```text id="zj6m8s"
+Existence
+
+Ordering
+
+Tamper Detection
+```
+
+They do not replace attestations.
+
+---
+
+## Federation Depends on Attestations
+
+Trust federation requires portable evidence.
+
+Example:
+
+```text id="e6t5wi"
+Organization A
+      ↓
+Attestation
+      ↓
+Organization B
+      ↓
+Verification
+```
+
+Federation is impossible without standardized trust artifacts.
+
+---
+
+## Attestation Lifecycle
+
+### Creation
+
+```text id="ynx0t9"
+Decision
+ ↓
+Attestation
+```
+
+---
+
+### Distribution
+
+```text id="xz7j8k"
+Attestation
+ ↓
+Consumer
+```
+
+---
+
+### Verification
+
+```text id="m9o7e5"
+Attestation
+ ↓
+Verification
+```
+
+---
+
+### Receipt Generation
+
+```text id="pk2v8u"
+Verification
+ ↓
+Receipt
+```
+
+---
+
+### Transparency Anchoring
+
+```text id="n3o9h7"
+Receipt
+ ↓
+Transparency Log
+```
+
+---
+
+## Evidence Chain
+
+The complete evidence chain becomes:
+
+```text id="9l4x3p"
+Decision
+ ↓
+Attestation
+ ↓
+Verification
+ ↓
+Receipt
+ ↓
+Transparency Evidence
+```
+
+Each stage strengthens trust.
+
+---
+
+## Why Attestation Is a First-Class API
+
+Attestation is not a utility.
+
+Attestation is not an implementation detail.
+
+Attestation is a core runtime capability.
+
+Reason:
+
+```text id="j4m1x2"
+Authority Evaluation
+```
+
+creates decisions.
+
+```text id="v8y5q7"
+Attestation
+```
+
+creates trust.
+
+Without attestation:
+
+```text id="r0v2n1"
+Trust Cannot Travel
+```
+
+Across systems.
+
+---
+
+## Future API Contract
+
+### Request
+
+```http id="s7v6z4"
+POST /attest
+```
+
+Input:
+
+```json id="h2q5w8"
+{
+  "task": {},
+  "policy": {},
+  "decision": {}
+}
+```
+
+---
+
+### Response
+
+```json id="q6e4t9"
+{
+  "attestationId": "...",
+  "signatures": [],
+  "createdAt": "..."
+}
+```
+
+---
+
+## Trust Core Artifact Hierarchy
+
+```text id="t9o8r2"
+Task
+    ↓
+
+Policy
+    ↓
+
+Signals
+    ↓
+
+Decision
+    ↓
+
+Attestation
+    ↓
+
+Receipt
+    ↓
+
+Transparency Record
+```
+
+Each artifact answers a distinct trust question.
+
+---
+
+## The Authority Layer Perspective
+
+In the Authority Layer architecture:
+
+```text id="v5m1r7"
+Business Intent
+        ↓
+
+Authority Requirements
+        ↓
+
+Trusted Evidence
+        ↓
+
+Authority Decision
+        ↓
+
+Trust Evidence
+```
+
+Attestation is the bridge between:
+
+```text id="f8k3n1"
+Authority
+```
+
+and
+
+```text id="z7w2q6"
+Trust
+```
+
+---
+
+## Canonical Parmana Attestation Thesis
+
+```text id="x4b6n9"
+Policies determine what is allowed.
+
+Trusted signals provide evidence.
+
+Authority evaluation produces decisions.
+
+Attestation creates cryptographic evidence of those decisions.
+
+Verification determines whether that evidence can be trusted.
+
+Receipts provide audit evidence.
+
+Transparency logs provide tamper evidence.
+
+Parmana makes authority verifiable and enforceable before execution.
+```
+
+---
+
+## Next Architecture Document
+
+```text id="r9t4m2"
+docs/architecture/verify-api.mdx
+```
+
+This document defines:
+
+```text id="w1k7p5"
+Attestation
+      ↓
+Verification
+      ↓
+Receipt
+```
+
+which completes the first end-to-end trust lifecycle of the Parmana Authority Runtime.

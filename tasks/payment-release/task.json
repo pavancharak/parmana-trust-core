@@ -1,0 +1,9 @@
+{
+  "taskId": "payment.release",
+  "name": "Release Payment",
+
+  "policy": {
+    "policyId": "payment-release",
+    "policyVersion": "1.0.0"
+  }
+}

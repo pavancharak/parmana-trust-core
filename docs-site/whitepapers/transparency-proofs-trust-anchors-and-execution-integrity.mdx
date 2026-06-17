@@ -1,0 +1,346 @@
+# Parmana Trust Core
+
+## Part II — Transparency Proofs, Trust Anchors & Execution Integrity
+
+---
+
+# Why Receipts Are Not Enough
+
+A verification receipt proves that Parmana evaluated authority requirements at a specific point in time.
+
+However, a receipt alone does not prove:
+
+* The receipt was never modified
+* The receipt existed at a particular time
+* The receipt was included in a complete audit history
+* The receipt can be independently verified
+
+To solve these problems, Parmana introduces transparency proofs.
+
+---
+
+# Transparency Proof Layer
+
+Every verification receipt generates a cryptographic hash.
+
+```text
+Receipt
+    ↓
+SHA-256
+    ↓
+Receipt Hash
+```
+
+Example:
+
+```text
+Receipt A
+    ↓
+3c31382599460d6185d1f4bf07762ca922f01beeb0901b89c5c8d1b6f0385fdd
+```
+
+The receipt hash becomes the immutable identity of the verification event.
+
+---
+
+# Transparency Log Architecture
+
+Each receipt hash is appended to the transparency log.
+
+```text
+Receipt Hash
+        ↓
+Transparency Log
+```
+
+Transparency log entries contain:
+
+```text
+entryId
+receiptId
+receiptHash
+createdAt
+```
+
+Example:
+
+```json
+{
+  "entryId": "entry-001",
+  "receiptId": "85bbdbf1-3eda-48da-89c6-77631b5869bf",
+  "receiptHash": "3c313825...",
+  "createdAt": "2026-06-17T10:00:00Z"
+}
+```
+
+---
+
+# Merkle Trees
+
+Transparency logs eventually become large.
+
+Verifying every entry individually becomes inefficient.
+
+Parmana therefore groups receipt hashes into Merkle Trees.
+
+```text
+Receipt Hashes
+
+A
+B
+C
+D
+
+ ↓
+Merkle Tree
+
+       Root
+      /    \
+     X      Y
+    / \    / \
+   A   B  C   D
+```
+
+Advantages:
+
+* Efficient verification
+* Compact proofs
+* Tamper detection
+* Scalable evidence chains
+
+---
+
+# Merkle Root
+
+The Merkle Root becomes the cryptographic representation of all receipts included in a batch.
+
+```text
+Receipt Hashes
+        ↓
+Merkle Tree
+        ↓
+Merkle Root
+```
+
+Example:
+
+```text
+rootHash
+=
+9b5ef27c3e...
+```
+
+Changing even a single receipt changes the Merkle Root.
+
+---
+
+# Inclusion Proofs
+
+An inclusion proof allows anyone to verify that a receipt was part of a published transparency batch.
+
+Verification flow:
+
+```text
+Receipt Hash
+        ↓
+Inclusion Proof
+        ↓
+Merkle Root
+        ↓
+Verification
+```
+
+This allows independent verification without access to the full log.
+
+---
+
+# Trust Anchors
+
+A Merkle Root alone is not sufficient.
+
+Someone must attest that the root is legitimate.
+
+Parmana introduces Trust Anchors.
+
+```text
+Merkle Root
+        ↓
+Trust Anchor
+```
+
+A Trust Anchor contains:
+
+```text
+anchorId
+rootHash
+signature
+createdAt
+issuer
+```
+
+Example:
+
+```json
+{
+  "anchorId": "anchor-001",
+  "rootHash": "9b5ef27c3e...",
+  "issuer": "Parmana",
+  "createdAt": "2026-06-17T12:00:00Z"
+}
+```
+
+---
+
+# Signed Trust Anchors
+
+Trust Anchors are cryptographically signed.
+
+```text
+Merkle Root
+        ↓
+Signature
+        ↓
+Trust Anchor
+```
+
+Purpose:
+
+* Prove authenticity
+* Prevent forgery
+* Enable third-party verification
+
+---
+
+# Trust Anchor Verification
+
+Verification process:
+
+```text
+Receipt
+    ↓
+Receipt Hash
+    ↓
+Inclusion Proof
+    ↓
+Merkle Root
+    ↓
+Trust Anchor Signature
+    ↓
+Verified
+```
+
+Anyone can independently verify the chain.
+
+---
+
+# Execution Integrity
+
+Authority verification is not enough.
+
+Organizations must also know that the executed action matches the approved action.
+
+Parmana introduces Execution Integrity.
+
+---
+
+# Execution Evidence
+
+After execution, the system of record returns execution evidence.
+
+Example:
+
+```text
+transactionId
+executedAt
+executionHash
+status
+```
+
+Execution evidence is linked to:
+
+```text
+Verification Receipt
+        ↓
+Execution Evidence
+```
+
+---
+
+# Execution Integrity Chain
+
+```text
+Human Authority
+        ↓
+Verification
+        ↓
+Receipt
+        ↓
+Transparency Log
+        ↓
+Trust Anchor
+        ↓
+Execution Evidence
+```
+
+This creates a complete chain from authorization to execution.
+
+---
+
+# Independent Verification
+
+Any auditor can verify:
+
+```text
+1. Authority existed
+2. Policy was satisfied
+3. Receipt was generated
+4. Receipt was logged
+5. Receipt was included in a Merkle Root
+6. Root was signed
+7. Action was executed
+8. Execution matched approval
+```
+
+No trust in Parmana is required.
+
+Only cryptographic verification is required.
+
+---
+
+# Canonical Parmana Architecture
+
+```text
+Human Authority
+        ↓
+Authority Verification
+        ↓
+Signed Attestation
+        ↓
+Verification Receipt
+        ↓
+Receipt Hash
+        ↓
+Transparency Log
+        ↓
+Merkle Root
+        ↓
+Trust Anchor
+        ↓
+Execution Evidence
+        ↓
+Execution Integrity Proof
+```
+
+---
+
+# Core Principle
+
+AI has intelligence.
+
+Humans have authority.
+
+Intelligence generates actions.
+
+Authority decides what is allowed.
+
+Parmana ensures that only human-authorized actions are executed and provides verifiable evidence proving that authority was satisfied before execution.

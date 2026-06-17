@@ -23,3 +23,6 @@ export * from "./save-bundle.js";
 export * from "./load-bundle.js";
 
 export * from "./canonicalize.js";
+export * from "./load-policy.js";
+export * from "./load-task.js";
+export * from "./resolve-task.js";

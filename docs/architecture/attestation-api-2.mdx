@@ -1,0 +1,490 @@
+# Attestation API Specification (Part 2)
+
+## Why Attestation Exists
+
+Policy evaluation determines authority.
+
+Authority evaluation alone is insufficient for trust.
+
+Example:
+
+```text
+Decision
+ ↓
+approve
+```
+
+A consumer cannot answer:
+
+```text
+Who produced this decision?
+
+When was it produced?
+
+Which policy generated it?
+
+Was it modified?
+```
+
+Attestation solves this problem.
+
+---
+
+## Trust Boundary
+
+The decision boundary is:
+
+```text
+Policy
+ ↓
+Decision
+```
+
+The trust boundary is:
+
+```text
+Decision
+ ↓
+Attestation
+```
+
+Attestation converts evaluation output into cryptographic evidence.
+
+---
+
+## Attestation Ownership
+
+Attestations are runtime-generated artifacts.
+
+They are not customer-authored.
+
+They are not manually created.
+
+The runtime is responsible for:
+
+```text
+Attestation Generation
+Signature Creation
+Evidence Packaging
+Trust Metadata
+```
+
+---
+
+## Attestation Immutability
+
+Attestations are immutable.
+
+After signing:
+
+```text
+Decision
+Policy Reference
+Timestamp
+Signatures
+```
+
+must never change.
+
+Modification invalidates trust.
+
+---
+
+## Canonical Attestation Structure
+
+```json
+{
+  "attestationId": "att-123",
+
+  "taskId": "payment.release",
+
+  "policyId": "payment-release",
+
+  "policyVersion": "1.0.0",
+
+  "decision": {},
+
+  "createdAt": "...",
+
+  "signatures": []
+}
+```
+
+The attestation contains sufficient information to independently verify the decision.
+
+---
+
+## Policy Provenance
+
+Every attestation references the exact policy used.
+
+Example:
+
+```json
+{
+  "policyId": "payment-release",
+  "policyVersion": "1.0.0"
+}
+```
+
+This ensures:
+
+```text
+Reproducibility
+Traceability
+Auditability
+```
+
+Future policy changes cannot alter historical attestations.
+
+---
+
+## Task Provenance
+
+Every attestation references the originating task.
+
+Example:
+
+```json
+{
+  "taskId": "payment.release"
+}
+```
+
+This provides business context.
+
+Without task provenance:
+
+```text
+Decision Exists
+```
+
+With task provenance:
+
+```text
+Decision Exists
+For Which Business Action?
+```
+
+---
+
+## Decision Provenance
+
+Attestations preserve the exact decision.
+
+Example:
+
+```json
+{
+  "action": "approve",
+  "requires_override": false,
+  "reason": "payment_authorized"
+}
+```
+
+The attestation proves that this specific decision was produced.
+
+---
+
+## Timestamp Provenance
+
+Every attestation contains creation time.
+
+Example:
+
+```json
+{
+  "createdAt": "2026-06-17T12:00:00Z"
+}
+```
+
+This establishes:
+
+```text
+Decision History
+Chronology
+Audit Trails
+```
+
+---
+
+## Cryptographic Integrity
+
+Attestation signing provides integrity.
+
+Example:
+
+```text
+Attestation
+      ↓
+Hash
+      ↓
+Signature
+```
+
+Verification proves:
+
+```text
+Not Modified
+```
+
+after signing.
+
+---
+
+## Multi-Signature Model
+
+Attestations support multiple signatures.
+
+Example:
+
+```json
+{
+  "signatures": [
+    {
+      "algorithm": "ed25519"
+    },
+    {
+      "algorithm": "ecdsa-p256"
+    }
+  ]
+}
+```
+
+Benefits:
+
+```text
+Threshold Trust
+
+Multi-Party Approval
+
+Federated Governance
+
+Post-Quantum Migration
+```
+
+---
+
+## Threshold Trust
+
+Future Trust Profiles may require:
+
+```text
+1 of 1
+
+2 of 3
+
+3 of 5
+
+5 of 7
+```
+
+signature thresholds.
+
+Example:
+
+```text
+Attestation
+     ↓
+Multiple Signatures
+     ↓
+Threshold Verification
+```
+
+---
+
+## Trust Federation
+
+Future deployments may involve:
+
+```text
+Organization A
+
+Organization B
+
+Organization C
+```
+
+Each organization may sign the same attestation.
+
+Example:
+
+```text
+Decision
+     ↓
+Org A Signature
+     ↓
+Org B Signature
+     ↓
+Org C Signature
+```
+
+Verification evaluates the combined trust requirements.
+
+---
+
+## Post-Quantum Migration
+
+Attestations support algorithm evolution.
+
+Current:
+
+```text
+ed25519
+
+ecdsa-p256
+```
+
+Future:
+
+```text
+ml-dsa
+
+slh-dsa
+```
+
+Hybrid periods may contain:
+
+```text
+Classical Signature
++
+Post-Quantum Signature
+```
+
+on the same attestation.
+
+---
+
+## Attestation Storage
+
+Attestations may be stored in:
+
+```text
+Audit Database
+
+Object Storage
+
+Evidence Store
+
+Transparency Systems
+```
+
+Storage location is separate from trust evaluation.
+
+---
+
+## Attestation Lifecycle
+
+```text
+Decision
+      ↓
+Attestation
+      ↓
+Store
+      ↓
+Verify
+      ↓
+Receipt
+```
+
+Attestation becomes the authoritative evidence object.
+
+---
+
+## Future API Evolution
+
+### Create Attestation
+
+```http
+POST /attest
+```
+
+Creates signed evidence.
+
+---
+
+### Retrieve Attestation
+
+```http
+GET /attestation/:id
+```
+
+Returns attestation details.
+
+---
+
+### Verify Attestation
+
+```http
+POST /verify
+```
+
+Validates signatures and trust requirements.
+
+---
+
+### Retrieve Receipt
+
+```http
+GET /receipt/:id
+```
+
+Returns verification evidence.
+
+---
+
+## Runtime Artifact Model
+
+Trust Core artifacts:
+
+```text
+Task
+ ↓
+Policy
+ ↓
+Decision
+ ↓
+Attestation
+ ↓
+Receipt
+```
+
+Each artifact builds upon the previous artifact.
+
+---
+
+## Canonical Parmana Trust Model
+
+```text
+Policies define authority.
+
+Trusted signals provide evidence.
+
+Evaluation produces decisions.
+
+Attestation creates trust evidence.
+
+Verification validates trust evidence.
+
+Receipts provide audit evidence.
+
+Transparency logs provide tamper evidence.
+```
+
+---
+
+## Canonical Parmana Statement
+
+Organizations decide what to trust.
+
+Policies define what is required.
+
+Trusted signals provide evidence.
+
+Parmana evaluates those trusted signals against policy before execution.
+
+Attestation creates cryptographic evidence of that authority decision.
+
+Verification determines whether that evidence can be trusted.
+
+Parmana makes authority verifiable and enforceable before execution.

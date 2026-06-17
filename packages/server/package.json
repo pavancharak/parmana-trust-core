@@ -12,6 +12,7 @@
     "dev": "tsx src/index.ts"
   },
   "dependencies": {
-    "express": "^5.1.0"
-  }
+  "@parmana/audit-db": "*",
+  "express": "^5.1.0"
+}
 }

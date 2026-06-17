@@ -1,0 +1,477 @@
+# Verify API Specification
+
+## Status
+
+Planned
+
+Version:
+
+```text
+v1
+```
+
+Endpoint:
+
+```http
+POST /verify
+```
+
+---
+
+## Purpose
+
+The Verify API determines whether an attestation can be trusted.
+
+Evaluation answers:
+
+```text
+What was decided?
+```
+
+Attestation answers:
+
+```text
+What was signed?
+```
+
+Verification answers:
+
+```text
+Can that signed evidence be trusted?
+```
+
+---
+
+## Runtime Position
+
+```text
+POST /evaluate
+        ↓
+Decision
+        ↓
+POST /attest
+        ↓
+Attestation
+        ↓
+POST /verify
+        ↓
+Verification Result
+```
+
+Verification is the trust-validation stage of the Authority Runtime.
+
+---
+
+## Responsibility
+
+The Verify API:
+
+```text
+Validates Signatures
+
+Validates Trust Profiles
+
+Validates Threshold Rules
+
+Validates Trust Anchors
+
+Produces Verification Results
+```
+
+The Verify API does not:
+
+```text
+Evaluate Policies
+
+Create Decisions
+
+Execute Actions
+
+Create Attestations
+```
+
+---
+
+## Request
+
+### Content Type
+
+```http
+Content-Type: application/json
+```
+
+### Schema
+
+```json
+{
+  "attestation": {}
+}
+```
+
+---
+
+## Example Request
+
+```json
+{
+  "attestationId": "att-123",
+
+  "taskId": "payment.release",
+
+  "policyId": "payment-release",
+
+  "policyVersion": "1.0.0",
+
+  "decision": {
+    "action": "approve",
+    "requires_override": false,
+    "reason": "payment_authorized"
+  },
+
+  "createdAt": "2026-06-17T12:00:00Z",
+
+  "signatures": [
+    {
+      "algorithm": "ed25519",
+      "keyId": "key-001",
+      "signature": "..."
+    }
+  ]
+}
+```
+
+---
+
+## Verification Flow
+
+```text
+Attestation
+      ↓
+Canonical Serialization
+      ↓
+Hash
+      ↓
+Signature Validation
+      ↓
+Trust Evaluation
+      ↓
+Verification Result
+```
+
+---
+
+## Verification Result
+
+Verification produces a trust determination.
+
+Example:
+
+```json
+{
+  "verified": true,
+
+  "trustProfile": "enterprise",
+
+  "verifiedSignatures": 1,
+
+  "requiredSignatures": 1,
+
+  "verifiedAt": "2026-06-17T12:01:00Z"
+}
+```
+
+---
+
+## Signature Verification
+
+Verification checks:
+
+```text
+Signature Integrity
+
+Signing Algorithm
+
+Key Validity
+
+Trust Anchor Membership
+```
+
+Example:
+
+```text
+Attestation
+      ↓
+Signature
+      ↓
+Public Key
+      ↓
+Verification
+```
+
+---
+
+## Trust Profiles
+
+Verification is governed by Trust Profiles.
+
+Examples:
+
+```text
+default
+
+enterprise
+
+regulated
+
+post-quantum
+```
+
+Trust Profiles define:
+
+```text
+Accepted Algorithms
+
+Required Signatures
+
+Threshold Rules
+
+Trust Anchors
+```
+
+---
+
+## Threshold Verification
+
+Future profiles may require:
+
+```text
+1 of 1
+
+2 of 3
+
+3 of 5
+
+5 of 7
+```
+
+Example:
+
+```text
+3 Signatures Present
+       ↓
+2 Required
+       ↓
+Verification Success
+```
+
+---
+
+## Trust Anchor Validation
+
+Verification resolves trust anchors.
+
+Examples:
+
+```text
+Public Keys
+
+Certificate Chains
+
+Federated Registries
+
+Trust Stores
+```
+
+Verification succeeds only if signatures chain to trusted anchors.
+
+---
+
+## Response
+
+### Success
+
+```http
+200 OK
+```
+
+Example:
+
+```json
+{
+  "verified": true,
+
+  "trustProfile": "enterprise",
+
+  "verifiedSignatures": 1,
+
+  "requiredSignatures": 1,
+
+  "verifiedAt": "2026-06-17T12:01:00Z"
+}
+```
+
+---
+
+## Failure Response
+
+Example:
+
+```json
+{
+  "verified": false,
+
+  "reason": "invalid_signature"
+}
+```
+
+---
+
+## Verification Outcomes
+
+### Verified
+
+```json
+{
+  "verified": true
+}
+```
+
+Meaning:
+
+```text
+Evidence Is Trusted
+```
+
+---
+
+### Not Verified
+
+```json
+{
+  "verified": false
+}
+```
+
+Meaning:
+
+```text
+Evidence Cannot Be Trusted
+```
+
+---
+
+## Relationship To Receipts
+
+Verification produces evidence.
+
+Receipts package that evidence.
+
+Flow:
+
+```text
+Attestation
+      ↓
+Verification
+      ↓
+Receipt
+```
+
+The receipt becomes the audit artifact.
+
+---
+
+## Relationship To Transparency Logs
+
+Verification may anchor results.
+
+Flow:
+
+```text
+Verification
+      ↓
+Receipt
+      ↓
+Transparency Log
+```
+
+This enables:
+
+```text
+Tamper Detection
+
+Historical Integrity
+
+Public Auditability
+```
+
+---
+
+## Deterministic Verification Principle
+
+Given:
+
+```text
+Attestation
+
+Trust Profile
+
+Trust Anchors
+```
+
+verification must produce:
+
+```text
+Same Result
+```
+
+every time.
+
+This enables:
+
+```text
+Independent Verification
+
+Cross-Organization Trust
+
+Regulatory Review
+
+Audit Reproducibility
+```
+
+---
+
+## The Trust Boundary
+
+Evaluation determines authority.
+
+Verification determines trust.
+
+Model:
+
+```text
+Authority
+      ↓
+Decision
+
+Trust
+      ↓
+Verification
+```
+
+These are separate concerns.
+
+---
+
+## Canonical Verification Statement
+
+Verification does not determine what is allowed.
+
+Verification determines whether evidence of authority can be trusted.
+
+Policies define authority.
+
+Attestations create trust evidence.
+
+Verification validates that trust evidence.
+
+Parmana makes authority verifiable and enforceable before execution.

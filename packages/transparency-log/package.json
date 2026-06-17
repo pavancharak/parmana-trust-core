@@ -2,11 +2,14 @@
   "name": "@parmana/transparency-log",
   "version": "0.1.0",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+
+  "main": "./dist/transparency-log/src/index.js",
+  "types": "./dist/transparency-log/src/index.d.ts",
+
   "files": [
     "dist"
   ],
+
   "scripts": {
     "build": "tsc -p ."
   }

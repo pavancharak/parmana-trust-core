@@ -1,23 +1,20 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProof = createProof;
-var crypto = require("node:crypto");
+import * as crypto from "node:crypto";
 function sha256(value) {
     return crypto
         .createHash("sha256")
         .update(value)
         .digest("hex");
 }
-function createProof(leaves, index) {
-    var _a;
-    var path = [];
-    var level = leaves.map(sha256);
-    var currentIndex = index;
+export function createProof(leaves, index) {
+    const path = [];
+    let level = leaves.map(sha256);
+    let currentIndex = index;
     while (level.length > 1) {
-        var next = [];
-        for (var i = 0; i < level.length; i += 2) {
-            var left = level[i];
-            var right = (_a = level[i + 1]) !== null && _a !== void 0 ? _a : left;
+        const next = [];
+        for (let i = 0; i < level.length; i += 2) {
+            const left = level[i];
+            const right = level[i + 1] ??
+                left;
             if (i === currentIndex ||
                 i + 1 === currentIndex) {
                 path.push(i === currentIndex
@@ -32,6 +29,7 @@ function createProof(leaves, index) {
     }
     return {
         leaf: leaves[index],
-        path: path
+        path
     };
 }
+//# sourceMappingURL=proof.js.map

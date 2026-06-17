@@ -1,0 +1,575 @@
+# Receipt API Specification
+
+## Status
+
+Planned
+
+Version:
+
+```text
+v1
+```
+
+Endpoint:
+
+```http
+POST /receipt
+```
+
+---
+
+## Purpose
+
+The Receipt API produces an audit-ready artifact from a successful verification.
+
+Evaluation determines:
+
+```text
+What was allowed?
+```
+
+Attestation determines:
+
+```text
+What was signed?
+```
+
+Verification determines:
+
+```text
+Can it be trusted?
+```
+
+Receipt determines:
+
+```text
+What evidence proves trust?
+```
+
+A receipt is the canonical audit artifact of the Parmana Authority Runtime.
+
+---
+
+## Runtime Position
+
+```text
+POST /evaluate
+        ↓
+Decision
+        ↓
+POST /attest
+        ↓
+Attestation
+        ↓
+POST /verify
+        ↓
+Verification
+        ↓
+POST /receipt
+        ↓
+Receipt
+```
+
+---
+
+## Responsibility
+
+The Receipt API:
+
+```text
+Creates Audit Artifacts
+
+Packages Verification Evidence
+
+Captures Runtime Metadata
+
+Creates Long-Term Evidence Objects
+
+Produces Portable Audit Records
+```
+
+The Receipt API does not:
+
+```text
+Evaluate Policies
+
+Sign Decisions
+
+Verify Signatures
+
+Execute Actions
+```
+
+---
+
+## Why Receipts Exist
+
+Verification results are transient.
+
+Receipts are durable.
+
+Verification answers:
+
+```text
+Can this be trusted?
+```
+
+Receipt answers:
+
+```text
+How can this trust determination be proven later?
+```
+
+---
+
+## Request
+
+### Content Type
+
+```http
+Content-Type: application/json
+```
+
+### Schema
+
+```json
+{
+  "verification": {}
+}
+```
+
+---
+
+## Example Request
+
+```json
+{
+  "verified": true,
+
+  "trustProfile": "enterprise",
+
+  "verifiedSignatures": 1,
+
+  "requiredSignatures": 1,
+
+  "verifiedAt": "2026-06-17T12:01:00Z",
+
+  "attestationId": "att-123"
+}
+```
+
+---
+
+## Receipt Structure
+
+Example:
+
+```json
+{
+  "receiptId": "rcpt-001",
+
+  "attestationId": "att-123",
+
+  "verified": true,
+
+  "trustProfile": "enterprise",
+
+  "verifiedAt": "2026-06-17T12:01:00Z",
+
+  "createdAt": "2026-06-17T12:01:05Z"
+}
+```
+
+---
+
+## Receipt Contents
+
+A receipt captures:
+
+```text
+Verification Outcome
+
+Attestation Reference
+
+Trust Profile
+
+Verification Timestamp
+
+Receipt Timestamp
+```
+
+This creates a portable audit record.
+
+---
+
+## Receipt Identity
+
+Every receipt has a unique identifier.
+
+Example:
+
+```json
+{
+  "receiptId": "rcpt-001"
+}
+```
+
+The receipt identifier becomes the canonical reference used by:
+
+```text
+Auditors
+
+Regulators
+
+Enterprise Systems
+
+Transparency Logs
+```
+
+---
+
+## Receipt Provenance
+
+Receipts inherit provenance from:
+
+```text
+Task
+
+Policy
+
+Decision
+
+Attestation
+
+Verification
+```
+
+Receipt generation does not create new authority.
+
+It records trust evidence.
+
+---
+
+## Receipt Lifecycle
+
+```text
+Verification
+      ↓
+Receipt
+      ↓
+Store
+      ↓
+Retrieve
+      ↓
+Audit
+```
+
+Receipts are intended for long-term retention.
+
+---
+
+## Response
+
+### Success
+
+```http
+200 OK
+```
+
+Example:
+
+```json
+{
+  "receiptId": "rcpt-001",
+
+  "attestationId": "att-123",
+
+  "verified": true,
+
+  "trustProfile": "enterprise",
+
+  "verifiedAt": "2026-06-17T12:01:00Z",
+
+  "createdAt": "2026-06-17T12:01:05Z"
+}
+```
+
+---
+
+## Failure
+
+```json
+{
+  "error": "verification required"
+}
+```
+
+Receipts can only be generated from successful verification.
+
+---
+
+## Receipt Storage
+
+Receipts may be stored in:
+
+```text
+Audit Database
+
+Evidence Store
+
+Object Storage
+
+Compliance Archive
+```
+
+Storage is implementation-specific.
+
+Receipt format remains portable.
+
+---
+
+## Retrieval API
+
+Future endpoint:
+
+```http
+GET /receipt/:receiptId
+```
+
+Example:
+
+```http
+GET /receipt/rcpt-001
+```
+
+Response:
+
+```json
+{
+  "receiptId": "rcpt-001"
+}
+```
+
+---
+
+## Receipt Integrity
+
+Receipts may be hashed.
+
+Example:
+
+```text
+Receipt
+   ↓
+Canonical JSON
+   ↓
+Hash
+```
+
+This enables:
+
+```text
+Tamper Detection
+
+Transparency Anchoring
+
+Evidence Preservation
+```
+
+---
+
+## Relationship To Transparency Logs
+
+Receipts are the primary transparency artifact.
+
+Flow:
+
+```text
+Receipt
+    ↓
+Hash
+    ↓
+Transparency Log
+```
+
+The transparency log records receipt existence.
+
+---
+
+## Relationship To Audits
+
+Auditors should be able to answer:
+
+```text
+What decision occurred?
+
+What policy was used?
+
+What evidence was verified?
+
+When was verification performed?
+
+Can verification be reproduced?
+```
+
+The receipt provides the audit trail.
+
+---
+
+## Independent Verification
+
+Receipts support independent review.
+
+Example:
+
+```text
+Organization A
+       ↓
+Receipt
+
+Organization B
+       ↓
+Audit
+
+Organization C
+       ↓
+Compliance Review
+```
+
+The receipt becomes the common evidence object.
+
+---
+
+## Deterministic Receipt Principle
+
+Given:
+
+```text
+Verification Result
+Attestation
+Trust Profile
+```
+
+receipt generation must produce a deterministic artifact.
+
+This ensures:
+
+```text
+Reproducibility
+
+Audit Consistency
+
+Cross-System Validation
+```
+
+---
+
+## Evidence Chain
+
+```text
+Task
+ ↓
+
+Policy
+ ↓
+
+Signals
+ ↓
+
+Decision
+ ↓
+
+Attestation
+ ↓
+
+Verification
+ ↓
+
+Receipt
+```
+
+The receipt is the first audit-ready artifact in the trust chain.
+
+---
+
+## Receipt and the Authority Layer
+
+Authority evaluation determines:
+
+```text
+What is allowed?
+```
+
+Verification determines:
+
+```text
+Can authority evidence be trusted?
+```
+
+Receipt determines:
+
+```text
+How is trust preserved?
+```
+
+Receipts provide durable evidence of verified authority.
+
+---
+
+## Canonical Receipt Statement
+
+Policies define authority.
+
+Trusted signals provide evidence.
+
+Evaluation produces decisions.
+
+Attestation creates cryptographic evidence.
+
+Verification validates trust evidence.
+
+Receipts preserve verified trust evidence.
+
+Parmana makes authority verifiable, auditable, and enforceable before execution.
+
+---
+
+## Future Runtime Flow
+
+```text
+POST /evaluate
+      ↓
+Decision
+      ↓
+POST /attest
+      ↓
+Attestation
+      ↓
+POST /verify
+      ↓
+Verification
+      ↓
+POST /receipt
+      ↓
+Receipt
+      ↓
+Transparency Log
+```
+
+---
+
+## Next Document
+
+```text
+docs/architecture/transparency-log-api.mdx
+```
+
+This document defines:
+
+```text
+Receipt
+    ↓
+Transparency Log
+```
+
+which introduces tamper-evident history and immutable trust records into the Parmana Authority Runtime.
