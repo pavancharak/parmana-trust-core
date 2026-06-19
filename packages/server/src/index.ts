@@ -24,7 +24,8 @@ import verifyRoute
 
 import receiptRoute
   from "./routes/receipt.js";
-
+import tasksRoute
+  from "./routes/tasks.js";
 import receiptsRoute
   from "./routes/receipts.js";
 import transparencyProofRoute
@@ -53,6 +54,9 @@ app.use(
 );
 app.use(
   invariantsRoute
+);
+app.use(
+  tasksRoute
 );
 app.use(
   verifyTrustRootRouter

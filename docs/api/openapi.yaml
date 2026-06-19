@@ -1,31 +1,186 @@
 openapi: 3.1.0
 
 info:
-  title: Parmana Trust Core API
-  version: 0.2.0
+  title: Parmana Authority Verification API
+  version: 0.3.0
+  description: |
+    Parmana makes authority verifiable and enforceable before execution.
+
+    Organizations decide what to trust.
+    Parmana evaluates trusted signals against policy before execution.
+
+servers:
+  - url: http://localhost:3000
 
 paths:
 
   /attest:
     post:
       summary: Create attestation
+      responses:
+        "200":
+          description: Attestation created
 
   /verify-attestation:
     post:
       summary: Verify attestation
+      responses:
+        "200":
+          description: Verification result
 
   /receipt:
     post:
       summary: Create verification receipt
+      responses:
+        "200":
+          description: Receipt created
 
   /trust-root/current:
     get:
       summary: Get current trust root
+      responses:
+        "200":
+          description: Current trust root
 
   /trust-root/verify:
     post:
       summary: Verify trust root
+      responses:
+        "200":
+          description: Trust root verification result
 
   /keys/current:
     get:
       summary: Get active verification key
+      responses:
+        "200":
+          description: Current verification key
+
+  /tasks:
+    get:
+      summary: List tasks
+      responses:
+        "200":
+          description: Task list
+
+    post:
+      summary: Create task
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Task"
+
+      responses:
+        "201":
+          description: Task created
+
+  /tasks/{taskId}:
+    get:
+      summary: Get task
+
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Task found
+
+        "404":
+          description: Task not found
+
+components:
+
+  schemas:
+
+    Task:
+
+      type: object
+
+      required:
+        - taskId
+        - name
+        - active
+
+      properties:
+
+        taskId:
+          type: string
+          example: payment.release
+
+        name:
+          type: string
+          example: Payment Release
+
+        description:
+          type: string
+          example: Release payment to beneficiary
+
+        active:
+          type: boolean
+          example: true
+
+    Attestation:
+
+      type: object
+
+      properties:
+
+        decisionId:
+          type: string
+
+        taskId:
+          type: string
+
+        policyId:
+          type: string
+
+        outcome:
+          type: object
+
+    Receipt:
+
+      type: object
+
+      properties:
+
+        receiptId:
+          type: string
+
+        decisionId:
+          type: string
+
+        valid:
+          type: boolean
+
+        receiptHash:
+          type: string
+
+    TrustRoot:
+
+      type: object
+
+      properties:
+
+        rootHash:
+          type: string
+
+        createdAt:
+          type: string
+
+    VerificationResult:
+
+      type: object
+
+      properties:
+
+        valid:
+          type: boolean
