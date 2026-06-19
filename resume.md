@@ -1,436 +1,168 @@
-Yes, for a \*\*V1 integration platform\*\*, you are surprisingly close.
+Parmana Trust Core – Step 5: Verification Chain Consolidation
 
 
 
-Based on what you've demonstrated, Parmana already has the core APIs needed for external systems to integrate.
+Goal:
+
+Unify the existing authority, attestation, verification, receipt, and transparency flows into a single authoritative trust workflow.
 
 
 
-Current APIs:
+Current State:
 
 
 
-```text id="0ahfwp"
+✓ Task Registry
 
-POST /tasks
+✓ Policy Registry
 
-GET  /tasks
+✓ Schema Registry
 
-GET  /tasks/:taskId
+✓ Signal Registry
 
+✓ Authority Evaluation
 
+✓ Decision IDs
 
-POST /policies
+✓ Decision Persistence
 
-GET  /policies
+✓ Attestation Generation
 
-GET  /policies/:policyId
+✓ Attestation Persistence
 
+✓ Verification Receipts
 
+✓ Receipt Persistence
 
-POST /schemas
-
-GET  /schemas
-
-GET  /schemas/:schemaId
-
-
-
-POST /signals
-
-GET  /signals
-
-GET  /signals/:signalId
+✓ Transparency Log Integration
 
 
 
-POST /evaluate
-
-```
+Objective:
 
 
 
-And you've proven:
+Create a single end-to-end workflow:
 
 
-
-```text id="dgz0kb"
-
-External System
-
-&#x20;      ↓
-
-POST /evaluate
-
-&#x20;      ↓
 
 Task
 
+↓
+
 Policy
+
+↓
 
 Schema
 
-Signals
+↓
 
-&#x20;      ↓
+Trusted Signals
+
+↓
+
+Authority Evaluation
+
+↓
 
 Decision
 
-```
+↓
 
+Decision Persistence
 
+↓
 
-works end-to-end.
+Attestation Generation
 
+↓
 
+Attestation Persistence
 
-\---
+↓
 
+Attestation Verification
 
+↓
 
-\## What is missing before external customers can use it?
+Verification Receipt
 
+↓
 
+Receipt Persistence
 
-\### 1. Decision ID
+↓
 
+Transparency Log Entry
 
 
-Current:
 
+Tasks:
 
 
-```json id="i4jqm7"
 
-{
+1\. Inspect existing verifier package and identify duplicate verification paths.
 
-&#x20; "decision":"approved",
+2\. Compare:
 
-&#x20; "reasons":\[]
 
-}
 
-```
+&#x20;  \* /evaluate
 
+&#x20;  \* /attest
 
+&#x20;  \* /verify
 
-Should become:
+&#x20;  \* /verify-attestation
 
+3\. Determine canonical workflow and deprecate duplicate routes.
 
+4\. Refactor verification to use persisted attestations whenever possible.
 
-```json id="v8on1f"
+5\. Ensure every receipt references:
 
-{
 
-&#x20; "decisionId":"dec\_123",
 
-&#x20; "decision":"approved",
+&#x20;  \* decisionId
 
-&#x20; "reasons":\[]
+&#x20;  \* policyId
 
-}
+&#x20;  \* policyVersion
 
-```
+&#x20;  \* attestation hash
 
+6\. Ensure every transparency log entry references:
 
 
-This is critical.
 
+&#x20;  \* receiptId
 
+&#x20;  \* decisionId
 
-Every integration partner needs a reference.
+7\. Create architecture diagram for final workflow.
 
+8\. Update README and API documentation.
 
+9\. Produce a final "Authority → Attestation → Receipt" sequence diagram.
 
-\---
+10\. Prepare for Step 6: Trust Federation and External Verification APIs.
 
 
 
-\### 2. Decision Persistence
+Deliverables:
 
 
 
-Today:
+\* Unified workflow
 
+\* Reduced duplicate code paths
 
+\* Canonical API sequence
 
-```text id="yjlwmr"
+\* Updated architecture documentation
 
-Decision returned
-
-```
-
-
-
-Need:
-
-
-
-```text id="l6vr8x"
-
-Decision returned
-
-Decision stored
-
-```
-
-
-
-in:
-
-
-
-```text id="yn6yxk"
-
-authority\_decisions
-
-```
-
-
-
-table.
-
-
-
-\---
-
-
-
-\### 3. Verification Receipt API
-
-
-
-External systems will ask:
-
-
-
-```text id="jlwm50"
-
-How do I prove Parmana approved this?
-
-```
-
-
-
-Need:
-
-
-
-```text id="g3zr3s"
-
-GET /receipts/:receiptId
-
-```
-
-
-
-\---
-
-
-
-\### 4. OpenAPI / Swagger
-
-
-
-For third-party developers:
-
-
-
-```text id="1kpfh2"
-
-POST /evaluate
-
-```
-
-
-
-must be documented.
-
-
-
-You already have Swagger packages installed.
-
-
-
-\---
-
-
-
-\### 5. API Key Authentication
-
-
-
-Current:
-
-
-
-```text id="t0c9ea"
-
-Anyone can call /evaluate
-
-```
-
-
-
-Need:
-
-
-
-```text id="jlwm9v"
-
-X-API-Key
-
-```
-
-
-
-or
-
-
-
-```text id="b1l7bx"
-
-Bearer token
-
-```
-
-
-
-before exposing publicly.
-
-
-
-\---
-
-
-
-\## Can external systems integrate today?
-
-
-
-\### Example Payment System
-
-
-
-```text id="aj2k5v"
-
-Banking App
-
-&#x20;    ↓
-
-POST /evaluate
-
-{
-
-&#x20; taskId: "payment.release",
-
-&#x20; signals: {
-
-&#x20;     managerApproved: true,
-
-&#x20;     kycVerified: true
-
-&#x20; }
-
-}
-
-&#x20;    ↓
-
-approved
-
-&#x20;    ↓
-
-Release Payment
-
-```
-
-
-
-Yes.
-
-
-
-That workflow already works.
-
-
-
-\---
-
-
-
-\## Readiness Assessment
-
-
-
-```text id="tz4i0d"
-
-Registry Platform        100%
-
-Authority Evaluation      90%
-
-Persistence               95%
-
-Developer APIs            80%
-
-Security                  20%
-
-Receipts                  10%
-
-Attestations              10%
-
-Production Readiness      60%
-
-```
-
-
-
-\---
-
-
-
-The most important observation is:
-
-
-
-```text id="8w73rk"
-
-You are no longer building a prototype.
-
-
-
-You now have a functioning Authority Verification API.
-
-```
-
-
-
-The next milestone is not "make evaluation work."
-
-
-
-You already did that.
-
-
-
-The next milestone is:
-
-
-
-```text id="dxlmmd"
-
-Make decisions
-
-verifiable,
-
-auditable,
-
-and externally consumable.
-
-```
-
-
-
-That is where Decision IDs, Receipts, Attestations, and Transparency Logs come in. Those features turn Parmana from an internal rules engine into an integration-ready trust infrastructure.
+\* Production-ready trust lifecycle
 
 
 
