@@ -1,3 +1,6 @@
+import invariantsRoute
+  from "./routes/invariants.js";
+
 import verifyAttestationRoute
   from "./routes/verify-attestation.js";
 import transparencyGetRoute
@@ -40,6 +43,9 @@ import swaggerRoute
   from "./routes/swagger.js";
 app.use(
   rootRoute
+);
+app.use(
+  invariantsRoute
 );
 app.use(
   trustRootCurrentRoute

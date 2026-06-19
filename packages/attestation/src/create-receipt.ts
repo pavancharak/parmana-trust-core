@@ -1,5 +1,7 @@
 import crypto from "node:crypto";
-
+import {
+  enforceInvariant
+} from "@parmana/contracts";
 import type {
   VerificationReceipt
 } from "@parmana/contracts";
@@ -9,8 +11,14 @@ export function createReceipt(
   valid: boolean
 ): VerificationReceipt {
 
-  return {
+  enforceInvariant(
+    "INV-102",
+    Boolean(
+      decisionId
+    )
+  );
 
+  return {
     receiptId:
       crypto.randomUUID(),
 

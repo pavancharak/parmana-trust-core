@@ -1,5 +1,7 @@
 import express from "express";
-
+import {
+  enforceInvariant
+} from "@parmana/contracts";
 import {
   supabase
 } from "@parmana/audit-db";
@@ -17,7 +19,11 @@ router.post(
         receiptId,
         receiptHash
       } = req.body;
-
+enforceInvariant(
+  "INV-103",
+  Boolean(receiptId) &&
+  Boolean(receiptHash)
+);
       const {
         data,
         error

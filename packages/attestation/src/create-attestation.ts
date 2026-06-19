@@ -1,5 +1,7 @@
 import crypto from "node:crypto";
-
+import {
+  enforceInvariant
+} from "@parmana/contracts";
 import type {
   DecisionAttestation
 } from "./types.js";
@@ -8,9 +10,17 @@ export function createAttestation(
   evaluation: any
 ): DecisionAttestation {
 
+
+  enforceInvariant(
+    "INV-100",
+    Boolean(
+      evaluation.decision
+    )
+  );
+
+
   const createdAt =
     new Date().toISOString();
-
   const outcome = {
     result:
       evaluation.decision.action
@@ -41,7 +51,7 @@ export function createAttestation(
       )
       .digest("hex");
 
-  return {
+  const attestation: DecisionAttestation = {
 
     schemaVersion: "2",
 
@@ -80,4 +90,15 @@ export function createAttestation(
 
     outcome
   };
+
+
+  enforceInvariant(
+    "INV-101",
+    Boolean(
+      attestation.decisionId
+    )
+  );
+
+
+  return attestation;
 }

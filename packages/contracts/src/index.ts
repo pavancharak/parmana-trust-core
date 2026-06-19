@@ -5,3 +5,5 @@ export * from "./attestation-v2.js";
 export * from "./policy.js";
 export * from "./task.js";
 export * from "./verification-receipt.js";
+export * from "./invariants.js";
+export * from "./enforce-invariant.js";
