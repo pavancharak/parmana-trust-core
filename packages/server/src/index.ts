@@ -48,7 +48,11 @@ import keysCurrentRouter
   from "./routes/keys-current.js";
 import verifyTrustRootRouter
   from "./routes/verify-trust-root.js";
-
+import policiesRoute
+  from "./routes/policies.js";
+app.use(
+  policiesRoute
+);
 app.use(
   rootRoute
 );
