@@ -51,6 +51,8 @@ import verifyTrustRootRouter
   from "./routes/verify-trust-root.js";
 import policiesRoute
   from "./routes/policies.js";
+import signalsRoute
+  from "./routes/signals.js";
 app.use(
   policiesRoute
 );
@@ -62,6 +64,9 @@ app.use(
 );
 app.use(
   tasksRoute
+);
+app.use(
+  signalsRoute
 );
 app.use(
   verifyTrustRootRouter

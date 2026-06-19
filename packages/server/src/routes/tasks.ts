@@ -13,14 +13,15 @@ const router =
 
 router.post(
   "/tasks",
-  (req, res) => {
+  async (req, res) => {
 
     const task =
-      createTask(
+      await createTask(
         req.body
       );
 
-    res.status(201)
+    res
+      .status(201)
       .json(task);
 
   }
@@ -28,10 +29,13 @@ router.post(
 
 router.get(
   "/tasks",
-  (_req, res) => {
+  async (_req, res) => {
+
+    const tasks =
+      await listTasks();
 
     res.json(
-      listTasks()
+      tasks
     );
 
   }
@@ -39,10 +43,10 @@ router.get(
 
 router.get(
   "/tasks/:taskId",
-  (req, res) => {
+  async (req, res) => {
 
     const task =
-      getTask(
+      await getTask(
         req.params.taskId
       );
 

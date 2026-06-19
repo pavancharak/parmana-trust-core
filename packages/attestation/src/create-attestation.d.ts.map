@@ -1,1 +1,1 @@
-{"version":3,"file":"create-attestation.d.ts","sourceRoot":"","sources":["create-attestation.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EACV,mBAAmB,EACpB,MAAM,YAAY,CAAC;AAEpB,wBAAgB,iBAAiB,CAC/B,WAAW,EAAE,mBAAmB,GAC/B,mBAAmB,CAGrB"}
+{"version":3,"file":"create-attestation.d.ts","sourceRoot":"","sources":["create-attestation.ts"],"names":[],"mappings":"AAMA,OAAO,KAAK,EACV,mBAAmB,EACpB,MAAM,YAAY,CAAC;AAMpB,wBAAgB,iBAAiB,CAC/B,UAAU,EAAE,GAAG,GACd,mBAAmB,CAuHrB"}

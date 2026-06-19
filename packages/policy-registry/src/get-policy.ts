@@ -1,13 +1,37 @@
 import {
-  policies
-} from "./store.js";
+  supabase
+} from "@parmana/database";
 
-export function getPolicy(
+import type {
+  Policy
+} from "./types.js";
+
+export async function getPolicy(
   policyId: string
-) {
+): Promise<Policy | undefined> {
 
-  return policies.get(
-    policyId
-  );
+  const {
+    data,
+    error
+  } = await supabase
+    .from("policies")
+    .select("*")
+    .eq(
+      "policy_id",
+      policyId
+    )
+    .single();
 
+  if (error) {
+    return undefined;
+  }
+
+  return {
+    policyId: data.policy_id,
+    taskId: data.task_id,
+    schemaId: data.schema_id,
+    version: data.version,
+    status: data.status,
+    definition: data.definition
+  };
 }

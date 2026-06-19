@@ -9,16 +9,19 @@ export interface AttestationMetadata {
     issuer?: string;
     createdAt: string;
 }
+export interface DecisionOutcome {
+    result: string;
+    confidence?: number;
+}
 export interface DecisionAttestation {
     schemaVersion: "2";
     decisionId: string;
+    taskId: string;
+    policyId: string;
+    policyVersion: string;
     evidence: EvidenceRecord[];
     signatures: SignatureSet;
     metadata: AttestationMetadata;
     outcome: DecisionOutcome;
-}
-export interface DecisionOutcome {
-    result: string;
-    confidence?: number;
 }
 //# sourceMappingURL=types.d.ts.map

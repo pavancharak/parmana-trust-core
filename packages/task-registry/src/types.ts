@@ -8,4 +8,6 @@ export interface Task {
 
   active: boolean;
 
+  policyId: string;
+
 }

@@ -1,0 +1,15 @@
+{
+  "name": "@parmana/database",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.53.0",
+    "dotenv": "^17.2.0"
+  }
+}

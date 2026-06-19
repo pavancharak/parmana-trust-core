@@ -1,20 +1,30 @@
+import {
+  supabase
+} from "@parmana/database";
+
 import type {
   Task
 } from "./types.js";
 
-import {
-  tasks
-} from "./store.js";
-
-export function createTask(
+export async function createTask(
   task: Task
-): Task {
+): Promise<Task> {
 
-  tasks.set(
-    task.taskId,
-    task
-  );
+  const {
+    error
+  } = await supabase
+    .from("tasks")
+    .upsert({
+      task_id: task.taskId,
+      name: task.name,
+      description: task.description,
+      active: task.active,
+      policy_id: task.policyId
+    });
+
+  if (error) {
+    throw error;
+  }
 
   return task;
-
 }

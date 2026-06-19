@@ -13,14 +13,15 @@ const router =
 
 router.post(
   "/policies",
-  (req, res) => {
+  async (req, res) => {
 
     const policy =
-      createPolicy(
+      await createPolicy(
         req.body
       );
 
-    res.status(201)
+    res
+      .status(201)
       .json(policy);
 
   }
@@ -28,10 +29,13 @@ router.post(
 
 router.get(
   "/policies",
-  (_req, res) => {
+  async (_req, res) => {
+
+    const policies =
+      await listPolicies();
 
     res.json(
-      listPolicies()
+      policies
     );
 
   }
@@ -39,10 +43,10 @@ router.get(
 
 router.get(
   "/policies/:policyId",
-  (req, res) => {
+  async (req, res) => {
 
     const policy =
-      getPolicy(
+      await getPolicy(
         req.params.policyId
       );
 

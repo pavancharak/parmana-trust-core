@@ -1,11 +1,31 @@
 import {
-  tasks
-} from "./store.js";
+  supabase
+} from "@parmana/database";
 
-export function listTasks() {
+import type {
+  Task
+} from "./types.js";
 
-  return [
-    ...tasks.values()
-  ];
+export async function listTasks(): Promise<Task[]> {
 
+  const {
+    data,
+    error
+  } = await supabase
+    .from("tasks")
+    .select("*");
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data.map(
+    row => ({
+      taskId: row.task_id,
+      name: row.name,
+      description: row.description,
+      active: row.active,
+      policyId: row.policy_id
+    })
+  );
 }

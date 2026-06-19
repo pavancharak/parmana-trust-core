@@ -1,20 +1,31 @@
 import {
-  policies
-} from "./store.js";
+  supabase
+} from "@parmana/database";
 
 import type {
   Policy
 } from "./types.js";
 
-export function createPolicy(
+export async function createPolicy(
   policy: Policy
-): Policy {
+): Promise<Policy> {
 
-  policies.set(
-    policy.policyId,
-    policy
-  );
+  const {
+    error
+  } = await supabase
+    .from("policies")
+    .upsert({
+      policy_id: policy.policyId,
+      task_id: policy.taskId,
+      schema_id: policy.schemaId,
+      version: policy.version,
+      status: policy.status,
+      definition: policy.definition
+    });
+
+  if (error) {
+    throw error;
+  }
 
   return policy;
-
 }

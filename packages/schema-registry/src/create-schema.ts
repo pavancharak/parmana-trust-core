@@ -1,20 +1,29 @@
 import {
-  schemas
-} from "./store.js";
+  supabase
+} from "@parmana/database";
 
 import type {
   Schema
 } from "./types.js";
 
-export function createSchema(
+export async function createSchema(
   schema: Schema
-): Schema {
+): Promise<Schema> {
 
-  schemas.set(
-    schema.schemaId,
-    schema
-  );
+  const {
+    error
+  } = await supabase
+    .from("schemas")
+    .upsert({
+      schema_id: schema.schemaId,
+      policy_id: schema.policyId,
+      version: schema.version,
+      fields: schema.fields
+    });
+
+  if (error) {
+    throw error;
+  }
 
   return schema;
-
 }

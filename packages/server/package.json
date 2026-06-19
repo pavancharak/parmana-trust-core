@@ -16,6 +16,8 @@
     "@parmana/task-registry": "*",
     "@parmana/policy-registry": "*",
     "@parmana/schema-registry": "*",
+    "@parmana/authority-engine": "*",
+    "@parmana/signal-registry": "*",
     "express": "^5.1.0",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"

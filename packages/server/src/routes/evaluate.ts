@@ -12,8 +12,8 @@ import {
 } from "express";
 
 import {
-  evaluateTask
-} from "@parmana/verifier";
+  evaluateAuthority
+} from "@parmana/authority-engine";
 
 const router =
   Router();
@@ -27,11 +27,11 @@ router.post(
     try {
 
       const {
-        task,
-        signals
-      } = req.body;
+  taskId,
+  signals
+} = req.body;
 
-      if (!task) {
+      if (!taskId) {
 
         return res
           .status(400)
@@ -41,15 +41,15 @@ router.post(
           });
       }
 
-      const result =
-  evaluateTask(
-    task,
+    const result =
+  await evaluateAuthority(
+    taskId,
     signals ?? {}
   );
 
-await saveDecision(
-  result
-);
+// await saveDecision(
+ // result
+// );
 
 return res
   .status(200)

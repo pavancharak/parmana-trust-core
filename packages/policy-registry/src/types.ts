@@ -4,6 +4,8 @@ export interface Policy {
 
   taskId: string;
 
+  schemaId: string;
+
   version: string;
 
   status:

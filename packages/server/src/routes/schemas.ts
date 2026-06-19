@@ -1,4 +1,6 @@
-import { Router } from "express";
+import {
+  Router
+} from "express";
 
 import {
   createSchema,
@@ -6,16 +8,20 @@ import {
   listSchemas
 } from "@parmana/schema-registry";
 
-const router = Router();
+const router =
+  Router();
 
 router.post(
   "/schemas",
-  (req, res) => {
+  async (req, res) => {
 
     const schema =
-      createSchema(req.body);
+      await createSchema(
+        req.body
+      );
 
-    res.status(201)
+    res
+      .status(201)
       .json(schema);
 
   }
@@ -23,10 +29,13 @@ router.post(
 
 router.get(
   "/schemas",
-  (_req, res) => {
+  async (_req, res) => {
+
+    const schemas =
+      await listSchemas();
 
     res.json(
-      listSchemas()
+      schemas
     );
 
   }
@@ -34,10 +43,10 @@ router.get(
 
 router.get(
   "/schemas/:schemaId",
-  (req, res) => {
+  async (req, res) => {
 
     const schema =
-      getSchema(
+      await getSchema(
         req.params.schemaId
       );
 

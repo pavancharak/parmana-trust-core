@@ -1,11 +1,32 @@
 import {
-  policies
-} from "./store.js";
+  supabase
+} from "@parmana/database";
 
-export function listPolicies() {
+import type {
+  Policy
+} from "./types.js";
 
-  return [
-    ...policies.values()
-  ];
+export async function listPolicies(): Promise<Policy[]> {
 
+  const {
+    data,
+    error
+  } = await supabase
+    .from("policies")
+    .select("*");
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data.map(
+    row => ({
+      policyId: row.policy_id,
+      taskId: row.task_id,
+      schemaId: row.schema_id,
+      version: row.version,
+      status: row.status,
+      definition: row.definition
+    })
+  );
 }

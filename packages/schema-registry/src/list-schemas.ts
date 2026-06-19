@@ -1,11 +1,30 @@
 import {
-  schemas
-} from "./store.js";
+  supabase
+} from "@parmana/database";
 
-export function listSchemas() {
+import type {
+  Schema
+} from "./types.js";
 
-  return [
-    ...schemas.values()
-  ];
+export async function listSchemas(): Promise<Schema[]> {
 
+  const {
+    data,
+    error
+  } = await supabase
+    .from("schemas")
+    .select("*");
+
+  if (error || !data) {
+    return [];
+  }
+
+  return data.map(
+    row => ({
+      schemaId: row.schema_id,
+      policyId: row.policy_id,
+      version: row.version,
+      fields: row.fields
+    })
+  );
 }

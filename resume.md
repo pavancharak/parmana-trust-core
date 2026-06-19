@@ -1,67 +1,322 @@
-Continue Parmana development from the latest state.
+Parmana Trust Core - Phase 2
 
-Current status:
 
-Trust Core:
-- Decision verification complete
-- Attestation generation complete
-- Attestation verification complete
-- Receipt generation complete
-- Receipt verification complete
-- Transparency log complete
-- Trust root generation complete
-- Trust root verification complete
-- Trust Core invariants implemented
-- Tests passing
 
-Authority Layer:
-- Task Registry package implemented
-- GET /tasks working
-- POST /tasks working
-- GET /tasks/:taskId working
-- Turbo workspace working
-- Server starts successfully
+Current state:
 
-Canonical architecture is locked:
+
+
+Completed:
+
+
+
+\* Task Registry persisted in Supabase
+
+\* Policy Registry persisted in Supabase
+
+\* Schema Registry persisted in Supabase
+
+\* Signal Registry persisted in Supabase
+
+\* Authority Engine reads registries asynchronously
+
+\* /evaluate survives server restart
+
+\* End-to-end evaluation returns approved or denied
+
+
+
+Example:
+
+
 
 Task
- ↓
+
+→ payment.release
+
+
+
 Policy
- ↓
+
+→ payment-policy-v1
+
+
+
 Schema
- ↓
+
+→ payment-schema-v1
+
+
+
 Signals
- ↓
+
+→ managerApproved
+
+→ kycVerified
+
+
+
 Decision
- ↓
-Attestation
- ↓
-Receipt
- ↓
-Transparency
- ↓
-Trust Root
 
-Canonical positioning is locked:
+→ approved
 
-"Humans define authority. Parmana makes authority verifiable and enforceable before execution."
 
-"Organizations decide what to trust. Parmana evaluates trusted signals against policy before execution."
 
-Continue from the next unfinished milestone.
+Goal:
 
-First inspect the current repository state, identify what is already implemented, identify blockers, and then provide the next smallest executable engineering step with exact file paths, code, build commands, and verification commands.
 
-Do not repeat completed work.
-Do not rewrite architecture.
-Continue incrementally toward:
-Policy Registry → Schema Registry → Signal Registry → Authority Engine.
 
-v0.1  Trust Core Foundation        ✅
-v0.2  Trust Verification APIs      ✅
-v0.3  Task Registry                ✅
-v0.4  Policy Registry              Next
-v0.5  Schema Registry
-v0.6  Signal Registry
-v0.7  Authority Engine
-v1.0  Authority Verification Platform
+Transform Parmana from a registry-validation engine into an authority-decision engine.
+
+
+
+Phase 2 requirements:
+
+
+
+1\. Decision Model
+
+
+
+Create a Decision object:
+
+
+
+{
+
+decisionId: string,
+
+taskId: string,
+
+policyId: string,
+
+policyVersion: string,
+
+action: "approved" | "denied",
+
+reasons: string\[],
+
+timestamp: string
+
+}
+
+
+
+2\. Decision IDs
+
+
+
+Generate a UUID for every decision.
+
+
+
+Decision IDs must be unique and returned in every evaluation response.
+
+
+
+3\. Decision Persistence
+
+
+
+Persist every decision into authority\_decisions.
+
+
+
+Fields:
+
+
+
+decision\_id
+
+task\_id
+
+policy\_id
+
+policy\_version
+
+action
+
+reason
+
+decision
+
+created\_at
+
+
+
+4\. Evaluation Result
+
+
+
+Change /evaluate response to:
+
+
+
+{
+
+decisionId: "...",
+
+decision: "approved",
+
+reasons: \[]
+
+}
+
+
+
+5\. Attestation Integration
+
+
+
+When a decision is produced:
+
+
+
+\* create an attestation
+
+\* store the attestation
+
+\* link attestation to decisionId
+
+
+
+6\. Transparency Log Integration
+
+
+
+Write every decision hash to transparency\_log.
+
+
+
+Store:
+
+
+
+decisionId
+
+decisionHash
+
+timestamp
+
+
+
+7\. Verification Receipt
+
+
+
+Generate a receipt:
+
+
+
+{
+
+receiptId,
+
+decisionId,
+
+taskId,
+
+policyId,
+
+decision,
+
+attestationId,
+
+timestamp
+
+}
+
+
+
+Persist receipt.
+
+
+
+8\. Evaluation Flow
+
+
+
+Task
+
+→ Policy
+
+→ Schema
+
+→ Signal Validation
+
+→ Decision
+
+→ Decision Persistence
+
+→ Attestation
+
+→ Transparency Log
+
+→ Verification Receipt
+
+→ API Response
+
+
+
+9\. Future Policy Rules
+
+
+
+Keep architecture ready for:
+
+
+
+policy.definition.rules
+
+
+
+Examples:
+
+
+
+{
+
+"all": \[
+
+"managerApproved",
+
+"kycVerified"
+
+]
+
+}
+
+
+
+Do not implement rule evaluation yet.
+
+
+
+Only prepare interfaces and evaluation pipeline for future rule execution.
+
+
+
+Deliverable:
+
+
+
+A complete authority decision pipeline with:
+
+
+
+\* decision IDs
+
+\* persistence
+
+\* attestations
+
+\* transparency logs
+
+\* verification receipts
+
+
+
+while preserving the existing Task → Policy → Schema → Signal architecture.
+
+
+
