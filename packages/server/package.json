@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "@parmana/audit-db": "*",
+    "@parmana/task-registry": "*",
+    "@parmana/policy-registry": "*",
+    "@parmana/schema-registry": "*",
     "express": "^5.1.0",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"

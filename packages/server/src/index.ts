@@ -21,7 +21,8 @@ import rootRoute
 
 import verifyRoute
   from "./routes/verify.js";
-
+import schemasRoute
+  from "./routes/schemas.js";
 import receiptRoute
   from "./routes/receipt.js";
 import tasksRoute
@@ -67,6 +68,9 @@ app.use(
 );
 app.use(
   trustRootCurrentRoute
+);
+app.use(
+  schemasRoute
 );
 app.use(
   verifyRoute
