@@ -1,15 +1,20 @@
 import crypto from "node:crypto";
+
 import {
   enforceInvariant
 } from "@parmana/contracts";
+
 import type {
   DecisionAttestation
 } from "./types.js";
 
+import {
+  provider
+} from "./provider.js";
+
 export function createAttestation(
   evaluation: any
 ): DecisionAttestation {
-
 
   enforceInvariant(
     "INV-100",
@@ -18,12 +23,14 @@ export function createAttestation(
     )
   );
 
-
   const createdAt =
     new Date().toISOString();
+
   const outcome = {
+
     result:
       evaluation.decision.action
+
   };
 
   const attestationHash =
@@ -51,12 +58,17 @@ export function createAttestation(
       )
       .digest("hex");
 
+  const signature =
+  provider.sign(
+    attestationHash
+  );
+
   const attestation: DecisionAttestation = {
 
     schemaVersion: "2",
 
     decisionId:
-  evaluation.decisionId,
+      evaluation.decisionId,
 
     taskId:
       evaluation.task.taskId,
@@ -78,19 +90,39 @@ export function createAttestation(
     ],
 
     signatures: {
-      signatures: []
-    },
+
+  signatures: [
+
+    {
+
+      algorithm:
+  provider.algorithm(),
+
+      keyId:
+        "parmana-root-key",
+
+      value:
+        signature,
+
+      createdAt
+
+    }
+
+  ]
+
+},
 
     metadata: {
 
       profile: "default",
 
       createdAt
+
     },
 
     outcome
-  };
 
+  };
 
   enforceInvariant(
     "INV-101",
@@ -99,6 +131,6 @@ export function createAttestation(
     )
   );
 
-
   return attestation;
+
 }

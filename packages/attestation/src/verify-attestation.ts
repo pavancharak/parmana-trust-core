@@ -1,9 +1,13 @@
 import crypto from "node:crypto";
-
+import {
+  provider
+} from "./provider.js";
 import type {
   DecisionAttestation
 } from "./types.js";
-
+import {
+  enforceInvariant
+} from "@parmana/contracts";
 export function verifyAttestation(
   attestation: DecisionAttestation
 ): boolean {
@@ -17,11 +21,20 @@ export function verifyAttestation(
 
     );
 
-  if (!hashEvidence) {
+  enforceInvariant(
+  "INV-140",
+  Boolean(
+    hashEvidence
+  )
+);
 
-    return false;
+if (!hashEvidence) {
 
-  }
+  throw new Error(
+    "INV-140 violation"
+  );
+
+}
 
   const expectedHash =
     crypto
@@ -50,8 +63,41 @@ export function verifyAttestation(
       )
       .digest("hex");
 
-  return (
-    expectedHash ===
-    hashEvidence.hash
+  if (
+
+  expectedHash !==
+  hashEvidence.hash
+
+) {
+
+  return false;
+
+}
+
+const signatureRecord =
+  attestation
+    .signatures
+    .signatures[0];
+
+if (!signatureRecord) {
+
+  return false;
+
+}
+
+const valid =
+  provider.verify(
+    expectedHash,
+    signatureRecord.value
   );
+
+enforceInvariant(
+  "INV-120",
+  valid
+);
+enforceInvariant(
+  "INV-121",
+  valid
+);
+return valid;
 }

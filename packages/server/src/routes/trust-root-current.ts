@@ -1,7 +1,12 @@
 import express from "express";
 
 import crypto from "node:crypto";
-
+import {
+  provider
+} from "@parmana/attestation";;
+import {
+  enforceInvariant
+} from "@parmana/contracts";
 import {
   getReceiptHashes
 } from "@parmana/audit-db";
@@ -27,6 +32,23 @@ router.get(
           hashes
         );
 
+      const signature =
+  provider.sign(
+    rootHash
+  );
+enforceInvariant(
+  "INV-130",
+  Boolean(
+    signature
+  )
+);
+enforceInvariant(
+  "INV-130",
+  Boolean(
+    signature
+  )
+);
+
       const receiptCount =
         hashes.length;
 
@@ -42,9 +64,18 @@ router.get(
 
         rootHash,
 
+        signature,
+
+        signatureAlgorithm:
+          "ed25519",
+
+        keyId:
+          "parmana-root-key",
+
         publishedAt:
           new Date()
             .toISOString()
+
       });
 
     } catch (error) {
@@ -56,6 +87,7 @@ router.get(
             error instanceof Error
               ? error.message
               : String(error)
+
         });
 
     }

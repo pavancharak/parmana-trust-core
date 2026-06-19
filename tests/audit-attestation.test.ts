@@ -3,12 +3,17 @@ import {
   expect,
   it
 } from "vitest";
+import {
+  AuditStore
+} from "../packages/audit-db/src/audit-store.js";
 
 import {
-  AuditStore,
-  storeAttestation,
+  storeAttestation
+} from "../packages/audit-db/src/store-attestation.js";
+
+import {
   queryByType
-} from "../packages/audit-db/src/index.js";
+} from "../packages/audit-db/src/query-by-type.js";
 
 describe(
   "audit attestation",

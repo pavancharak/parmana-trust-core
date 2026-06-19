@@ -1,6 +1,12 @@
 import express from "express";
 
 import crypto from "node:crypto";
+import {
+  enforceInvariant
+} from "@parmana/contracts";
+import {
+  provider
+} from "@parmana/attestation";
 
 import {
   getReceiptHashes,
@@ -28,6 +34,22 @@ router.post(
           hashes
         );
 
+      const signature =
+        provider.sign(
+          rootHash
+        );
+enforceInvariant(
+  "INV-130",
+  Boolean(
+    signature
+  )
+);
+enforceInvariant(
+  "INV-130",
+  Boolean(
+    signature
+  )
+);
       const trustRoot = {
 
         rootId:
@@ -35,12 +57,21 @@ router.post(
 
         rootHash,
 
+        signature,
+
+        signatureAlgorithm:
+          provider.algorithm(),
+
+        keyId:
+          "parmana-root-key",
+
         receiptCount:
           hashes.length,
 
         publishedAt:
           new Date()
             .toISOString()
+
       };
 
       await saveTrustRoot(
@@ -60,6 +91,7 @@ router.post(
             error instanceof Error
               ? error.message
               : String(error)
+
         });
 
     }

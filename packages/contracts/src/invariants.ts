@@ -86,10 +86,124 @@ export const INVARIANT_REGISTRY = {
       "trust-root"
 
   },
+"INV-105": {
+
+  id: "INV-105",
+
+  description:
+    "Trust root generation is reproducible",
+
+  boundary:
+    "trust-root"
+
+},
 
 
+"INV-120": {
+
+  id: "INV-120",
+
+  description:
+    "Attestation signatures are cryptographically valid",
+
+  boundary:
+    "attestation"
+
+},
+
+
+"INV-121": {
+
+  id: "INV-121",
+
+  description:
+    "Attestation signatures are independently verifiable",
+
+  boundary:
+    "attestation"
+
+},
+
+
+"INV-130": {
+
+  id: "INV-130",
+
+  description:
+    "Published trust roots are signed",
+
+  boundary:
+    "trust-root"
+
+},
+
+
+"INV-131": {
+
+  id: "INV-131",
+
+  description:
+    "Trust root signatures are independently verifiable",
+
+  boundary:
+    "trust-root"
+
+},
+"INV-140": {
+
+  id: "INV-140",
+
+  description:
+    "Evidence hashes are immutable and verifiable",
+
+  boundary:
+    "attestation"
+
+},
+"INV-150": {
+
+  id: "INV-150",
+
+  description:
+    "Evidence content changes invalidate existing attestations",
+
+  boundary:
+    [
+      "attestation",
+      "verification"
+    ]
+
+},
+"INV-160": {
+
+  id: "INV-160",
+
+  description:
+    "Verification receipts are cryptographically bound to verified attestations",
+
+  boundary:
+    [
+      "receipt",
+      "verification"
+    ]
+
+},
+
+"INV-170": {
+
+  id: "INV-170",
+
+  description:
+    "Receipt history is append-only and cryptographically linked",
+
+  boundary:
+    [
+      "receipt",
+      "transparency"
+    ]
+
+},
   "META-010": {
-
     id: "META-010",
 
     description:

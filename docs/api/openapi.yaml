@@ -1,0 +1,31 @@
+openapi: 3.1.0
+
+info:
+  title: Parmana Trust Core API
+  version: 0.2.0
+
+paths:
+
+  /attest:
+    post:
+      summary: Create attestation
+
+  /verify-attestation:
+    post:
+      summary: Verify attestation
+
+  /receipt:
+    post:
+      summary: Create verification receipt
+
+  /trust-root/current:
+    get:
+      summary: Get current trust root
+
+  /trust-root/verify:
+    post:
+      summary: Verify trust root
+
+  /keys/current:
+    get:
+      summary: Get active verification key

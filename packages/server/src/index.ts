@@ -41,11 +41,21 @@ import versionRoute
   from "./routes/version.js";
 import swaggerRoute
   from "./routes/swagger.js";
+import verifyTrustRootRoute
+  from "./routes/verify-trust-root.js";
+import keysCurrentRouter
+  from "./routes/keys-current.js";
+import verifyTrustRootRouter
+  from "./routes/verify-trust-root.js";
+
 app.use(
   rootRoute
 );
 app.use(
   invariantsRoute
+);
+app.use(
+  verifyTrustRootRouter
 );
 app.use(
   trustRootCurrentRoute
@@ -54,10 +64,16 @@ app.use(
   verifyRoute
 );
 app.use(
+  keysCurrentRouter
+);
+app.use(
   transparencyProofRoute
 );
 app.use(
   evaluateRoute
+);
+app.use(
+  verifyTrustRootRoute
 );
 app.use(
   transparencyRoute
