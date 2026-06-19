@@ -16,3 +16,5 @@ export * from "./save-attestation.js";
 export * from "./save-decision.js";
 export * from "./save-trust-root.js";
 export * from "./get-receipt-hashes.js";
+export * from "./create-receipt.js";
+export * from "./get-attestation.js";

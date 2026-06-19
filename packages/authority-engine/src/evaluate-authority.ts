@@ -1,4 +1,8 @@
 import {
+  randomUUID
+} from "node:crypto";
+
+import {
   getTask
 } from "@parmana/task-registry";
 
@@ -30,15 +34,27 @@ export async function evaluateAuthority(
 ) {
 
   const task =
-  await getTask(
-    taskId
-  );
+    await getTask(
+      taskId
+    );
 
   if (!task) {
 
     return {
 
-      decision: "denied",
+      decisionId:
+        randomUUID(),
+
+      taskId,
+
+      policyId:
+        "unknown",
+
+      policyVersion:
+        "unknown",
+
+      decision:
+        "denied",
 
       reasons: [
         "task not found"
@@ -48,19 +64,28 @@ export async function evaluateAuthority(
 
   }
 
-  const taskRecord =
-    task;
-
   const policy =
-  await getPolicy(
-    taskRecord.policyId
-  );
+    await getPolicy(
+      task.policyId
+    );
 
   if (!policy) {
 
     return {
 
-      decision: "denied",
+      decisionId:
+        randomUUID(),
+
+      taskId,
+
+      policyId:
+        task.policyId,
+
+      policyVersion:
+        "unknown",
+
+      decision:
+        "denied",
 
       reasons: [
         "policy not found"
@@ -70,19 +95,28 @@ export async function evaluateAuthority(
 
   }
 
-  const policyRecord =
-    policy;
-
   const schema =
-  await getSchema(
-    policyRecord.schemaId
-  );
+    await getSchema(
+      policy.schemaId
+    );
 
   if (!schema) {
 
     return {
 
-      decision: "denied",
+      decisionId:
+        randomUUID(),
+
+      taskId,
+
+      policyId:
+        policy.policyId,
+
+      policyVersion:
+        policy.version,
+
+      decision:
+        "denied",
 
       reasons: [
         "schema not found"
@@ -92,19 +126,16 @@ export async function evaluateAuthority(
 
   }
 
-  const schemaRecord =
-    schema;
-
   const schemaErrors =
     validateSchema(
-      schemaRecord,
+      schema,
       signals
     );
 
   const signalErrors =
-  await validateSignals(
+    await validateSignals(
 
-      schemaRecord.fields.map(
+      schema.fields.map(
 
         field =>
           field.name
@@ -121,7 +152,20 @@ export async function evaluateAuthority(
 
   ];
 
+  const decisionId =
+    randomUUID();
+
   return {
+
+    decisionId,
+
+    taskId,
+
+    policyId:
+      policy.policyId,
+
+    policyVersion:
+      policy.version,
 
     decision:
 

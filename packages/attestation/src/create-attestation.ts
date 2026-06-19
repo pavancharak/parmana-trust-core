@@ -28,10 +28,10 @@ export function createAttestation(
 
   const outcome = {
 
-    result:
-      evaluation.decision.action
+  result:
+    evaluation.decision
 
-  };
+};
 
   const attestationHash =
     crypto
@@ -41,13 +41,13 @@ export function createAttestation(
         JSON.stringify({
 
           taskId:
-            evaluation.task.taskId,
+            evaluation.taskId,
 
           policyId:
-            evaluation.policy.policyId,
+            evaluation.policyId,
 
           policyVersion:
-            evaluation.policy.policyVersion,
+            evaluation.policyVersion,
 
           outcome,
 
@@ -71,13 +71,13 @@ export function createAttestation(
       evaluation.decisionId,
 
     taskId:
-      evaluation.task.taskId,
+      evaluation.taskId,
 
     policyId:
-      evaluation.policy.policyId,
+      evaluation.policyId,
 
     policyVersion:
-      evaluation.policy.policyVersion,
+      evaluation.policyVersion,
 
     evidence: [
 

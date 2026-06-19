@@ -3,7 +3,14 @@ import {
 } from "./supabase.js";
 
 export async function saveDecision(
-  decision: any
+  decision: {
+    decisionId: string;
+    taskId: string;
+    policyId: string;
+    policyVersion: string;
+    decision: string;
+    reasons: string[];
+  }
 ) {
 
   const {
@@ -20,19 +27,21 @@ export async function saveDecision(
         decision.decisionId,
 
       task_id:
-        decision.task.taskId,
+        decision.taskId,
 
       policy_id:
-        decision.policy.policyId,
+        decision.policyId,
 
       policy_version:
-        decision.policy.policyVersion,
+        decision.policyVersion,
 
       action:
-        decision.decision.action,
+        decision.decision,
 
       reason:
-        decision.decision.reason,
+        decision.reasons.join(
+          "; "
+        ),
 
       decision
 
@@ -43,4 +52,5 @@ export async function saveDecision(
     throw error;
 
   }
+
 }

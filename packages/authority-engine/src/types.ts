@@ -12,6 +12,14 @@ export interface EvaluationRequest {
 
 export interface EvaluationResult {
 
+  decisionId: string;
+
+  taskId: string;
+
+  policyId: string;
+
+  policyVersion: string;
+
   decision:
     | "approved"
     | "denied";

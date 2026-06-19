@@ -1,6 +1,11 @@
 import {
-  saveDecision
+  saveDecision,
+  saveAttestation
 } from "@parmana/audit-db";
+
+import {
+  createAttestation
+} from "@parmana/attestation";
 
 import type {
   Request,
@@ -27,9 +32,9 @@ router.post(
     try {
 
       const {
-  taskId,
-  signals
-} = req.body;
+        taskId,
+        signals
+      } = req.body;
 
       if (!taskId) {
 
@@ -39,25 +44,57 @@ router.post(
             error:
               "task is required"
           });
+
       }
 
-    const result =
-  await evaluateAuthority(
-    taskId,
-    signals ?? {}
-  );
+      const result =
+        await evaluateAuthority(
+          taskId,
+          signals ?? {}
+        );
 
-// await saveDecision(
- // result
-// );
+      await saveDecision({
 
-return res
-  .status(200)
-  .json(
-    result
-  );
+        decisionId:
+          result.decisionId,
+
+        taskId:
+          result.taskId,
+
+        policyId:
+          result.policyId,
+
+        policyVersion:
+          result.policyVersion,
+
+        decision:
+          result.decision,
+
+        reasons:
+          result.reasons
+
+      });
+
+      const attestation =
+        createAttestation(
+          result
+        );
+
+      await saveAttestation(
+        attestation
+      );
+
+      return res
+        .status(200)
+        .json(
+          result
+        );
 
     } catch (error) {
+
+      console.error(
+        error
+      );
 
       return res
         .status(400)
@@ -70,7 +107,9 @@ return res
               ? error.message
 
               : "Unknown error"
+
         });
+
     }
   }
 );

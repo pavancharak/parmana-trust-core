@@ -1,3 +1,7 @@
+import {
+  randomUUID
+} from "node:crypto";
+
 import type {
   EvaluationRequest,
   EvaluationResult
@@ -28,6 +32,18 @@ export function evaluate(
   }
 
   return {
+
+    decisionId:
+      randomUUID(),
+
+    taskId:
+      request.taskId ?? "unknown",
+
+    policyId:
+      "unknown",
+
+    policyVersion:
+      "unknown",
 
     decision:
 
