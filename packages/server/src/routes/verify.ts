@@ -1,5 +1,6 @@
 import crypto
   from "node:crypto";
+
 import {
   AuditDbClient
 } from "@parmana/audit-db";
@@ -27,8 +28,10 @@ import {
 import type {
   VerificationReceipt
 } from "../types/verification-receipt.js";
+
 const auditDb =
   new AuditDbClient();
+
 const router =
   Router();
 
@@ -38,6 +41,7 @@ router.post(
     req,
     res
   ) => {
+
     try {
 
       if (
@@ -51,6 +55,7 @@ router.post(
             error:
               "attestation and policy are required"
           });
+
       }
 
       const result =
@@ -65,8 +70,20 @@ router.post(
         receiptId:
           crypto.randomUUID(),
 
+        subjectId:
+          req.body.attestation.subjectId,
+
         decisionId:
           req.body.attestation.decisionId,
+
+taskId:
+  req.body.attestation.taskId,
+
+        policyId:
+          req.body.attestation.policyId,
+
+        policyVersion:
+          req.body.attestation.policyVersion,
 
         valid:
           result.valid,
@@ -80,43 +97,55 @@ router.post(
         verifiedAt:
           new Date()
             .toISOString()
+
       };
 
       receipts.set(
         receipt.receiptId,
         receipt
       );
-     await auditDb
-  .recordVerificationReceipt(
-    receipt
-  );
-const receiptHash =
-  hashReceipt(
-    receipt
-  );
-
-await appendEntry(
-
-  receipt.receiptId,
-
-  receiptHash
+console.log(
+  "RECEIPT ID:",
+  receipt.receiptId
 );
-    res.json({
 
-  ...receipt,
+console.log(
+  receipt
+);
+      await auditDb
+        .recordVerificationReceipt(
+          receipt
+        );
 
-  receiptHash
-});
+      const receiptHash =
+        hashReceipt(
+          receipt
+        );
+
+      await appendEntry(
+        receipt.receiptId,
+        receiptHash
+      );
+
+      res.json({
+
+        ...receipt,
+
+        receiptHash
+
+      });
 
     } catch (error) {
 
       res
         .status(400)
         .json({
+
           error:
             error instanceof Error
               ? error.message
               : "Unknown error"
+
         });
 
     }

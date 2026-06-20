@@ -8,7 +8,15 @@ import type {
 
 export function createReceipt(
 
+  subjectId: string,
+
   decisionId: string,
+
+  taskId: string,
+
+  policyId: string,
+
+  policyVersion: string,
 
   valid: boolean
 
@@ -19,7 +27,15 @@ export function createReceipt(
     receiptId:
       randomUUID(),
 
+    subjectId,
+
     decisionId,
+
+    taskId,
+
+    policyId,
+
+    policyVersion,
 
     valid,
 

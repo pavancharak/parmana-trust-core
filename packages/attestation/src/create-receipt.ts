@@ -1,28 +1,48 @@
 import crypto from "node:crypto";
+
 import {
   enforceInvariant
 } from "@parmana/contracts";
+
 import type {
   VerificationReceipt
 } from "@parmana/contracts";
 
 export function createReceipt(
+
+  subjectId: string,
+
   decisionId: string,
+
+  taskId: string,
+
+  policyId: string,
+
+  policyVersion: string,
+
   valid: boolean
+
 ): VerificationReceipt {
 
   enforceInvariant(
     "INV-102",
-    Boolean(
-      decisionId
-    )
+    Boolean(decisionId)
   );
 
   return {
+
     receiptId:
       crypto.randomUUID(),
 
+    subjectId,
+
     decisionId,
+
+    taskId,
+
+    policyId,
+
+    policyVersion,
 
     valid,
 
@@ -39,8 +59,14 @@ export function createReceipt(
       crypto
         .createHash("sha256")
         .update(
-          decisionId +
-          String(valid)
+          JSON.stringify({
+            subjectId,
+            decisionId,
+            taskId,
+            policyId,
+            policyVersion,
+            valid
+          })
         )
         .digest("hex")
   };

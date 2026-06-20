@@ -7,7 +7,10 @@ import transparencyGetRoute
   from "./routes/transparency-get.js";
 import evaluateRoute
   from "./routes/evaluate.js";
-
+import executeRoute
+  from "./routes/execute.js";
+import executionRoute
+  from "./routes/execution.js";
 import attestRoute
   from "./routes/attest.js";
 import transparencyRoute
@@ -63,6 +66,9 @@ app.use(
   invariantsRoute
 );
 app.use(
+  executeRoute
+);
+app.use(
   tasksRoute
 );
 app.use(
@@ -88,6 +94,9 @@ app.use(
 );
 app.use(
   evaluateRoute
+);
+app.use(
+  executionRoute
 );
 app.use(
   verifyTrustRootRoute

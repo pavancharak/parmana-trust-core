@@ -2,13 +2,23 @@ export interface VerificationReceipt {
 
   receiptId: string;
 
+  subjectId: string;
+
   decisionId: string;
+
+  taskId: string;
+
+  policyId: string;
+
+  policyVersion: string;
 
   valid: boolean;
 
-  verifiedAlgorithms: string[];
+  verifiedAlgorithms:
+    string[];
 
-  failedAlgorithms: string[];
+  failedAlgorithms:
+    string[];
 
   verifiedAt: string;
 

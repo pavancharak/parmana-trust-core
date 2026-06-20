@@ -32,13 +32,21 @@ router.post(
 
 
       const receipt =
-        createReceipt(
+  createReceipt(
 
-          attestation.decisionId,
+    attestation.subjectId,
 
-          verified
+    attestation.decisionId,
 
-        );
+    attestation.taskId,
+
+    attestation.policyId,
+
+    attestation.policyVersion,
+
+    verified
+
+  );
 
 
       verifyReceipt(

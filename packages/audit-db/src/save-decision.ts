@@ -5,6 +5,7 @@ import {
 export async function saveDecision(
   decision: {
     decisionId: string;
+    subjectId: string;
     taskId: string;
     policyId: string;
     policyVersion: string;
@@ -23,29 +24,32 @@ export async function saveDecision(
 
     .insert({
 
-      decision_id:
-        decision.decisionId,
+  decision_id:
+    decision.decisionId,
 
-      task_id:
-        decision.taskId,
+  subject_id:
+    decision.subjectId,
 
-      policy_id:
-        decision.policyId,
+  task_id:
+    decision.taskId,
 
-      policy_version:
-        decision.policyVersion,
+  policy_id:
+    decision.policyId,
 
-      action:
-        decision.decision,
+  policy_version:
+    decision.policyVersion,
 
-      reason:
-        decision.reasons.join(
-          "; "
-        ),
+  action:
+    decision.decision,
 
-      decision
+  reason:
+    decision.reasons.join(
+      "; "
+    ),
 
-    });
+  decision
+
+});
 
   if (error) {
 

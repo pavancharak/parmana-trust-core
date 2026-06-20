@@ -29,12 +29,25 @@ router.post(
     req: Request,
     res: Response
   ) => {
+
     try {
 
       const {
+        subjectId,
         taskId,
         signals
       } = req.body;
+
+      if (!subjectId) {
+
+        return res
+          .status(400)
+          .json({
+            error:
+              "subjectId is required"
+          });
+
+      }
 
       if (!taskId) {
 
@@ -49,6 +62,7 @@ router.post(
 
       const result =
         await evaluateAuthority(
+          subjectId,
           taskId,
           signals ?? {}
         );
@@ -57,6 +71,9 @@ router.post(
 
         decisionId:
           result.decisionId,
+
+        subjectId:
+          result.subjectId,
 
         taskId:
           result.taskId,
@@ -111,6 +128,7 @@ router.post(
         });
 
     }
+
   }
 );
 

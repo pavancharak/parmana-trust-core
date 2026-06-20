@@ -34,8 +34,20 @@ export class AuditDbClient {
         receipt_id:
           receipt.receiptId,
 
+        subject_id:
+          receipt.subjectId,
+
         decision_id:
           receipt.decisionId,
+
+        task_id:
+          receipt.taskId,
+
+        policy_id:
+          receipt.policyId,
+
+        policy_version:
+          receipt.policyVersion,
 
         valid:
           receipt.valid,
@@ -51,12 +63,15 @@ export class AuditDbClient {
 
         receipt_hash:
           receiptHash
+
       });
 
     if (error) {
 
       throw error;
+
     }
+
   }
 
   async getVerificationReceipt(
@@ -84,8 +99,11 @@ export class AuditDbClient {
     if (error) {
 
       throw error;
+
     }
 
     return data;
+
   }
+
 }

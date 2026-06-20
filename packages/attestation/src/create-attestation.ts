@@ -40,20 +40,23 @@ export function createAttestation(
 
         JSON.stringify({
 
-          taskId:
-            evaluation.taskId,
+  subjectId:
+    evaluation.subjectId,
 
-          policyId:
-            evaluation.policyId,
+  taskId:
+    evaluation.taskId,
 
-          policyVersion:
-            evaluation.policyVersion,
+  policyId:
+    evaluation.policyId,
 
-          outcome,
+  policyVersion:
+    evaluation.policyVersion,
 
-          createdAt
+  outcome,
 
-        })
+  createdAt
+
+})
 
       )
       .digest("hex");
@@ -65,13 +68,16 @@ export function createAttestation(
 
   const attestation: DecisionAttestation = {
 
-    schemaVersion: "2",
+  schemaVersion: "2",
 
-    decisionId:
-      evaluation.decisionId,
+  decisionId:
+    evaluation.decisionId,
 
-    taskId:
-      evaluation.taskId,
+  subjectId:
+    evaluation.subjectId,
+
+  taskId:
+    evaluation.taskId,
 
     policyId:
       evaluation.policyId,

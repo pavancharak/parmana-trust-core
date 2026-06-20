@@ -24,6 +24,8 @@ import {
 
 export async function evaluateAuthority(
 
+  subjectId: string,
+
   taskId: string,
 
   signals: Record<
@@ -44,6 +46,8 @@ export async function evaluateAuthority(
 
       decisionId:
         randomUUID(),
+
+      subjectId,
 
       taskId,
 
@@ -76,6 +80,8 @@ export async function evaluateAuthority(
       decisionId:
         randomUUID(),
 
+      subjectId,
+
       taskId,
 
       policyId:
@@ -106,6 +112,8 @@ export async function evaluateAuthority(
 
       decisionId:
         randomUUID(),
+
+      subjectId,
 
       taskId,
 
@@ -158,6 +166,8 @@ export async function evaluateAuthority(
   return {
 
     decisionId,
+
+    subjectId,
 
     taskId,
 

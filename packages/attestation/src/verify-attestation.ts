@@ -43,22 +43,25 @@ if (!hashEvidence) {
 
         JSON.stringify({
 
-          taskId:
-            attestation.taskId,
+  subjectId:
+    attestation.subjectId,
 
-          policyId:
-            attestation.policyId,
+  taskId:
+    attestation.taskId,
 
-          policyVersion:
-            attestation.policyVersion,
+  policyId:
+    attestation.policyId,
 
-          outcome:
-            attestation.outcome,
+  policyVersion:
+    attestation.policyVersion,
 
-          createdAt:
-            attestation.metadata.createdAt
+  outcome:
+    attestation.outcome,
 
-        })
+  createdAt:
+    attestation.metadata.createdAt
+
+})
 
       )
       .digest("hex");

@@ -25,8 +25,9 @@ export interface DecisionAttestation {
 
   decisionId: string;
 
-  taskId: string;
+  subjectId: string;
 
+  taskId: string;
   policyId: string;
 
   policyVersion: string;

@@ -31,30 +31,33 @@ export function evaluate(
 
   }
 
-  return {
+ return {
 
-    decisionId:
-      randomUUID(),
+  decisionId:
+    randomUUID(),
 
-    taskId:
-      request.taskId ?? "unknown",
+  subjectId:
+    request.subjectId,
 
-    policyId:
-      "unknown",
+  taskId:
+    request.taskId ?? "unknown",
 
-    policyVersion:
-      "unknown",
+  policyId:
+    "unknown",
 
-    decision:
+  policyVersion:
+    "unknown",
 
-      reasons.length === 0
+  decision:
 
-        ? "approved"
+    reasons.length === 0
 
-        : "denied",
+      ? "approved"
 
-    reasons
+      : "denied",
 
-  };
+  reasons
+
+};
 
 }
