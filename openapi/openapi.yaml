@@ -2,11 +2,9 @@ openapi: 3.1.0
 
 info:
   title: Parmana Trust Core API
-  version: 0.1.0
+  version: 0.3.0
   description: >
-    Parmana evaluates trusted signals against policy before execution.
-    Every decision becomes attestable, verifiable, auditable,
-    and transparently published.
+    Parmana verifies human-defined authority before execution.
 
 servers:
   - url: http://localhost:3000
@@ -15,6 +13,7 @@ tags:
   - name: Authority
   - name: Attestation
   - name: Verification
+  - name: Execution
   - name: Transparency
   - name: Trust Roots
   - name: Invariants
@@ -25,8 +24,8 @@ paths:
     post:
       tags:
         - Authority
-      operationId: evaluateTask
-      summary: Evaluate a task against policy
+      operationId: evaluateAuthority
+      summary: Evaluate authority
       requestBody:
         required: true
         content:
@@ -35,7 +34,7 @@ paths:
               $ref: '#/components/schemas/EvaluateRequest'
       responses:
         '200':
-          description: Evaluation result
+          description: Authority decision
 
   /attest:
     post:
@@ -43,48 +42,16 @@ paths:
         - Attestation
       operationId: createAttestation
       summary: Create attestation
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EvaluateRequest'
       responses:
         '200':
           description: Attestation created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Attestation'
 
-  /verify-attestation:
+  /verify:
     post:
       tags:
         - Verification
-      operationId: verifyAttestation
+      operationId: verifyDecision
       summary: Verify attestation
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Attestation'
-      responses:
-        '200':
-          description: Verification result
-
-  /receipt:
-    post:
-      tags:
-        - Verification
-      operationId: createReceipt
-      summary: Generate verification receipt
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Attestation'
       responses:
         '200':
           description: Verification receipt
@@ -93,109 +60,59 @@ paths:
               schema:
                 $ref: '#/components/schemas/VerificationReceipt'
 
-  /transparency:
+  /execute:
     post:
       tags:
-        - Transparency
-      operationId: appendTransparencyEntry
-      summary: Append transparency entry
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TransparencyRequest'
+        - Execution
+      operationId: executeDecision
+      summary: Record execution
       responses:
         '200':
-          description: Transparency entry created
-
-  /transparency/{receiptId}:
-    get:
-      tags:
-        - Transparency
-      operationId: getTransparencyEntry
-      summary: Get transparency entry
-      parameters:
-        - name: receiptId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Transparency entry
-
-  /transparency/proof/{receiptId}:
-    get:
-      tags:
-        - Transparency
-      operationId: getTransparencyProof
-      summary: Get transparency proof
-      parameters:
-        - name: receiptId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Inclusion proof
-
-  /trust-root/current:
-    get:
-      tags:
-        - Trust Roots
-      operationId: getCurrentTrustRoot
-      summary: Get current trust root
-      responses:
-        '200':
-          description: Current trust root
+          description: Execution recorded
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TrustRoot'
+                $ref: '#/components/schemas/ExecutionRecord'
 
-  /trust-root/publish:
-    post:
-      tags:
-        - Trust Roots
-      operationId: publishTrustRoot
-      summary: Publish trust root
-      responses:
-        '200':
-          description: Published trust root
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrustRoot'
-
-  /invariants:
+  /execution/{executionId}:
     get:
       tags:
-        - Invariants
-      operationId: listInvariants
-      summary: List all Trust Core invariants
-      responses:
-        '200':
-          description: Invariant registry
-
-  /invariants/{id}:
-    get:
-      tags:
-        - Invariants
-      operationId: getInvariant
-      summary: Get invariant by ID
+        - Execution
+      operationId: getExecution
+      summary: Retrieve execution record
       parameters:
-        - name: id
+        - name: executionId
           in: path
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: Invariant definition
-        '404':
-          description: Invariant not found
+          description: Execution record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionRecord'
+
+  /health:
+    get:
+      tags:
+        - Invariants
+      operationId: healthCheck
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+
+  /version:
+    get:
+      tags:
+        - Invariants
+      operationId: getVersion
+      summary: Version
+      responses:
+        '200':
+          description: Version info
 
 components:
 
@@ -204,19 +121,29 @@ components:
     EvaluateRequest:
       type: object
       required:
-        - task
+        - subjectId
+        - taskId
       properties:
-        task:
+        subjectId:
+          type: string
+        taskId:
           type: string
         signals:
           type: object
+          additionalProperties: true
 
     Attestation:
       type: object
+      required:
+        - decisionId
+        - subjectId
+        - taskId
+        - policyId
+        - policyVersion
       properties:
-        schemaVersion:
-          type: string
         decisionId:
+          type: string
+        subjectId:
           type: string
         taskId:
           type: string
@@ -224,346 +151,45 @@ components:
           type: string
         policyVersion:
           type: string
-        evidence:
-          type: array
-          items:
-            type: object
-        signatures:
-          type: object
-        metadata:
-          type: object
-        outcome:
-          type: object
 
     VerificationReceipt:
       type: object
-      properties:
-        receiptId:
-          type: string
-        decisionId:
-          type: string
-        valid:
-          type: boolean
-        verifiedAlgorithms:
-          type: array
-          items:
-            type: string
-        failedAlgorithms:
-          type: array
-          items:
-            type: string
-        verifiedAt:
-          type: string
-          format: date-time
-        receiptHash:
-          type: string
-
-    TransparencyRequest:
-      type: object
       required:
         - receiptId
-        - receiptHash
+        - subjectId
+        - decisionId
+        - taskId
       properties:
         receiptId:
           type: string
-        receiptHash:
-          type: string
-
-    TrustRoot:
-      type: object
-      properties:
-        rootId:
-          type: string
-        algorithm:
-          type: string
-        receiptCount:
-          type: integer
-        rootHash:
-          type: string
-        publishedAt:
-          type: string
-          format: date-timeopenapi: 3.1.0
-
-info:
-  title: Parmana Trust Core API
-  version: 0.1.0
-  description: >
-    Parmana evaluates trusted signals against policy before execution.
-    Every decision becomes attestable, verifiable, auditable,
-    and transparently published.
-
-servers:
-  - url: http://localhost:3000
-
-tags:
-  - name: Authority
-  - name: Attestation
-  - name: Verification
-  - name: Transparency
-  - name: Trust Roots
-  - name: Invariants
-
-paths:
-
-  /evaluate:
-    post:
-      tags:
-        - Authority
-      operationId: evaluateTask
-      summary: Evaluate a task against policy
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EvaluateRequest'
-      responses:
-        '200':
-          description: Evaluation result
-
-  /attest:
-    post:
-      tags:
-        - Attestation
-      operationId: createAttestation
-      summary: Create attestation
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EvaluateRequest'
-      responses:
-        '200':
-          description: Attestation created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Attestation'
-
-  /verify-attestation:
-    post:
-      tags:
-        - Verification
-      operationId: verifyAttestation
-      summary: Verify attestation
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Attestation'
-      responses:
-        '200':
-          description: Verification result
-
-  /receipt:
-    post:
-      tags:
-        - Verification
-      operationId: createReceipt
-      summary: Generate verification receipt
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Attestation'
-      responses:
-        '200':
-          description: Verification receipt
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VerificationReceipt'
-
-  /transparency:
-    post:
-      tags:
-        - Transparency
-      operationId: appendTransparencyEntry
-      summary: Append transparency entry
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TransparencyRequest'
-      responses:
-        '200':
-          description: Transparency entry created
-
-  /transparency/{receiptId}:
-    get:
-      tags:
-        - Transparency
-      operationId: getTransparencyEntry
-      summary: Get transparency entry
-      parameters:
-        - name: receiptId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Transparency entry
-
-  /transparency/proof/{receiptId}:
-    get:
-      tags:
-        - Transparency
-      operationId: getTransparencyProof
-      summary: Get transparency proof
-      parameters:
-        - name: receiptId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Inclusion proof
-
-  /trust-root/current:
-    get:
-      tags:
-        - Trust Roots
-      operationId: getCurrentTrustRoot
-      summary: Get current trust root
-      responses:
-        '200':
-          description: Current trust root
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrustRoot'
-
-  /trust-root/publish:
-    post:
-      tags:
-        - Trust Roots
-      operationId: publishTrustRoot
-      summary: Publish trust root
-      responses:
-        '200':
-          description: Published trust root
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrustRoot'
-
-  /invariants:
-    get:
-      tags:
-        - Invariants
-      operationId: listInvariants
-      summary: List all Trust Core invariants
-      responses:
-        '200':
-          description: Invariant registry
-
-  /invariants/{id}:
-    get:
-      tags:
-        - Invariants
-      operationId: getInvariant
-      summary: Get invariant by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Invariant definition
-        '404':
-          description: Invariant not found
-
-components:
-
-  schemas:
-
-    EvaluateRequest:
-      type: object
-      required:
-        - task
-      properties:
-        task:
-          type: string
-        signals:
-          type: object
-
-    Attestation:
-      type: object
-      properties:
-        schemaVersion:
+        subjectId:
           type: string
         decisionId:
           type: string
         taskId:
           type: string
-        policyId:
-          type: string
-        policyVersion:
-          type: string
-        evidence:
-          type: array
-          items:
-            type: object
-        signatures:
-          type: object
-        metadata:
-          type: object
-        outcome:
-          type: object
+        valid:
+          type: boolean
 
-    VerificationReceipt:
+    ExecutionRecord:
       type: object
+      required:
+        - executionId
+        - subjectId
+        - decisionId
+        - receiptId
       properties:
-        receiptId:
+        executionId:
+          type: string
+        subjectId:
           type: string
         decisionId:
           type: string
-        valid:
-          type: boolean
-        verifiedAlgorithms:
-          type: array
-          items:
-            type: string
-        failedAlgorithms:
-          type: array
-          items:
-            type: string
-        verifiedAt:
-          type: string
-          format: date-time
-        receiptHash:
-          type: string
-
-    TransparencyRequest:
-      type: object
-      required:
-        - receiptId
-        - receiptHash
-      properties:
         receiptId:
           type: string
-        receiptHash:
+        executionSystem:
           type: string
-
-    TrustRoot:
-      type: object
-      properties:
-        rootId:
+        executionReference:
           type: string
-        algorithm:
+        executionStatus:
           type: string
-        receiptCount:
-          type: integer
-        rootHash:
-          type: string
-        publishedAt:
-          type: string
-          format: date-time
