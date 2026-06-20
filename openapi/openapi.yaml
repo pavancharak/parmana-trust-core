@@ -8,6 +8,8 @@ info:
 
 servers:
   - url: http://localhost:3000
+security:
+  - bearerAuth: []
 
 tags:
   - name: Authority
@@ -45,13 +47,82 @@ paths:
       responses:
         '200':
           description: Attestation created
+  /verify-attestation:
+    post:
+      tags:
+        - Verification
 
+      operationId: verifyAttestation
+
+      summary: Verify attestation signature set
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+
+            schema:
+              $ref: '#/components/schemas/Attestation'
+      responses:
+        '200':
+          description: Verification result
+  /receipt:
+    post:
+      tags:
+        - Verification
+
+      operationId: createReceipt
+
+      summary: Generate verification receipt
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+
+            schema:
+              $ref: '#/components/schemas/Attestation'
+
+      responses:
+        '200':
+
+          description: Verification receipt
+
+          content:
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/VerificationReceipt'
   /verify:
     post:
       tags:
         - Verification
       operationId: verifyDecision
       summary: Verify attestation
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+
+            schema:
+              type: object
+
+              required:
+                - attestation
+                - policy
+
+              properties:
+
+                attestation:
+                  $ref: '#/components/schemas/Attestation'
+
+                policy:
+                  type: object
+                  
       responses:
         '200':
           description: Verification receipt
@@ -64,8 +135,35 @@ paths:
     post:
       tags:
         - Execution
+
       operationId: executeDecision
+
       summary: Record execution
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+
+            schema:
+              type: object
+
+              required:
+                - receiptId
+                - executionSystem
+                - executionReference
+
+              properties:
+
+                receiptId:
+                  type: string
+
+                executionSystem:
+                  type: string
+
+                executionReference:
+                  type: string
       responses:
         '200':
           description: Execution recorded
@@ -93,7 +191,101 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExecutionRecord'
+  /transparency:
+    post:
+      tags:
+        - Transparency
 
+      operationId: appendTransparencyEntry
+
+      summary: Append transparency entry
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+
+            schema:
+              $ref: '#/components/schemas/TransparencyRequest'
+
+      responses:
+        '200':
+          description: Transparency entry created
+  /trust-root/current:
+    get:
+      tags:
+        - Trust Roots
+
+      operationId: getCurrentTrustRoot
+
+      summary: Retrieve current trust root
+
+      responses:
+        '200':
+          description: Current trust root
+
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustRoot'
+
+  /trust-root/publish:
+    post:
+      tags:
+        - Trust Roots
+
+      operationId: publishTrustRoot
+
+      summary: Publish trust root
+
+      responses:
+        '200':
+          description: Published trust root
+
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustRoot'
+  /transparency/{receiptId}:
+    get:
+      tags:
+        - Transparency
+
+      operationId: getTransparencyEntry
+
+      summary: Retrieve transparency entry
+
+      parameters:
+        - name: receiptId
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Transparency entry
+
+  /transparency/proof/{receiptId}:
+    get:
+      tags:
+        - Transparency
+
+      operationId: getTransparencyProof
+
+      summary: Retrieve inclusion proof
+
+      parameters:
+        - name: receiptId
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Inclusion proof
   /health:
     get:
       tags:
@@ -113,8 +305,51 @@ paths:
       responses:
         '200':
           description: Version info
+  /invariants:
+    get:
+      tags:
+        - Invariants
+
+      operationId: listInvariants
+
+      summary: List all Trust Core invariants
+
+      responses:
+        '200':
+          description: Invariant registry
+
+  /invariants/{id}:
+    get:
+      tags:
+        - Invariants
+
+      operationId: getInvariant
+
+      summary: Get invariant by ID
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Invariant definition
+
+        '404':
+          description: Invariant not found
 
 components:
+
+  securitySchemes:
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
   schemas:
 
@@ -154,42 +389,140 @@ components:
 
     VerificationReceipt:
       type: object
+
       required:
         - receiptId
         - subjectId
         - decisionId
         - taskId
+
       properties:
+
         receiptId:
           type: string
+
         subjectId:
           type: string
+
         decisionId:
           type: string
+
         taskId:
           type: string
+
+        policyId:
+          type: string
+
+        policyVersion:
+          type: string
+
         valid:
           type: boolean
 
+        verifiedAlgorithms:
+          type: array
+
+          items:
+            type: string
+
+        failedAlgorithms:
+          type: array
+
+          items:
+            type: string
+
+        verifiedAt:
+          type: string
+          format: date-time
+
+        receiptHash:
+          type: string
+      
     ExecutionRecord:
       type: object
+
       required:
         - executionId
         - subjectId
         - decisionId
         - receiptId
+        - taskId
+        - policyId
+        - policyVersion
+        - executionSystem
+        - executionReference
+        - executionStatus
+        - executedAt
+
       properties:
+
         executionId:
           type: string
+
         subjectId:
           type: string
+
         decisionId:
           type: string
+
         receiptId:
           type: string
+
+        taskId:
+          type: string
+
+        policyId:
+          type: string
+
+        policyVersion:
+          type: string
+
         executionSystem:
           type: string
+
         executionReference:
           type: string
+
         executionStatus:
           type: string
+
+        executedAt:
+          type: string
+          format: date-time
+
+
+    TransparencyRequest:
+      type: object
+
+      required:
+        - receiptId
+        - receiptHash
+
+      properties:
+
+        receiptId:
+          type: string
+
+        receiptHash:
+          type: string
+
+    TrustRoot:
+      type: object
+
+      properties:
+
+        rootId:
+          type: string
+
+        algorithm:
+          type: string
+
+        receiptCount:
+          type: integer
+
+        rootHash:
+          type: string
+
+        publishedAt:
+          type: string
+          format: date-time
