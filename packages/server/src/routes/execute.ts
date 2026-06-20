@@ -70,6 +70,18 @@ router.post(
           });
 
       }
+if (!receipt.valid) {
+
+  return res
+    .status(403)
+    .json({
+
+      error:
+        "INV-199 violation: receipt is not valid"
+
+    });
+
+}
 
       const execution = {
 

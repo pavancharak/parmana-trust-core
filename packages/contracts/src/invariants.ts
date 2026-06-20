@@ -203,6 +203,20 @@ export const INVARIANT_REGISTRY = {
     ]
 
 },
+"INV-199": {
+
+  id: "INV-199",
+
+  description:
+    "Execution is fail-closed. An action MUST NOT execute unless a valid verification receipt exists and required lineage identifiers are present.",
+
+  boundary:
+    [
+      "verification",
+      "receipt"
+    ]
+
+},
   "META-010": {
     id: "META-010",
 
