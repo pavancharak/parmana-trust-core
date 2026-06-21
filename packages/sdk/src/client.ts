@@ -1,13 +1,24 @@
+import type {
+  AttestRequest,
+  VerifyRequest,
+  ExecuteRequest,
+  DecisionAttestation,
+  VerificationReceipt,
+  ExecutionToken,
+  ExecutionRecord,
+  TrustChain
+} from "./types.js";
+
 export class ParmanaClient {
 
   constructor(
     private readonly baseUrl: string
   ) {}
 
-  private async post(
+  private async post<T>(
     path: string,
     body: unknown
-  ) {
+  ): Promise<T> {
 
     const response =
       await fetch(
@@ -31,13 +42,13 @@ export class ParmanaClient {
 
     }
 
-    return response.json();
+    return response.json() as Promise<T>;
 
   }
 
-  private async get(
+  private async get<T>(
     path: string
-  ) {
+  ): Promise<T> {
 
     const response =
       await fetch(
@@ -52,77 +63,97 @@ export class ParmanaClient {
 
     }
 
-    return response.json();
+    return response.json() as Promise<T>;
 
   }
 
-  attest(body: unknown) {
+  async attest(
+    body: AttestRequest
+  ): Promise<DecisionAttestation> {
+
     return this.post(
       "/attest",
       body
     );
+
   }
 
-  verify(body: unknown) {
+  async verify(
+    body: VerifyRequest
+  ): Promise<VerificationReceipt> {
+
     return this.post(
       "/verify",
       body
     );
+
   }
 
-  issueToken(
+  async issueToken(
     receiptId: string
-  ) {
+  ): Promise<ExecutionToken> {
+
     return this.post(
       "/token",
       { receiptId }
     );
+
   }
 
-  execute(body: unknown) {
+  async execute(
+    body: ExecuteRequest
+  ): Promise<ExecutionRecord> {
+
     return this.post(
       "/execute",
       body
     );
+
   }
 
-  createOverride(
+  async createOverride(
     body: unknown
-  ) {
+  ): Promise<unknown> {
+
     return this.post(
       "/override",
       body
     );
+
   }
 
-  attestOverride(
+  async attestOverride(
     overrideId: string
-  ) {
+  ): Promise<unknown> {
+
     return this.post(
       "/override/attest",
       { overrideId }
     );
+
   }
 
-  verifyOverride(
-    overrideAttestationId:
-      string
-  ) {
+  async verifyOverride(
+    overrideAttestationId: string
+  ): Promise<unknown> {
+
     return this.post(
       "/override/verify",
       {
         overrideAttestationId
       }
     );
+
   }
 
-  getTrustChain(
-    businessTransactionId:
-      string
-  ) {
+  async getTrustChain(
+    businessTransactionId: string
+  ): Promise<TrustChain> {
+
     return this.get(
       `/trust-chain/${businessTransactionId}`
     );
+
   }
 
 }
