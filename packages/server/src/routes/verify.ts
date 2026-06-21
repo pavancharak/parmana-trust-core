@@ -145,18 +145,23 @@ router.post(
 
     } catch (error) {
 
-      res
-        .status(400)
-        .json({
+  console.error(
+    "VERIFY ERROR:",
+    error
+  );
 
-          error:
-            error instanceof Error
-              ? error.message
-              : "Unknown error"
+  res
+    .status(400)
+    .json({
 
-        });
+      error:
+        error instanceof Error
+          ? error.message
+          : JSON.stringify(error)
 
-    }
+    });
+
+}
 
   }
 );

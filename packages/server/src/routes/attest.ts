@@ -34,6 +34,13 @@ router.post(
         createAttestation(
           evaluation
         );
+console.log(
+  JSON.stringify(
+    attestation,
+    null,
+    2
+  )
+);
 await saveAttestation(
   attestation
 );
@@ -43,15 +50,23 @@ await saveAttestation(
 
     } catch (error) {
 
-      res.status(500)
-        .json({
-          error:
-            error instanceof Error
-              ? error.message
-              : "Unknown error"
-        });
+  console.error(
+    "ATTEST ERROR:",
+    error
+  );
 
-    }
+  res
+    .status(500)
+    .json({
+
+      error:
+        error instanceof Error
+          ? error.stack
+          : JSON.stringify(error)
+
+    });
+
+}
 
   }
 );

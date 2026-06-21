@@ -19,6 +19,7 @@
   "@parmana/authority-engine": "*",
   "@parmana/signal-registry": "*",
   "@parmana/execution-token": "*",
+   "@parmana/override-engine": "*",
   "express": "^5.1.0",
   "swagger-ui-express": "^5.0.1",
   "yamljs": "^0.3.0"

@@ -31,40 +31,43 @@ export class AuditDbClient {
 
       .insert({
 
-        receipt_id:
-          receipt.receiptId,
+  receipt_id:
+    receipt.receiptId,
 
-        subject_id:
-          receipt.subjectId,
+  business_transaction_id:
+    receipt.businessTransactionId,
 
-        decision_id:
-          receipt.decisionId,
+  subject_id:
+    receipt.subjectId,
 
-        task_id:
-          receipt.taskId,
+  decision_id:
+    receipt.decisionId,
 
-        policy_id:
-          receipt.policyId,
+  task_id:
+    receipt.taskId,
 
-        policy_version:
-          receipt.policyVersion,
+  policy_id:
+    receipt.policyId,
 
-        valid:
-          receipt.valid,
+  policy_version:
+    receipt.policyVersion,
 
-        verified_algorithms:
-          receipt.verifiedAlgorithms,
+  valid:
+    receipt.valid,
 
-        failed_algorithms:
-          receipt.failedAlgorithms,
+  verified_algorithms:
+    receipt.verifiedAlgorithms,
 
-        verified_at:
-          receipt.verifiedAt,
+  failed_algorithms:
+    receipt.failedAlgorithms,
 
-        receipt_hash:
-          receiptHash
+  verified_at:
+    receipt.verifiedAt,
 
-      });
+  receipt_hash:
+    receiptHash
+
+});
 
     if (error) {
 

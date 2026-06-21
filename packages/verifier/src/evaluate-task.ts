@@ -32,22 +32,27 @@ export function evaluateTask(
       signals
     );
 
-  return {
+return {
 
   decisionId:
     crypto.randomUUID(),
 
-  task,
+  businessTransactionId:
+    signals.businessTransactionId,
 
-  policy: {
+  subjectId:
+    signals.subjectId,
 
-    policyId:
-      policy.policyId,
+  taskId:
+    task.taskId,
 
-    policyVersion:
-      policy.policyVersion
-  },
+  policyId:
+    policy.policyId,
+
+  policyVersion:
+    policy.policyVersion,
 
   decision
+
 };
 }
