@@ -384,3 +384,31 @@ Business systems determine whether an operation has already been executed.
 
 
 
+\## Receipt Consumption Protection
+
+
+
+Verification receipts are governance artifacts.
+
+
+
+A receipt may be consumed for execution only once.
+
+
+
+Receipt consumption protection exists to preserve lineage integrity and auditability.
+
+
+
+Receipt consumption protection is not business replay protection.
+
+
+
+Preventing reuse of a receipt does not prevent duplicate execution of a business operation.
+
+
+
+Business replay protection remains outside Parmana Trust Core and is enforced using business-owned identifiers.
+
+
+

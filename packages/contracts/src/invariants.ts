@@ -244,7 +244,7 @@ export const INVARIANT_REGISTRY = {
   id: "INV-204",
 
   description:
-    "A verification receipt may authorize execution only once.",
+    "Verification receipts are single-use governance artifacts and may be consumed for execution only once.",
 
   boundary:
     [
