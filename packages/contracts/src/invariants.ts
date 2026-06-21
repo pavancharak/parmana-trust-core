@@ -203,6 +203,28 @@ export const INVARIANT_REGISTRY = {
     ]
 
 },
+"INV-180": {
+
+  id: "INV-180",
+
+  description:
+    "Authority decisions are deterministic. Identical task, policy and trusted signals MUST produce identical decisions.",
+
+  boundary:
+    "decision"
+
+},
+"INV-181": {
+
+  id: "INV-181",
+
+  description:
+    "Lineage identifiers are outside decision scope and MUST NOT influence authority evaluation.",
+
+  boundary:
+    "decision"
+
+},
 "INV-199": {
 
   id: "INV-199",
@@ -214,6 +236,20 @@ export const INVARIANT_REGISTRY = {
     [
       "verification",
       "receipt"
+    ]
+
+},
+"INV-204": {
+
+  id: "INV-204",
+
+  description:
+    "A verification receipt may authorize execution only once.",
+
+  boundary:
+    [
+      "receipt",
+      "verification"
     ]
 
 },
