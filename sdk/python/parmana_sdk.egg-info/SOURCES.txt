@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+parmana_sdk/__init__.py
+parmana_sdk/client.py
+parmana_sdk.egg-info/PKG-INFO
+parmana_sdk.egg-info/SOURCES.txt
+parmana_sdk.egg-info/dependency_links.txt
+parmana_sdk.egg-info/requires.txt
+parmana_sdk.egg-info/top_level.txt
