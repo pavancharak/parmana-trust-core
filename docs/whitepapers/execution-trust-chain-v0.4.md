@@ -1,3 +1,7 @@
+\# Execution Trust Chain v0.4
+
+
+
 Status: VALIDATED
 
 
@@ -22,37 +26,37 @@ Implementation State:
 
 \* Override Chain: Complete
 
+\* Transparency Log: Complete
+
 \* OpenAPI Specification: Complete
 
 \* TypeScript SDK: Complete
 
-\* Transparency Log: Complete
+\* Python SDK: Complete
 
 
 
-
-
-\# Execution Trust Chain v0.4
-
-
-
-\## Abstract
+\---
 
 
 
-Autonomous systems can generate actions at machine speed, but organizations remain accountable for the consequences of those actions. Existing AI governance approaches primarily focus on model behavior, logging, or monitoring after an action has already occurred.
+\# Abstract
 
 
 
-Parmana introduces the Execution Trust Chain: a verification architecture that establishes whether an action was authorized before execution occurs.
+Autonomous systems can generate actions at machine speed, but organizations remain accountable for the consequences of those actions.
 
 
 
-The Execution Trust Chain creates a verifiable lineage connecting a subject, task, policy, attestation, verification receipt, execution authorization, and execution record.
+As AI systems move from answering questions to initiating actions, organizations require a mechanism that verifies authority before execution occurs.
 
 
 
-Version 0.4 represents the first end-to-end validated implementation of this architecture.
+Parmana introduces the Execution Trust Chain, a trust infrastructure that creates verifiable authorization evidence connecting a subject, task, policy, attestation, verification receipt, execution authorization, and execution record.
+
+
+
+Execution Trust Chain v0.4 represents the first validated end-to-end implementation of this architecture.
 
 
 
@@ -64,37 +68,47 @@ Version 0.4 represents the first end-to-end validated implementation of this arc
 
 
 
-AI systems can propose actions, but organizations require evidence that those actions were authorized.
+AI systems can recommend actions.
 
 
 
-Traditional approaches suffer from several limitations:
+AI systems can automate workflows.
 
 
 
-\* Logs record events after execution.
-
-\* Monitoring systems detect violations after execution.
-
-\* Model guardrails focus on generation quality rather than authority.
-
-\* Approval workflows rarely produce cryptographically verifiable evidence.
+AI systems can initiate operational processes.
 
 
 
-As AI systems gain the ability to initiate operational actions, organizations need a mechanism that proves:
+However, organizations remain responsible for answering a critical question:
 
 
 
-1\. Who was authorized.
+Why was this action allowed?
 
-2\. What task was requested.
 
-3\. Which policy applied.
 
-4\. Whether policy requirements were satisfied.
+Traditional approaches are insufficient.
 
-5\. Why execution was permitted.
+
+
+Logs explain events after execution.
+
+
+
+Monitoring detects violations after execution.
+
+
+
+Approval workflows often produce weak evidence.
+
+
+
+Guardrails constrain model behavior but do not establish organizational authority.
+
+
+
+As autonomous systems gain access to payment systems, claims systems, procurement systems, ERP platforms, and internal business applications, organizations require authorization evidence before execution occurs.
 
 
 
@@ -130,11 +144,11 @@ Parmana exists to verify authority before execution.
 
 
 
-\# Execution Trust Chain
+\# The Execution Trust Chain
 
 
 
-The Execution Trust Chain is a sequence of verifiable artifacts.
+The Execution Trust Chain creates a verifiable lineage from request to execution.
 
 
 
@@ -174,7 +188,7 @@ External System
 
 
 
-Each artifact is independently identifiable, persisted, and retrievable.
+Every artifact is independently identifiable, persisted, and retrievable.
 
 
 
@@ -190,7 +204,7 @@ Each artifact is independently identifiable, persisted, and retrievable.
 
 
 
-A subject represents the entity requesting an action.
+The subject represents the entity requesting an action.
 
 
 
@@ -244,9 +258,9 @@ payment.release
 
 insurance.claim.approve
 
-vendor.create
-
 refund.issue
+
+vendor.create
 
 ```
 
@@ -276,9 +290,9 @@ Policies determine:
 
 \* Validation requirements
 
-\* Trust requirements
-
 \* Approval requirements
+
+\* Trust requirements
 
 
 
@@ -288,9 +302,9 @@ Example:
 
 ```text
 
-payment-release
+policyId: payment-release
 
-v1.0.0
+policyVersion: 1.0.0
 
 ```
 
@@ -308,7 +322,7 @@ A Decision Attestation is a signed statement that policy evaluation occurred.
 
 
 
-The attestation contains:
+Each attestation contains:
 
 
 
@@ -352,7 +366,7 @@ Example outcome:
 
 
 
-The attestation becomes the authoritative record of the decision.
+The attestation becomes the authoritative decision artifact.
 
 
 
@@ -364,7 +378,7 @@ The attestation becomes the authoritative record of the decision.
 
 
 
-A Verification Receipt confirms that an attestation satisfies policy verification requirements.
+A Verification Receipt confirms that an attestation satisfies verification requirements.
 
 
 
@@ -390,7 +404,7 @@ The receipt records:
 
 
 
-Verification Receipts provide independent proof that validation occurred.
+Verification Receipts provide independently verifiable authorization evidence.
 
 
 
@@ -406,25 +420,25 @@ Execution Tokens authorize execution.
 
 
 
-An Execution Token is derived from a valid Verification Receipt.
+Execution Tokens are derived from valid Verification Receipts.
 
 
 
-The token binds:
+They bind:
 
 
 
-\* decision
+\* Decision
 
-\* policy
+\* Policy
 
-\* receipt
+\* Receipt
 
-\* transaction
+\* Transaction
 
 
 
-Without a valid token, execution is denied.
+Without a valid execution token, execution is denied.
 
 
 
@@ -440,27 +454,23 @@ Execution Records represent completed execution events.
 
 
 
-Example:
+Each execution record contains:
 
 
 
-```text
+\* executionId
 
-executionId
+\* receiptId
 
-decisionId
+\* decisionId
 
-receiptId
+\* executionSystem
 
-executionSystem
+\* executionReference
 
-executionReference
+\* executionStatus
 
-executionStatus
-
-executedAt
-
-```
+\* executedAt
 
 
 
@@ -476,7 +486,7 @@ Execution Records connect authorization evidence to real-world execution.
 
 
 
-Certain situations require human intervention.
+Certain situations require explicit human intervention.
 
 
 
@@ -500,7 +510,7 @@ Override Verification Receipt
 
 
 
-Override workflows remain independently auditable.
+Override authorization remains independently auditable.
 
 
 
@@ -534,53 +544,7 @@ createdAt
 
 
 
-The log creates tamper-evident verification history.
-
-
-
-\---
-
-
-
-\# Implementation Status
-
-
-
-Execution Trust Chain v0.4 has been validated end-to-end.
-
-
-
-Implemented capabilities:
-
-
-
-\* Task evaluation
-
-\* Policy evaluation
-
-\* Decision attestation
-
-\* Cryptographic signatures
-
-\* Verification receipts
-
-\* Receipt persistence
-
-\* Transparency logging
-
-\* Execution token issuance
-
-\* Execution token verification
-
-\* Execution recording
-
-\* Override workflows
-
-\* Trust chain retrieval
-
-\* OpenAPI specification
-
-\* TypeScript SDK
+The transparency log provides tamper-evident verification history.
 
 
 
@@ -618,79 +582,11 @@ businessTransactionId
 
 
 
-These identifiers form the permanent trust chain for an action.
+These identifiers form the permanent trust chain of an action.
 
 
 
 \---
-
-
-
-\# Architectural Position
-
-
-
-Parmana does not execute actions.
-
-
-
-Parmana does not replace systems of record.
-
-
-
-Parmana verifies authority and policy requirements before execution occurs.
-
-
-
-Execution is performed by the underlying execution system.
-
-
-
-Examples:
-
-
-
-\* Stripe
-
-\* Banking systems
-
-\* ERP systems
-
-\* Claims systems
-
-\* Internal platforms
-
-
-
-Parmana acts as the trust layer between decision generation and execution.
-
-
-
-\---
-
-
-
-\# Conclusion
-
-
-
-Organizations define authority.
-
-
-
-Organizations define policy.
-
-
-
-Parmana verifies that authority and policy requirements have been satisfied before autonomous systems act.
-
-
-
-The Execution Trust Chain provides a verifiable path from request to execution, creating evidence that actions were authorized before they occurred.
-
-
-
-This architecture establishes the foundation for trustworthy autonomous execution in enterprise environments.
 
 
 
@@ -698,19 +594,15 @@ This architecture establishes the foundation for trustworthy autonomous executio
 
 
 
-The Execution Trust Chain is governed by the following principles.
-
-
-
 \## Authority Before Execution
 
 
 
-Execution must never occur before authority verification.
+Authorization evidence must exist before execution occurs.
 
 
 
-Authorization evidence is created before execution and cannot be retroactively generated.
+Authorization cannot be created retroactively.
 
 
 
@@ -730,20 +622,6 @@ Implicit authorization is prohibited.
 
 
 
-Each decision references:
-
-
-
-\* policyId
-
-\* policyVersion
-
-
-
-This ensures that authorization can be replayed and understood in its original context.
-
-
-
 \---
 
 
@@ -752,37 +630,7 @@ This ensures that authorization can be replayed and understood in its original c
 
 
 
-Trust chain identifiers are immutable once created.
-
-
-
-The lineage:
-
-
-
-```text
-
-subjectId
-
-taskId
-
-policyId
-
-policyVersion
-
-decisionId
-
-receiptId
-
-executionId
-
-businessTransactionId
-
-```
-
-
-
-must remain stable throughout the lifecycle of the transaction.
+Trust chain identifiers remain immutable once created.
 
 
 
@@ -794,15 +642,11 @@ must remain stable throughout the lifecycle of the transaction.
 
 
 
-Trust assertions are not accepted as evidence.
+Trust assertions are not evidence.
 
 
 
-Evidence must be independently verifiable.
-
-
-
-Verification receipts, signatures, hashes, and transparency log entries provide objective validation.
+Evidence must be independently verifiable through signatures, hashes, receipts, and transparency log entries.
 
 
 
@@ -810,11 +654,7 @@ Verification receipts, signatures, hashes, and transparency log entries provide 
 
 
 
-\## Separation of Concerns
-
-
-
-Decision generation and execution authorization are separate responsibilities.
+\## Separation of Responsibilities
 
 
 
@@ -846,7 +686,7 @@ Performs action
 
 
 
-This separation reduces risk and improves auditability.
+Decision generation and execution authorization are separate responsibilities.
 
 
 
@@ -866,7 +706,7 @@ Parmana is not an execution engine.
 
 
 
-Parmana integrates with existing systems while providing an independent authorization layer.
+Parmana acts as an authorization layer between decision generation and execution.
 
 
 
@@ -878,15 +718,11 @@ Parmana integrates with existing systems while providing an independent authoriz
 
 
 
-The Execution Trust Chain is designed to address several classes of risk.
-
-
-
 \## Unauthorized Execution
 
 
 
-An autonomous system attempts an action without satisfying policy.
+An autonomous system attempts execution without satisfying policy.
 
 
 
@@ -894,11 +730,11 @@ Mitigation:
 
 
 
-\* Verification receipt required
+\* Verification receipts
 
-\* Execution token required
+\* Execution tokens
 
-\* Token verification required
+\* Token verification
 
 
 
@@ -918,11 +754,11 @@ Mitigation:
 
 
 
-\* policyId binding
+\* Policy binding
 
-\* policyVersion binding
+\* Version binding
 
-\* receipt verification
+\* Receipt validation
 
 
 
@@ -946,7 +782,7 @@ Mitigation:
 
 \* Receipt hashes
 
-\* Transparency log anchoring
+\* Transparency logging
 
 
 
@@ -970,15 +806,11 @@ Mitigation:
 
 \* Receipt preservation
 
-\* Execution record preservation
+\* Execution preservation
 
 
 
 \---
-
-
-
-\# Future Roadmap
 
 
 
@@ -990,27 +822,7 @@ Mitigation:
 
 
 
-Most AI infrastructure focuses on intelligence.
-
-
-
-Examples include:
-
-
-
-\* Foundation models
-
-\* Agent frameworks
-
-\* Retrieval systems
-
-\* Tool orchestration systems
-
-\* Workflow engines
-
-
-
-These systems answer:
+Most AI infrastructure answers:
 
 
 
@@ -1018,7 +830,7 @@ These systems answer:
 
 
 
-They do not answer:
+Organizations also need an answer to:
 
 
 
@@ -1026,7 +838,7 @@ They do not answer:
 
 
 
-As autonomous systems become capable of initiating real-world actions, a new infrastructure layer becomes necessary.
+These are different problems.
 
 
 
@@ -1066,10 +878,6 @@ Authority Infrastructure
 
 
 
-Authority Infrastructure ensures that actions satisfy organizational requirements before execution.
-
-
-
 Parmana is designed as Authority Infrastructure.
 
 
@@ -1090,11 +898,7 @@ Logs explain what happened.
 
 
 
-Logs do not prevent unauthorized execution.
-
-
-
-\---
+Logs do not establish authority before execution.
 
 
 
@@ -1102,31 +906,19 @@ Logs do not prevent unauthorized execution.
 
 
 
-Monitoring identifies issues after execution.
+Monitoring detects violations after execution.
 
 
 
-Monitoring does not establish authority before execution.
+Monitoring does not authorize execution.
 
 
 
-\---
+\### Approval Workflows
 
 
 
-\### Human Approval Workflows
-
-
-
-Approvals often exist as emails, tickets, or workflow states.
-
-
-
-These systems rarely produce verifiable authorization evidence.
-
-
-
-\---
+Approval systems rarely produce independently verifiable authorization evidence.
 
 
 
@@ -1134,7 +926,7 @@ These systems rarely produce verifiable authorization evidence.
 
 
 
-Guardrails constrain model behavior.
+Guardrails constrain models.
 
 
 
@@ -1150,7 +942,7 @@ Authority belongs to organizations, not models.
 
 
 
-\## The Parmana Category
+\## Execution Trust Infrastructure
 
 
 
@@ -1158,7 +950,7 @@ Parmana introduces a new category:
 
 
 
-\### Execution Trust Infrastructure
+Execution Trust Infrastructure.
 
 
 
@@ -1177,36 +969,6 @@ Execution Trust Infrastructure verifies that:
 
 
 before actions occur.
-
-
-
-\---
-
-
-
-\## What Parmana Is Not
-
-
-
-Parmana is not:
-
-
-
-\* A workflow engine
-
-\* An orchestration platform
-
-\* An agent framework
-
-\* A model gateway
-
-\* A policy authoring platform
-
-\* A system of record
-
-
-
-Parmana is the trust layer that sits between decision generation and execution.
 
 
 
@@ -1258,7 +1020,7 @@ External Action
 
 
 
-Examples of execution systems:
+Examples of execution systems include:
 
 
 
@@ -1272,7 +1034,7 @@ Examples of execution systems:
 
 \* Procurement systems
 
-\* Internal enterprise applications
+\* Enterprise applications
 
 
 
@@ -1280,37 +1042,49 @@ Examples of execution systems:
 
 
 
-\# Enterprise Implications
+\# Implementation Validation
 
 
 
-Execution Trust Infrastructure creates a new operational capability.
+Execution Trust Chain v0.4 has been validated end-to-end through:
 
 
 
-Organizations gain:
+\* REST API
+
+\* TypeScript SDK
+
+\* Python SDK
 
 
 
-\* Pre-execution authorization
-
-\* Independent verification
-
-\* Tamper-evident evidence
-
-\* Trust-chain retrieval
-
-\* Audit readiness
-
-\* Policy traceability
+Validated capabilities:
 
 
 
-The result is a verifiable answer to a critical question:
+\* Task evaluation
 
+\* Policy evaluation
 
+\* Decision attestation
 
-> Why was this action allowed?
+\* Signature generation
+
+\* Signature verification
+
+\* Verification receipt issuance
+
+\* Transparency log anchoring
+
+\* Execution token issuance
+
+\* Execution token verification
+
+\* Execution recording
+
+\* Override workflows
+
+\* Trust chain retrieval
 
 
 
@@ -1342,101 +1116,27 @@ Parmana verifies whether those actions are authorized before they occur.
 
 
 
-
-
-\## v0.5
-
-
-
-Trust Chain Retrieval API maturity.
-
-
-
-Goals:
-
-
-
-\* Full trust-chain query API
-
-\* Multi-transaction retrieval
-
-\* Advanced lineage search
-
-
-
 \---
 
 
 
-\## v0.6
+\# Conclusion
 
 
 
-Trust Federation.
+As autonomous systems gain the ability to perform real-world actions, organizations require infrastructure that establishes authorization before execution.
 
 
 
-Goals:
+The Execution Trust Chain provides a verifiable path from request to execution through attestations, verification receipts, execution tokens, execution records, and transparency logging.
 
 
 
-\* Multiple trust anchors
-
-\* Cross-organization verification
-
-\* Federated authority validation
+Execution Trust Chain v0.4 demonstrates that authority can be represented, verified, preserved, and retrieved as a first-class system artifact.
 
 
 
-\---
-
-
-
-\## v0.7
-
-
-
-Enterprise Policy Administration.
-
-
-
-Goals:
-
-
-
-\* Policy lifecycle management
-
-\* Policy approval workflows
-
-\* Policy governance controls
-
-
-
-\---
-
-
-
-\## v1.0
-
-
-
-Execution Trust Infrastructure.
-
-
-
-Goals:
-
-
-
-\* Production readiness
-
-\* Federated trust
-
-\* Enterprise deployment support
-
-\* Compliance evidence generation
-
-\* Large-scale execution authorization
+This architecture establishes the foundation for trustworthy autonomous execution in enterprise environments.
 
 
 
