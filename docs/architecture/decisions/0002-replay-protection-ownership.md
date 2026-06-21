@@ -14,7 +14,19 @@ Accepted
 
 
 
-Parmana Trust Core provides authority evaluation, attestation, verification, and execution lineage.
+Parmana Trust Core provides:
+
+
+
+\* Authority evaluation
+
+\* Policy enforcement
+
+\* Attestation generation
+
+\* Verification
+
+\* Execution lineage
 
 
 
@@ -38,7 +50,7 @@ Several candidate replay identities were considered:
 
 
 
-Analysis showed that replay protection and authority evaluation solve different problems.
+Analysis showed that authority evaluation and replay protection solve different problems.
 
 
 
@@ -148,7 +160,127 @@ Only the business system can define replay boundaries.
 
 
 
-Therefore replay enforcement belongs to the execution boundary and not to the authority core.
+Replay enforcement therefore belongs to the execution boundary and not to the authority core.
+
+
+
+\## Rejected Alternatives
+
+
+
+\### Receipt-Based Replay Protection
+
+
+
+A replay model based on receiptId was evaluated.
+
+
+
+Example:
+
+
+
+getExecutionByReceipt(receiptId)
+
+
+
+Under this model, a receipt may be executed only once.
+
+
+
+This approach was rejected because receiptId is a governance artifact rather than a business operation identifier.
+
+
+
+A business operation may legitimately produce multiple governance artifacts over time.
+
+
+
+Example:
+
+
+
+Business Operation
+
+→ Authority Decision A
+
+→ Receipt A
+
+
+
+Business Operation
+
+→ Authority Decision B
+
+→ Receipt B
+
+
+
+Preventing reuse of Receipt A does not prevent duplicate execution of the underlying business operation.
+
+
+
+Receipt replay protection and business replay protection are different concerns.
+
+
+
+\### Decision-Based Replay Protection
+
+
+
+A replay model based on decisionId was evaluated.
+
+
+
+This approach was rejected because decisionId represents a specific authority evaluation instance.
+
+
+
+Multiple evaluations of the same business operation produce different decision identifiers.
+
+
+
+Decision identifiers therefore cannot serve as stable replay identities.
+
+
+
+\### Subject-Based Replay Protection
+
+
+
+A replay model based on subjectId was evaluated.
+
+
+
+This approach was rejected because subjectId was reclassified as optional lineage metadata.
+
+
+
+Authority evaluation does not depend on subjectId.
+
+
+
+Lineage identifiers are outside decision scope and are not replay identities.
+
+
+
+\### Trust-Core-Owned Replay Protection
+
+
+
+A replay model in which Parmana Trust Core owns replay enforcement was evaluated.
+
+
+
+This approach was rejected because replay boundaries are business-defined.
+
+
+
+Only the business system can determine whether two requests represent the same business operation.
+
+
+
+Parmana therefore cannot authoritatively define replay identity.
 
 
 
@@ -208,25 +340,47 @@ Business systems are responsible for detecting and preventing duplicate executio
 
 
 
-\## Invariants
+\## Architectural Boundary
 
 
 
-Replay ownership SHALL NOT influence:
+Parmana Trust Core ends at:
 
 
 
-\* authority evaluation
+Task
 
-\* policy selection
+→ Authority Decision
 
-\* attestation generation
+→ Attestation
 
-\* verification outcomes
+→ Verification Receipt
+
+→ Execution Record
 
 
 
-Authority and replay remain separate architectural concerns.
+Replay protection begins at:
+
+
+
+Business Transaction Identity
+
+→ Execution Gateway
+
+→ System of Record
+
+
+
+Authority and replay are intentionally separated.
+
+
+
+Parmana determines whether an action is authorized.
+
+
+
+Business systems determine whether an operation has already been executed.
 
 
 
