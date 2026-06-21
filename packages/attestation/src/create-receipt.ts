@@ -10,7 +10,9 @@ import type {
 
 export function createReceipt(
 
-  subjectId: string,
+  businessTransactionId: string,
+
+  subjectId: string | undefined,
 
   decisionId: string,
 
@@ -33,6 +35,8 @@ export function createReceipt(
 
     receiptId:
       crypto.randomUUID(),
+
+   businessTransactionId,
 
     subjectId,
 
@@ -60,13 +64,22 @@ export function createReceipt(
         .createHash("sha256")
         .update(
           JSON.stringify({
-            subjectId,
-            decisionId,
-            taskId,
-            policyId,
-            policyVersion,
-            valid
-          })
+
+  businessTransactionId,
+
+  subjectId,
+
+  decisionId,
+
+  taskId,
+
+  policyId,
+
+  policyVersion,
+
+  valid
+
+})
         )
         .digest("hex")
   };

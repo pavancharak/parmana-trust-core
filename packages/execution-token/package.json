@@ -1,0 +1,15 @@
+{
+  "name": "@parmana/execution-token",
+  "version": "0.1.0",
+  "type": "module",
+"main": "dist/execution-token/src/index.js",
+"types": "dist/execution-token/src/index.d.ts",
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "dependencies": {
+    "@parmana/contracts": "*",
+    "@parmana/crypto": "*",
+    "@parmana/trust-anchor": "*"
+  }
+}

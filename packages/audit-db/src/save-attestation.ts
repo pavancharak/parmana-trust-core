@@ -16,21 +16,24 @@ export async function saveAttestation(
 
     .insert({
 
-      decision_id:
-        attestation.decisionId,
+  decision_id:
+    attestation.decisionId,
 
-      task_id:
-        attestation.taskId,
+  business_transaction_id:
+    attestation.businessTransactionId,
 
-      policy_id:
-        attestation.policyId,
+  task_id:
+    attestation.taskId,
 
-      policy_version:
-        attestation.policyVersion,
+  policy_id:
+    attestation.policyId,
 
-      attestation
+  policy_version:
+    attestation.policyVersion,
 
-    });
+  attestation
+
+});
 
   if (error) {
 

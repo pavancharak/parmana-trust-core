@@ -70,14 +70,17 @@ router.post(
         receiptId:
           crypto.randomUUID(),
 
+        businessTransactionId:
+          req.body.attestation.businessTransactionId,
+
         subjectId:
           req.body.attestation.subjectId,
 
         decisionId:
           req.body.attestation.decisionId,
 
-taskId:
-  req.body.attestation.taskId,
+        taskId:
+          req.body.attestation.taskId,
 
         policyId:
           req.body.attestation.policyId,
@@ -94,6 +97,9 @@ taskId:
         failedAlgorithms:
           result.failedAlgorithms,
 
+        receiptHash:
+          "",
+
         verifiedAt:
           new Date()
             .toISOString()
@@ -104,14 +110,16 @@ taskId:
         receipt.receiptId,
         receipt
       );
-console.log(
-  "RECEIPT ID:",
-  receipt.receiptId
-);
 
-console.log(
-  receipt
-);
+      console.log(
+        "RECEIPT ID:",
+        receipt.receiptId
+      );
+
+      console.log(
+        receipt
+      );
+
       await auditDb
         .recordVerificationReceipt(
           receipt

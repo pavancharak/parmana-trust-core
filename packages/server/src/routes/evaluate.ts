@@ -1,6 +1,7 @@
 import {
   saveDecision,
-  saveAttestation
+  saveAttestation,
+  saveSignalEvidence
 } from "@parmana/audit-db";
 
 import {
@@ -33,10 +34,21 @@ router.post(
     try {
 
       const {
-        subjectId,
-        taskId,
-        signals
-      } = req.body;
+  businessTransactionId,
+  subjectId,
+  taskId,
+  signals
+} = req.body;
+if (!businessTransactionId) {
+
+  return res
+    .status(400)
+    .json({
+      error:
+        "businessTransactionId is required"
+    });
+
+}
 
       
       if (!taskId) {
@@ -51,19 +63,32 @@ router.post(
       }
 
       const result =
-        await evaluateAuthority(
-          subjectId,
-          taskId,
-          signals ?? {}
-        );
+  await evaluateAuthority(
+    businessTransactionId,
+    subjectId,
+    taskId,
+    signals ?? {}
+  );
+await saveSignalEvidence({
 
+  decisionId:
+    result.decisionId,
+
+  businessTransactionId,
+
+  signalSnapshot:
+    signals ?? {}
+
+});
       await saveDecision({
 
-        decisionId:
-          result.decisionId,
+  decisionId:
+    result.decisionId,
 
-        subjectId:
-          result.subjectId,
+  businessTransactionId,
+
+  subjectId:
+    result.subjectId,
 
         taskId:
           result.taskId,

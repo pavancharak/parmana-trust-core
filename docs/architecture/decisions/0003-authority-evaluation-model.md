@@ -620,5 +620,57 @@ Parmana prevents unauthorized autonomous actions.
 
 
 
+\## Business Transaction Identity
+
+
+
+Parmana Trust Core does not define or generate business transaction identifiers.
+
+
+
+Every production execution system SHOULD define a mandatory business transaction identifier.
+
+
+
+Examples:
+
+
+
+\* PAYMENT-123
+
+\* ORDER-456
+
+\* REFUND-789
+
+
+
+The business transaction identifier is owned by the business system.
+
+
+
+Parmana Trust Core does not evaluate, generate, store, or enforce business transaction identifiers.
+
+
+
+Business transaction identifiers exist outside the authority boundary.
+
+
+
+They are used by business systems for:
+
+
+
+\* idempotency
+
+\* duplicate operation detection
+
+\* replay protection
+
+\* business reconciliation
+
+
+
+Authority evaluation remains independent of business transaction identity.
+
 
 

@@ -34,6 +34,8 @@ router.post(
       const receipt =
   createReceipt(
 
+    attestation.businessTransactionId,
+
     attestation.subjectId,
 
     attestation.decisionId,

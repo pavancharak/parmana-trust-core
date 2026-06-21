@@ -1,0 +1,96 @@
+{
+  "policyId": "insurance-claim-approval",
+  "policyVersion": "1.0.0",
+  "schemaVersion": "1.0.0",
+
+  "signalsSchema": {
+
+    "claimAmount": {
+      "type": "integer"
+    },
+
+    "claimantId": {
+      "type": "string"
+    },
+
+    "policyActive": {
+      "type": "boolean"
+    },
+
+    "fraudCheckPassed": {
+      "type": "boolean"
+    },
+
+    "incidentVerified": {
+      "type": "boolean"
+    }
+
+  },
+
+  "rules": [
+
+    {
+      "id": "approve-claim",
+
+      "condition": {
+
+        "all": [
+
+          {
+            "signal": "claimAmount",
+            "greater_than": 0
+          },
+
+          {
+            "signal": "policyActive",
+            "equals": true
+          },
+
+          {
+            "signal": "fraudCheckPassed",
+            "equals": true
+          },
+
+          {
+            "signal": "incidentVerified",
+            "equals": true
+          }
+
+        ]
+
+      },
+
+      "outcome": {
+
+        "action": "approve",
+
+        "requires_override": false,
+
+        "reason": "claim_authorized"
+
+      }
+
+    },
+
+    {
+      "id": "catch-all-reject",
+
+      "condition": {
+        "all": []
+      },
+
+      "outcome": {
+
+        "action": "reject",
+
+        "requires_override": true,
+
+        "reason": "claim_requirements_not_satisfied"
+
+      }
+
+    }
+
+  ]
+
+}

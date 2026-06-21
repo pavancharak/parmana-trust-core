@@ -4,14 +4,15 @@ import {
 
 export async function saveDecision(
   decision: {
-    decisionId: string;
-    subjectId: string;
-    taskId: string;
-    policyId: string;
-    policyVersion: string;
-    decision: string;
-    reasons: string[];
-  }
+  decisionId: string;
+  businessTransactionId: string;
+  subjectId: string | undefined;
+  taskId: string;
+  policyId: string;
+  policyVersion: string;
+  decision: string;
+  reasons: string[];
+}
 ) {
 
   const {
@@ -26,6 +27,9 @@ export async function saveDecision(
 
   decision_id:
     decision.decisionId,
+
+  business_transaction_id:
+  decision.businessTransactionId,
 
   subject_id:
     decision.subjectId,

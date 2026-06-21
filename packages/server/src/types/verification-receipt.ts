@@ -2,7 +2,9 @@ export interface VerificationReceipt {
 
   receiptId: string;
 
-  subjectId: string;
+  businessTransactionId: string;
+
+  subjectId?: string;
 
   decisionId: string;
 
@@ -21,4 +23,6 @@ export interface VerificationReceipt {
     string[];
 
   verifiedAt: string;
+
+  receiptHash: string;
 }

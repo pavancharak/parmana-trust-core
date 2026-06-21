@@ -24,7 +24,9 @@ import {
 
 export async function evaluateAuthority(
 
- subjectId: string | undefined,
+  businessTransactionId: string,
+
+  subjectId: string | undefined,
 
   taskId: string,
 
@@ -46,6 +48,8 @@ export async function evaluateAuthority(
 
       decisionId:
         randomUUID(),
+
+      businessTransactionId,
 
       subjectId,
 
@@ -80,6 +84,8 @@ export async function evaluateAuthority(
       decisionId:
         randomUUID(),
 
+      businessTransactionId,
+
       subjectId,
 
       taskId,
@@ -112,6 +118,8 @@ export async function evaluateAuthority(
 
       decisionId:
         randomUUID(),
+
+      businessTransactionId,
 
       subjectId,
 
@@ -166,6 +174,8 @@ export async function evaluateAuthority(
   return {
 
     decisionId,
+
+    businessTransactionId,
 
     subjectId,
 

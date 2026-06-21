@@ -9,6 +9,19 @@ packages/**/src/*.js
 packages/**/src/*.js.map
 packages/**/src/*.d.ts
 packages/**/src/*.d.ts.map
+
 test-*.json
 test-*.mjs
 *.log
+
+# Parmana trust anchor keys
+packages/trust-anchor/keys/root-private.pem
+
+# Local generated tokens
+token.json
+
+# OS files
+.DS_Store
+Thumbs.db
+packages/trust-anchor/keys/root-private.pem
+token.json

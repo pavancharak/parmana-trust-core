@@ -56,6 +56,16 @@ import policiesRoute
   from "./routes/policies.js";
 import signalsRoute
   from "./routes/signals.js";
+import trustChainRouter
+  from "./routes/trust-chain.js";
+import tokenRouter
+  from "./routes/token.js";
+import overrideRouter
+  from "./routes/override.js";
+import overrideAttestRouter
+  from "./routes/override-attest.js";
+import overrideVerifyRouter
+  from "./routes/override-verify.js";
 app.use(
   policiesRoute
 );
@@ -63,10 +73,25 @@ app.use(
   rootRoute
 );
 app.use(
+  overrideVerifyRouter
+);
+app.use(
+  overrideAttestRouter
+);
+app.use(
   invariantsRoute
 );
 app.use(
+  overrideRouter
+);
+app.use(
   executeRoute
+);
+app.use(
+  tokenRouter
+);
+app.use(
+  trustChainRouter
 );
 app.use(
   tasksRoute
@@ -89,6 +114,7 @@ app.use(
 app.use(
   keysCurrentRouter
 );
+
 app.use(
   transparencyProofRoute
 );

@@ -8,11 +8,9 @@ import type {
   VerificationReceipt
 } from "@parmana/contracts";
 
-
 export function verifyReceipt(
   receipt: VerificationReceipt
 ): boolean {
-
 
   const expectedHash =
     crypto
@@ -21,27 +19,63 @@ export function verifyReceipt(
       )
       .update(
 
-        receipt.decisionId +
-        String(
-          receipt.valid
-        )
+        JSON.stringify({
+
+          businessTransactionId:
+            receipt.businessTransactionId,
+
+          subjectId:
+            receipt.subjectId,
+
+          decisionId:
+            receipt.decisionId,
+
+          taskId:
+            receipt.taskId,
+
+          policyId:
+            receipt.policyId,
+
+          policyVersion:
+            receipt.policyVersion,
+
+          valid:
+            receipt.valid
+
+        })
 
       )
       .digest(
         "hex"
       );
 
+  console.log(
+  "EXPECTED HASH:",
+  expectedHash
+);
 
-  const valid =
-    expectedHash ===
-    receipt.receiptHash;
+console.log(
+  "RECEIPT HASH:",
+  receipt.receiptHash
+);
 
+console.log(
+  "RECEIPT:",
+  JSON.stringify(
+    receipt,
+    null,
+    2
+  )
+);
+
+const valid =
+  expectedHash ===
+  receipt.receiptHash;
 
   enforceInvariant(
     "INV-160",
     valid
   );
-
 
   return valid;
 

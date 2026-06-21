@@ -8,7 +8,9 @@ import type {
 
 export function createReceipt(
 
-  subjectId: string,
+  businessTransactionId: string,
+
+  subjectId: string | undefined,
 
   decisionId: string,
 
@@ -26,6 +28,8 @@ export function createReceipt(
 
     receiptId:
       randomUUID(),
+
+    businessTransactionId,
 
     subjectId,
 
@@ -50,6 +54,9 @@ export function createReceipt(
       valid
         ? []
         : ["sha256"],
+
+    receiptHash:
+      "",
 
     verifiedAt:
       new Date()

@@ -21,3 +21,16 @@ export * from "./create-receipt.js";
 export * from "./get-attestation.js";
 export * from "./save-execution.js";
 export * from "./get-execution.js";
+export * from "./save-signal-evidence.js";
+export * from "./get-trust-chain.js";
+export * from "./get-receipt-by-id.js";
+export * from "./save-override-decision.js";
+
+export * from "./save-override-attestation.js";
+
+export * from "./save-override-receipt.js";
+
+export * from "./get-override-by-id.js";
+export * from "./get-override-attestation-by-id.js";
+
+export * from "./get-override-receipt-by-id.js";

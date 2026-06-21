@@ -2,7 +2,9 @@ export interface ExecutionRecord {
 
   executionId: string;
 
-  subjectId: string;
+  businessTransactionId: string;
+
+  subjectId?: string;
 
   decisionId: string;
 

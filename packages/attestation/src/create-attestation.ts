@@ -40,6 +40,9 @@ export function createAttestation(
 
         JSON.stringify({
 
+   businessTransactionId:
+    evaluation.businessTransactionId,
+
   subjectId:
     evaluation.subjectId,
 
@@ -72,6 +75,9 @@ export function createAttestation(
 
   decisionId:
     evaluation.decisionId,
+
+   businessTransactionId:
+    evaluation.businessTransactionId,
 
   subjectId:
     evaluation.subjectId,

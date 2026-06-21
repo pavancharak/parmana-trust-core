@@ -1,52 +1,12 @@
-\# Parmana Trust Core
+\# Parmana
 
 
 
-Parmana Trust Core is a TypeScript trust-verification framework for building auditable, cryptographically verifiable decision systems.
+\*\*Parmana prevents unauthorized autonomous actions.\*\*
 
 
 
-It provides evidence tracking, decision attestations, trust policies, trust anchors, bundle packaging, receipt generation, and verification workflows.
-
-
-
-\---
-
-
-
-\# Features
-
-
-
-\* Evidence Records
-
-\* Decision Attestations
-
-\* Attestation Chains
-
-\* Trust Policies
-
-\* Trust Profiles
-
-\* Trust Anchors
-
-\* Trust Root Rotation
-
-\* Signature Verification
-
-\* Bundle Packaging
-
-\* Bundle Hashing
-
-\* Bundle Receipts
-
-\* CLI Verification
-
-\* Ed25519 Support
-
-\* ML-DSA-65 (Post-Quantum) Support
-
-\* End-to-End Verification Tests
+Parmana verifies human-defined authority and organizational policy before autonomous systems act.
 
 
 
@@ -54,37 +14,333 @@ It provides evidence tracking, decision attestations, trust policies, trust anch
 
 
 
-\# Architecture
+\## Why Parmana?
+
+
+
+AI systems can generate actions.
+
+
+
+Organizations must decide whether those actions are authorized.
+
+
+
+Parmana sits between intent and execution, ensuring that authority, policy, attestation, verification, and execution are cryptographically linked and auditable.
 
 
 
 ```text
 
-Evidence
+AI / Application
 
-&#x20;   ↓
+&#x20;      ↓
+
+Authority Evaluation
+
+&#x20;      ↓
+
+Decision Attestation
+
+&#x20;      ↓
+
+Verification Receipt
+
+&#x20;      ↓
+
+Execution
+
+```
+
+
+
+\---
+
+
+
+\## Core Principle
+
+
+
+```text
+
+AI has intelligence.
+
+Humans have authority.
+
+
+
+Intelligence generates actions.
+
+Authority decides what is allowed.
+
+```
+
+
+
+Parmana makes authority verifiable and enforceable before execution.
+
+
+
+\---
+
+
+
+\## Execution Trust Chain
+
+
+
+Parmana implements a complete Execution Trust Chain.
+
+
+
+```text
+
+Signal Evidence
+
+&#x20;     ↓
+
+Authority Decision
+
+&#x20;     ↓
+
+Decision Attestation
+
+&#x20;     ↓
+
+Verification Receipt
+
+&#x20;     ↓
+
+Execution Record
+
+```
+
+
+
+Every artifact is persisted and retrievable.
+
+
+
+\---
+
+
+
+\## Trust Chain Lineage
+
+
+
+Each transaction is linked through a business transaction identifier.
+
+
+
+```text
+
+businessTransactionId
+
+```
+
+
+
+Associated lineage identifiers:
+
+
+
+```text
+
+businessTransactionId
+
+decisionId
+
+receiptId
+
+executionId
+
+taskId
+
+policyId
+
+policyVersion
+
+subjectId (optional)
+
+```
+
+
+
+\---
+
+
+
+\## Example
+
+
+
+```text
+
+PAYMENT-E2E-001
+
+```
+
+
+
+Signals:
+
+
+
+```json
+
+{
+
+&#x20; "managerApproved": true,
+
+&#x20; "kycVerified": true
+
+}
+
+```
+
+
+
+Decision:
+
+
+
+```json
+
+{
+
+&#x20; "decision": "approved",
+
+&#x20; "taskId": "payment.release",
+
+&#x20; "policyId": "payment-policy-v1"
+
+}
+
+```
+
+
+
+Receipt:
+
+
+
+```json
+
+{
+
+&#x20; "valid": true,
+
+&#x20; "receiptId": "..."
+
+}
+
+```
+
+
+
+Execution:
+
+
+
+```json
+
+{
+
+&#x20; "executionSystem": "stripe",
+
+&#x20; "executionReference": "pi\_12345"
+
+}
+
+```
+
+
+
+\---
+
+
+
+\## Trust Chain Retrieval
+
+
+
+Retrieve the complete lineage:
+
+
+
+```http
+
+GET /trust-chain/{businessTransactionId}
+
+```
+
+
+
+Response:
+
+
+
+```json
+
+{
+
+&#x20; "decision": {},
+
+&#x20; "signals": \[],
+
+&#x20; "attestations": \[],
+
+&#x20; "receipts": \[],
+
+&#x20; "executions": \[]
+
+}
+
+```
+
+
+
+\---
+
+
+
+\## Architecture
+
+
+
+```text
+
+Subject
+
+&#x20;  ↓
+
+Task
+
+&#x20;  ↓
+
+Policy
+
+&#x20;  ↓
+
+Authority Decision
+
+&#x20;  ↓
 
 Attestation
 
-&#x20;   ↓
+&#x20;  ↓
 
-Trust Policy Validation
+Verification Receipt
 
-&#x20;   ↓
+&#x20;  ↓
 
-Trust Root
+Execution Record
 
-&#x20;   ↓
+&#x20;  ↓
 
-Bundle
-
-&#x20;   ↓
-
-Receipt
-
-&#x20;   ↓
-
-Verification
+External System
 
 ```
 
@@ -94,469 +350,25 @@ Verification
 
 
 
-\# Repository Structure
+\## What Parmana Stores
 
 
 
-```text
+\### Signal Evidence
 
-parmana-trust-core
 
 
+Evidence used during policy evaluation.
 
-packages/
 
-├── contracts
 
-├── crypto
-
-├── evidence
-
-├── provenance
-
-├── attestation
-
-├── trust-profiles
-
-├── trust-anchor
-
-├── verifier
-
-└── bundle
-
-
-
-apps/
-
-├── cli
-
-└── playground
-
-
-
-tests/
-
-```
-
-
-
-\---
-
-
-
-\# Packages
-
-
-
-\## @parmana/contracts
-
-
-
-Core shared interfaces and schemas.
-
-
-
-```text
-
-SignatureRecord
-
-SignatureSet
-
-TrustProfile
-
-AttestationV2
-
-```
-
-
-
-\---
-
-
-
-\## @parmana/crypto
-
-
-
-Cryptographic providers and abstractions.
-
-
-
-```text
-
-Signer
-
-Registry
-
-Factory
-
-
-
-Ed25519
-
-ML-DSA-65
-
-```
-
-
-
-\---
-
-
-
-\## @parmana/evidence
-
-
-
-Evidence record definitions and hashing support.
-
-
-
-\---
-
-
-
-\## @parmana/provenance
-
-
-
-Provenance tracking primitives.
-
-
-
-\---
-
-
-
-\## @parmana/attestation
-
-
-
-Decision attestation generation and management.
-
-
-
-```text
-
-createAttestation()
-
-appendChain()
-
-reattest()
-
-```
-
-
-
-\---
-
-
-
-\## @parmana/trust-profiles
-
-
-
-Trust policies and profile definitions.
-
-
-
-```text
-
-TrustPolicy
-
-TrustProfile
-
-```
-
-
-
-\---
-
-
-
-\## @parmana/trust-anchor
-
-
-
-Trust root management.
-
-
-
-```text
-
-createTrustRoot()
-
-rotateTrustRoot()
-
-verifyChain()
-
-```
-
-
-
-\---
-
-
-
-\## @parmana/verifier
-
-
-
-Verification engine.
-
-
-
-```text
-
-verifySignatureSet()
-
-verifyPolicy()
-
-verifyDecision()
-
-```
-
-
-
-\---
-
-
-
-\## @parmana/bundle
-
-
-
-Bundle packaging and verification.
-
-
-
-```text
-
-createBundle()
-
-verifyBundle()
-
-
-
-serializeBundle()
-
-deserializeBundle()
-
-
-
-hashBundle()
-
-
-
-createReceipt()
-
-
-
-signBundle()
-
-verifyBundleSignature()
-
-
-
-saveBundle()
-
-loadBundle()
-
-```
-
-
-
-\---
-
-
-
-\# Installation
-
-
-
-Clone the repository:
-
-
-
-```bash
-
-git clone <repository-url>
-
-
-
-cd parmana-trust-core
-
-```
-
-
-
-Install dependencies:
-
-
-
-```bash
-
-npm install
-
-```
-
-
-
-\---
-
-
-
-\# Build
-
-
-
-Build all packages:
-
-
-
-```bash
-
-npm run build
-
-```
-
-
-
-\---
-
-
-
-\# Test
-
-
-
-Run the complete test suite:
-
-
-
-```bash
-
-npm test
-
-```
-
-
-
-\---
-
-
-
-\# Quick Example
-
-
-
-Create a trust root, generate a receipt, and verify the trust chain.
-
-
-
-```ts
-
-import {
-
-&#x20; createTrustRoot,
-
-&#x20; verifyChain
-
-} from "@parmana/trust-anchor";
-
-
-
-import {
-
-&#x20; createReceipt
-
-} from "@parmana/bundle";
-
-
-
-const trustRoot =
-
-&#x20; createTrustRoot(
-
-&#x20;   "root-1",
-
-&#x20;   \[],
-
-&#x20;   "v1"
-
-&#x20; );
-
-
-
-const bundle = {
-
-&#x20; bundleId: "bundle-001",
-
-&#x20; trustRoot
-
-};
-
-
-
-const receipt =
-
-&#x20; createReceipt(
-
-&#x20;   bundle as any
-
-&#x20; );
-
-
-
-const chainResult =
-
-&#x20; verifyChain(\[
-
-&#x20;   trustRoot
-
-&#x20; ]);
-
-
-
-console.log(receipt);
-
-
-
-console.log(chainResult);
-
-```
-
-
-
-Example output:
-
-
-
-```text
+```json
 
 {
 
-&#x20; bundleId: 'bundle-001',
+&#x20; "kycVerified": true,
 
-&#x20; bundleHash: '...',
-
-&#x20; trustRootId: 'root-1',
-
-&#x20; trustRootVersion: 'v1',
-
-&#x20; createdAt: '...'
-
-}
-
-
-
-{
-
-&#x20; valid: true,
-
-&#x20; versions: \['v1'],
-
-&#x20; errors: \[]
+&#x20; "managerApproved": true
 
 }
 
@@ -564,147 +376,123 @@ Example output:
 
 
 
-\---
+\### Authority Decisions
 
 
 
-\# Verification Example
+Policy evaluation outcome.
 
 
 
-```ts
+```json
 
-import {
+{
 
-&#x20; verifyPolicy
+&#x20; "decision": "approved"
 
-} from "@parmana/verifier";
-
-
-
-const result =
-
-&#x20; verifyPolicy(
-
-&#x20;   \[
-
-&#x20;     {
-
-&#x20;       algorithm: "ed25519"
-
-&#x20;     }
-
-&#x20;   ] as any,
-
-&#x20;   {
-
-&#x20;     requiredAlgorithms: \[
-
-&#x20;       "ed25519"
-
-&#x20;     ]
-
-&#x20;   } as any
-
-&#x20; );
-
-
-
-console.log(result.valid);
+}
 
 ```
 
 
 
-Output:
+\### Decision Attestations
+
+
+
+Cryptographically signed decision artifacts.
+
+
+
+\### Verification Receipts
+
+
+
+Proof that attestation validation succeeded.
+
+
+
+\### Execution Records
+
+
+
+Evidence that an external system executed the approved action.
+
+
+
+\---
+
+
+
+\## Design Goals
+
+
+
+\* Human authority before execution
+
+\* Policy-driven authorization
+
+\* Cryptographic attestations
+
+\* Verifiable execution lineage
+
+\* Audit-ready evidence
+
+\* Replayable trust chain
+
+\* System-of-record neutrality
+
+
+
+\---
+
+
+
+\## Current Status
 
 
 
 ```text
 
-true
+Execution Trust Chain
 
-```
-
-
-
-\---
+✓ Completed
 
 
 
-\# CLI Usage
+Signal Evidence
+
+✓ Persisted
 
 
 
-Verify a bundle:
+Authority Decision
+
+✓ Persisted
 
 
 
-```bash
+Decision Attestation
 
-npx tsx apps/cli/src/verify.ts loan.bundle.json
-
-```
+✓ Persisted
 
 
 
-Generate a receipt:
+Verification Receipt
+
+✓ Persisted
 
 
 
-```bash
+Execution Record
 
-npx tsx apps/cli/src/receipt.ts
-
-```
+✓ Persisted
 
 
 
-\---
+Trust Chain Retrieval
 
-
-
-\# Test Coverage
-
-
-
-Current test coverage includes:
-
-
-
-```text
-
-Bundle Creation
-
-Bundle Serialization
-
-Bundle Roundtrip
-
-
-
-Receipt Generation
-
-
-
-Trust Root Creation
-
-Trust Root Rotation
-
-Trust Chain Verification
-
-
-
-Policy Verification
-
-Decision Verification
-
-
-
-Signature Verification
-
-
-
-End-to-End Trust Flow
+✓ Implemented
 
 ```
 
@@ -714,249 +502,19 @@ End-to-End Trust Flow
 
 
 
-\# Security
+\## Vision
 
 
 
-Parmana Trust Core supports:
+Organizations decide what to trust.
 
 
 
-```text
+Parmana ensures those trusted signals satisfy policy before execution.
 
-Ed25519
 
-ML-DSA-65
 
-```
-
-
-
-ML-DSA-65 provides a foundation for post-quantum migration strategies.
-
-
-
-Future releases will support:
-
-
-
-```text
-
-Hybrid Signatures
-
-Threshold Signatures
-
-Transparency Logs
-
-Trust Federation
-
-```
-
-
-
-\---
-
-
-
-\# Roadmap
-
-
-
-\## v0.2
-
-
-
-\### Hybrid Cryptography
-
-
-
-```text
-
-Ed25519 + ML-DSA-65
-
-```
-
-
-
-\### Threshold Trust
-
-
-
-```text
-
-2-of-3 approvals
-
-3-of-5 approvals
-
-```
-
-
-
-\### Trust Federation
-
-
-
-```text
-
-Multiple trust roots
-
-Cross-root validation
-
-```
-
-
-
-\### Transparency Logs
-
-
-
-```text
-
-Append-only audit logs
-
-Merkle proofs
-
-```
-
-
-
-\### Policy Engine v2
-
-
-
-```text
-
-Threshold rules
-
-Algorithm requirements
-
-Expiration checks
-
-Issuer restrictions
-
-```
-
-
-
-\---
-
-
-
-\# Development
-
-
-
-Build:
-
-
-
-```bash
-
-npm run build
-
-```
-
-
-
-Test:
-
-
-
-```bash
-
-npm test
-
-```
-
-
-
-Run playground examples:
-
-
-
-```bash
-
-npm run playground:bundle
-
-
-
-npm run playground:verify
-
-
-
-npm run playground:trust-root
-
-```
-
-
-
-\---
-
-
-
-\# Release Status
-
-
-
-Current target:
-
-
-
-```text
-
-v0.1.0
-
-```
-
-
-
-Project status:
-
-
-
-```text
-
-Build System       ✓
-
-Monorepo           ✓
-
-Crypto             ✓
-
-Evidence           ✓
-
-Attestation        ✓
-
-Trust Profiles     ✓
-
-Trust Anchors      ✓
-
-Verifier           ✓
-
-Bundles            ✓
-
-Receipts           ✓
-
-CLI                ✓
-
-Unit Tests         ✓
-
-Integration Tests  ✓
-
-End-to-End Tests   ✓
-
-```
-
-
-
-\---
-
-
-
-\# License
-
-
-
-MIT License.
+Parmana makes sure autonomous systems follow human rules before they act.
 
 
 

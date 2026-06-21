@@ -16,14 +16,17 @@ export async function saveReceipt(
 
     .insert({
 
-      receipt_id:
-        receipt.receiptId,
+  receipt_id:
+    receipt.receiptId,
 
-      subject_id:
-        receipt.subjectId,
+  business_transaction_id:
+    receipt.businessTransactionId,
 
-      decision_id:
-        receipt.decisionId,
+  subject_id:
+    receipt.subjectId,
+
+  decision_id:
+    receipt.decisionId,
 
       task_id:
         receipt.taskId,

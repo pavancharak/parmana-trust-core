@@ -1,13 +1,17 @@
 import crypto from "node:crypto";
-import {
-  provider
-} from "./provider.js";
-import type {
-  DecisionAttestation
-} from "./types.js";
+
 import {
   enforceInvariant
 } from "@parmana/contracts";
+
+import type {
+  DecisionAttestation
+} from "./types.js";
+
+import {
+  provider
+} from "./provider.js";
+
 export function verifyAttestation(
   attestation: DecisionAttestation
 ): boolean {
@@ -22,19 +26,19 @@ export function verifyAttestation(
     );
 
   enforceInvariant(
-  "INV-140",
-  Boolean(
-    hashEvidence
-  )
-);
-
-if (!hashEvidence) {
-
-  throw new Error(
-    "INV-140 violation"
+    "INV-140",
+    Boolean(
+      hashEvidence
+    )
   );
 
-}
+  if (!hashEvidence) {
+
+    throw new Error(
+      "INV-140 violation"
+    );
+
+  }
 
   const expectedHash =
     crypto
@@ -43,64 +47,70 @@ if (!hashEvidence) {
 
         JSON.stringify({
 
-  subjectId:
-    attestation.subjectId,
+          businessTransactionId:
+            attestation.businessTransactionId,
 
-  taskId:
-    attestation.taskId,
+          subjectId:
+            attestation.subjectId,
 
-  policyId:
-    attestation.policyId,
+          taskId:
+            attestation.taskId,
 
-  policyVersion:
-    attestation.policyVersion,
+          policyId:
+            attestation.policyId,
 
-  outcome:
-    attestation.outcome,
+          policyVersion:
+            attestation.policyVersion,
 
-  createdAt:
-    attestation.metadata.createdAt
+          outcome:
+            attestation.outcome,
 
-})
+          createdAt:
+            attestation.metadata.createdAt
+
+        })
 
       )
       .digest("hex");
 
   if (
 
-  expectedHash !==
-  hashEvidence.hash
+    expectedHash !==
+    hashEvidence.hash
 
-) {
+  ) {
 
-  return false;
+    return false;
 
-}
+  }
 
-const signatureRecord =
-  attestation
-    .signatures
-    .signatures[0];
+  const signatureRecord =
+    attestation
+      .signatures
+      .signatures[0];
 
-if (!signatureRecord) {
+  if (!signatureRecord) {
 
-  return false;
+    return false;
 
-}
+  }
 
-const valid =
-  provider.verify(
-    expectedHash,
-    signatureRecord.value
+  const valid =
+    provider.verify(
+      expectedHash,
+      signatureRecord.value
+    );
+
+  enforceInvariant(
+    "INV-120",
+    valid
   );
 
-enforceInvariant(
-  "INV-120",
-  valid
-);
-enforceInvariant(
-  "INV-121",
-  valid
-);
-return valid;
+  enforceInvariant(
+    "INV-121",
+    valid
+  );
+
+  return valid;
+
 }

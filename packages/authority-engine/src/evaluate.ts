@@ -36,6 +36,9 @@ export function evaluate(
   decisionId:
     randomUUID(),
 
+  businessTransactionId:
+    request.businessTransactionId,
+
   subjectId:
     request.subjectId,
 

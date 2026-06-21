@@ -6,6 +6,10 @@ import {
 } from "express";
 
 import {
+  verifyExecutionToken
+} from "@parmana/execution-token";
+
+import {
   getReceipt,
   saveExecution
 } from "@parmana/audit-db";
@@ -24,7 +28,7 @@ router.post(
 
       const {
 
-        receiptId,
+        executionToken,
 
         executionSystem,
 
@@ -34,7 +38,7 @@ router.post(
 
       if (
 
-        !receiptId ||
+        !executionToken ||
 
         !executionSystem ||
 
@@ -47,7 +51,25 @@ router.post(
           .json({
 
             error:
-              "receiptId, executionSystem and executionReference are required"
+              "executionToken, executionSystem and executionReference are required"
+
+          });
+
+      }
+
+      const tokenValid =
+        verifyExecutionToken(
+          executionToken
+        );
+
+      if (!tokenValid) {
+
+        return res
+          .status(403)
+          .json({
+
+            error:
+              "INV-170 violation: invalid execution trust token"
 
           });
 
@@ -55,7 +77,7 @@ router.post(
 
       const receipt =
         await getReceipt(
-          receiptId
+          executionToken.receiptId
         );
 
       if (!receipt) {
@@ -70,41 +92,45 @@ router.post(
           });
 
       }
-if (!receipt.valid) {
 
-  return res
-    .status(403)
-    .json({
+      if (!receipt.valid) {
 
-      error:
-        "INV-199 violation: receipt is not valid"
+        return res
+          .status(403)
+          .json({
 
-    });
+            error:
+              "INV-199 violation: receipt is not valid"
 
-}
+          });
+
+      }
 
       const execution = {
 
         executionId:
           crypto.randomUUID(),
 
+        businessTransactionId:
+          executionToken.businessTransactionId,
+
         subjectId:
           receipt.subject_id,
 
         decisionId:
-          receipt.decision_id,
+          executionToken.decisionId,
 
         receiptId:
-          receipt.receipt_id,
+          executionToken.receiptId,
 
         taskId:
-          receipt.task_id,
+          executionToken.taskId,
 
         policyId:
-          receipt.policy_id,
+          executionToken.policyId,
 
         policyVersion:
-          receipt.policy_version,
+          executionToken.policyVersion,
 
         executionSystem,
 
@@ -129,23 +155,23 @@ if (!receipt.valid) {
 
     } catch (error) {
 
-  console.error(
-    "EXECUTE ERROR:",
-    error
-  );
+      console.error(
+        "EXECUTE ERROR:",
+        error
+      );
 
-  return res
-    .status(400)
-    .json({
+      return res
+        .status(400)
+        .json({
 
-      error:
-        error instanceof Error
-          ? error.message
-          : JSON.stringify(error)
+          error:
+            error instanceof Error
+              ? error.message
+              : JSON.stringify(error)
 
-    });
+        });
 
-}
+    }
 
   }
 );

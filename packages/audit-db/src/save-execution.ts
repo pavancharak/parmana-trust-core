@@ -23,6 +23,9 @@ export async function saveExecution(
       execution_id:
         execution.executionId,
 
+     business_transaction_id:
+  execution.businessTransactionId,
+
       subject_id:
         execution.subjectId,
 
