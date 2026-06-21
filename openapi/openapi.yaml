@@ -353,19 +353,23 @@ components:
 
   schemas:
 
-    EvaluateRequest:
-      type: object
-      required:
-        - subjectId
-        - taskId
-      properties:
-        subjectId:
-          type: string
-        taskId:
-          type: string
-        signals:
-          type: object
-          additionalProperties: true
+  EvaluateRequest:
+    type: object
+
+    required:
+      - taskId
+
+    properties:
+
+      subjectId:
+        type: string
+
+      taskId:
+        type: string
+
+      signals:
+        type: object
+        additionalProperties: true
 
     Attestation:
       type: object

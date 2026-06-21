@@ -24,7 +24,7 @@ import {
 
 export async function evaluateAuthority(
 
-  subjectId: string,
+ subjectId: string | undefined,
 
   taskId: string,
 

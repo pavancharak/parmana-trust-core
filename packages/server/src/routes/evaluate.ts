@@ -38,17 +38,7 @@ router.post(
         signals
       } = req.body;
 
-      if (!subjectId) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "subjectId is required"
-          });
-
-      }
-
+      
       if (!taskId) {
 
         return res
