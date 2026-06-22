@@ -1,0 +1,345 @@
+openapi: 3.1.0
+info:
+  title: Parmana Trust Core API
+  version: 0.5.0
+components:
+  schemas:
+    AttestResponse:
+      type: object
+      properties:
+        attestationId:
+          type: string
+        status:
+          type: string
+      required:
+        - attestationId
+        - status
+      example:
+        attestationId: att-001
+        status: ATTESTED
+    AttestRequest:
+      type: object
+      properties:
+        task:
+          type: string
+        signals:
+          type: object
+          additionalProperties: {}
+      required:
+        - task
+        - signals
+      example:
+        task: payment-transfer
+        signals:
+          role: finance-manager
+          approvalId: APR-1001
+          amount: 5000
+          currency: USD
+    VerifyResponse:
+      type: object
+      properties:
+        verificationId:
+          type: string
+        valid:
+          type: boolean
+      required:
+        - verificationId
+        - valid
+      example:
+        verificationId: ver-001
+        valid: true
+    VerifyRequest:
+      type: object
+      properties:
+        attestation:
+          type: object
+          properties: {}
+        policy:
+          type: object
+          properties: {}
+      required:
+        - attestation
+        - policy
+      example:
+        attestation:
+          attestationId: att-001
+        policy:
+          policyId: payment-policy
+          version: "1.0"
+    TokenResponse:
+      type: object
+      properties:
+        tokenId:
+          type: string
+        executionToken:
+          type: string
+      required:
+        - tokenId
+        - executionToken
+      example:
+        tokenId: tok-001
+        executionToken: ett-001
+    TokenRequest:
+      type: object
+      properties:
+        verificationId:
+          type: string
+      required:
+        - verificationId
+      example:
+        verificationId: ver-001
+    ExecuteResponse:
+      type: object
+      properties:
+        executionId:
+          type: string
+        status:
+          type: string
+      required:
+        - executionId
+        - status
+      example:
+        executionId: exec-001
+        status: EXECUTED
+    ExecuteRequest:
+      type: object
+      properties:
+        executionToken:
+          type: string
+      required:
+        - executionToken
+      example:
+        executionToken: ett-001
+    TrustChainResponse:
+      type: object
+      properties:
+        businessTransactionId:
+          type: string
+        attestationId:
+          type: string
+        verificationId:
+          type: string
+        executionId:
+          type: string
+      required:
+        - businessTransactionId
+        - attestationId
+        - verificationId
+        - executionId
+      example:
+        businessTransactionId: txn-001
+        attestationId: att-001
+        verificationId: ver-001
+        executionId: exec-001
+    OverrideResponse:
+      type: object
+      properties:
+        overrideId:
+          type: string
+        status:
+          type: string
+      required:
+        - overrideId
+        - status
+      example:
+        overrideId: ovr-001
+        status: APPROVED
+    OverrideRequest:
+      type: object
+      properties:
+        businessTransactionId:
+          type: string
+        reason:
+          type: string
+        approver:
+          type: string
+      required:
+        - businessTransactionId
+        - reason
+        - approver
+      example:
+        businessTransactionId: txn-001
+        reason: Emergency payment release
+        approver: cfo@company.com
+    OverrideAttestResponse:
+      type: object
+      properties:
+        overrideAttestationId:
+          type: string
+      required:
+        - overrideAttestationId
+      example:
+        overrideAttestationId: ovr-att-001
+    OverrideAttestRequest:
+      type: object
+      properties:
+        overrideId:
+          type: string
+      required:
+        - overrideId
+      example:
+        overrideId: ovr-001
+    OverrideVerifyResponse:
+      type: object
+      properties:
+        verificationId:
+          type: string
+        valid:
+          type: boolean
+      required:
+        - verificationId
+        - valid
+      example:
+        verificationId: ovr-ver-001
+        valid: true
+    OverrideVerifyRequest:
+      type: object
+      properties:
+        overrideAttestationId:
+          type: string
+      required:
+        - overrideAttestationId
+      example:
+        overrideAttestationId: ovr-att-001
+  parameters: {}
+paths:
+  /attest:
+    post:
+      tags:
+        - Attestation
+      summary: Create decision attestation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttestRequest"
+      responses:
+        "200":
+          description: Decision attestation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttestResponse"
+  /verify:
+    post:
+      tags:
+        - Verification
+      summary: Verify decision attestation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyRequest"
+      responses:
+        "200":
+          description: Verification receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyResponse"
+  /token:
+    post:
+      tags:
+        - Execution
+      summary: Create execution token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRequest"
+      responses:
+        "200":
+          description: Execution token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+  /execute:
+    post:
+      tags:
+        - Execution
+      summary: Record execution
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecuteRequest"
+      responses:
+        "200":
+          description: Execution record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecuteResponse"
+  /trust-chain/{businessTransactionId}:
+    get:
+      tags:
+        - Trust Chain
+      summary: Retrieve execution trust chain
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: businessTransactionId
+          in: path
+      responses:
+        "200":
+          description: Trust chain
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrustChainResponse"
+        "404":
+          description: Trust chain not found
+  /override:
+    post:
+      tags:
+        - Override
+      summary: Create override decision
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OverrideRequest"
+      responses:
+        "200":
+          description: Override decision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OverrideResponse"
+  /override/attest:
+    post:
+      tags:
+        - Override
+      summary: Create override attestation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OverrideAttestRequest"
+      responses:
+        "200":
+          description: Override attestation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OverrideAttestResponse"
+  /override/verify:
+    post:
+      tags:
+        - Override
+      summary: Verify override attestation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OverrideVerifyRequest"
+      responses:
+        "200":
+          description: Override verification receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OverrideVerifyResponse"
+webhooks: {}
