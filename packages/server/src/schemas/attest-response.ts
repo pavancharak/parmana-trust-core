@@ -5,6 +5,10 @@ export const AttestResponseSchema = z.object({
   status: z.string(),
 }).meta({
   id: "AttestResponse",
+  example: {
+    attestationId: "att-001",
+    status: "ATTESTED",
+  },
 });
 
 export type AttestResponse =

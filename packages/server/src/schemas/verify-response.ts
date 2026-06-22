@@ -5,6 +5,10 @@ export const VerifyResponseSchema = z.object({
   valid: z.boolean(),
 }).meta({
   id: "VerifyResponse",
+  example: {
+    verificationId: "ver-001",
+    valid: true,
+  },
 });
 
 export type VerifyResponse =

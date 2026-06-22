@@ -7,6 +7,12 @@ export const TrustChainResponseSchema = z.object({
   executionId: z.string(),
 }).meta({
   id: "TrustChainResponse",
+  example: {
+    businessTransactionId: "txn-001",
+    attestationId: "att-001",
+    verificationId: "ver-001",
+    executionId: "exec-001",
+  },
 });
 
 export type TrustChainResponse =

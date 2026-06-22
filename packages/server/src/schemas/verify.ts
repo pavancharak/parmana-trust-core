@@ -5,6 +5,15 @@ export const VerifyRequestSchema = z.object({
   policy: z.object({}),
 }).meta({
   id: "VerifyRequest",
+  example: {
+    attestation: {
+      attestationId: "att-001",
+    },
+    policy: {
+      policyId: "payment-policy",
+      version: "1.0",
+    },
+  },
 });
 
 export type VerifyRequest =

@@ -5,6 +5,10 @@ export const TokenResponseSchema = z.object({
   executionToken: z.string(),
 }).meta({
   id: "TokenResponse",
+  example: {
+    tokenId: "tok-001",
+    executionToken: "ett-001",
+  },
 });
 
 export type TokenResponse =

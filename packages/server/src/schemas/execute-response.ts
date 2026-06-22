@@ -5,6 +5,10 @@ export const ExecuteResponseSchema = z.object({
   status: z.string(),
 }).meta({
   id: "ExecuteResponse",
+  example: {
+    executionId: "exec-001",
+    status: "EXECUTED",
+  },
 });
 
 export type ExecuteResponse =
