@@ -26,6 +26,9 @@ import {
 import {
   ExecuteRequestSchema,
 } from "../schemas/execute.js";
+import {
+  TrustChainParamsSchema,
+} from "../schemas/trust-chain.js";
 
 const registry = new OpenAPIRegistry();
 
@@ -124,6 +127,28 @@ registry.registerPath({
   responses: {
     200: {
       description: "Execution record",
+    },
+  },
+});
+registry.registerPath({
+  method: "get",
+  path: "/trust-chain/{businessTransactionId}",
+
+  tags: ["Trust Chain"],
+
+  summary: "Retrieve execution trust chain",
+
+  request: {
+    params: TrustChainParamsSchema,
+  },
+
+  responses: {
+    200: {
+      description: "Trust chain",
+    },
+
+    404: {
+      description: "Trust chain not found",
     },
   },
 });
