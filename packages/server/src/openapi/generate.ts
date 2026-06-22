@@ -23,6 +23,9 @@ import {
 import {
   TokenRequestSchema,
 } from "../schemas/token.js";
+import {
+  ExecuteRequestSchema,
+} from "../schemas/execute.js";
 
 const registry = new OpenAPIRegistry();
 
@@ -97,6 +100,30 @@ registry.registerPath({
   responses: {
     200: {
       description: "Execution token",
+    },
+  },
+});
+registry.registerPath({
+  method: "post",
+  path: "/execute",
+
+  tags: ["Execution"],
+
+  summary: "Record execution",
+
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: ExecuteRequestSchema,
+        },
+      },
+    },
+  },
+
+  responses: {
+    200: {
+      description: "Execution record",
     },
   },
 });
