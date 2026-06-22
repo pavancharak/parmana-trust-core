@@ -145,3 +145,8 @@ This is the first end-to-end intent-bound Execution Trust Chain in the Parmana s
 4. rootVersion Support
 5. Trust Root Registry
 6. Key Rotation
+
+1. GET /trust-anchor/public-key
+2. External Verification Example
+3. keyId support
+4. rootVersion support
