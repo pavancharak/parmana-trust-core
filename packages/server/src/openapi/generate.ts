@@ -17,6 +17,13 @@ import {
   AttestRequestSchema,
 } from "../schemas/attest.js";
 
+import {
+  VerifyRequestSchema,
+} from "../schemas/verify.js";
+import {
+  TokenRequestSchema,
+} from "../schemas/token.js";
+
 const registry = new OpenAPIRegistry();
 
 //registry.register("AttestRequest", AttestRequestSchema);
@@ -45,7 +52,54 @@ registry.registerPath({
     },
   },
 });
+registry.registerPath({
+  method: "post",
+  path: "/verify",
 
+  tags: ["Verification"],
+
+  summary: "Verify decision attestation",
+
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: VerifyRequestSchema,
+        },
+      },
+    },
+  },
+
+  responses: {
+    200: {
+      description: "Verification receipt",
+    },
+  },
+});
+registry.registerPath({
+  method: "post",
+  path: "/token",
+
+  tags: ["Execution"],
+
+  summary: "Create execution token",
+
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: TokenRequestSchema,
+        },
+      },
+    },
+  },
+
+  responses: {
+    200: {
+      description: "Execution token",
+    },
+  },
+});
 const generator =
   new OpenApiGeneratorV31(
     registry.definitions
