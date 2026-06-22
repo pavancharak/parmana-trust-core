@@ -9,21 +9,25 @@
   ],
   "scripts": {
     "build": "tsc -p .",
-    "dev": "tsx src/index.ts"
+  "dev": "tsx src/index.ts",
+  "openapi:generate": "tsx src/openapi/generate.ts"
   },
   "dependencies": {
-  "@parmana/audit-db": "*",
-  "@parmana/task-registry": "*",
-  "@parmana/policy-registry": "*",
-  "@parmana/schema-registry": "*",
-  "@parmana/authority-engine": "*",
-  "@parmana/signal-registry": "*",
-  "@parmana/execution-token": "*",
-   "@parmana/override-engine": "*",
-  "express": "^5.1.0",
-  "swagger-ui-express": "^5.0.1",
-  "yamljs": "^0.3.0"
-},
+    "@asteasolutions/zod-to-openapi": "^8.5.0",
+    "@parmana/audit-db": "*",
+    "@parmana/authority-engine": "*",
+    "@parmana/execution-token": "*",
+    "@parmana/override-engine": "*",
+    "@parmana/policy-registry": "*",
+    "@parmana/schema-registry": "*",
+    "@parmana/signal-registry": "*",
+    "@parmana/task-registry": "*",
+    "express": "^5.1.0",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.9.0",
+    "yamljs": "^0.3.0",
+    "zod": "^4.4.3"
+  },
   "devDependencies": {
     "@types/swagger-ui-express": "^4.1.8",
     "@types/yamljs": "^0.2.34"
