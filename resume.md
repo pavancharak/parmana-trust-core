@@ -137,3 +137,11 @@ You have successfully completed:
 ```
 
 This is the first end-to-end intent-bound Execution Trust Chain in the Parmana stack. The remaining work is independent verification and trust-anchor distribution.
+
+
+1. Public Key Endpoint
+2. External Verification Example
+3. keyId Support
+4. rootVersion Support
+5. Trust Root Registry
+6. Key Rotation
