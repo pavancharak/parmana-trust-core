@@ -1,0 +1,247 @@
+openapi: 3.1.0
+
+info:
+  title: Parmana Trust Core API
+  version: 0.4.0
+  description: |
+    Parmana prevents unauthorized autonomous actions.
+
+    Parmana verifies human-defined authority and
+    organizational policy before autonomous systems act.
+
+  license:
+    name: Apache License 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: https://api.parmana.ai
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Attestation
+    description: Decision attestation APIs
+
+  - name: Verification
+    description: Verification receipt APIs
+
+  - name: Execution
+    description: Execution authorization and execution APIs
+
+  - name: Override
+    description: Override authority workflows
+
+  - name: Trust Chain
+    description: Trust chain retrieval APIs
+
+  - name: System
+    description: Operational endpoints
+
+paths:
+
+  /health:
+    get:
+      operationId: healthCheck
+      security: []
+      tags:
+        - System
+      summary: Health check
+      responses:
+        "200":
+          description: Service healthy
+        "404":
+          description: Endpoint not found
+
+  /version:
+    get:
+      operationId: getVersion
+      security: []
+      tags:
+        - System
+      summary: Service version
+      responses:
+        "200":
+          description: Version information
+        "404":
+          description: Endpoint not found
+
+  /attest:
+    post:
+      operationId: createAttestation
+      tags:
+        - Attestation
+      summary: Create decision attestation
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttestRequest"
+
+      responses:
+        "200":
+          description: Decision attestation
+
+        "400":
+          description: Invalid attestation request
+
+  /verify:
+    post:
+      operationId: verifyAttestation
+      tags:
+        - Verification
+      summary: Verify decision attestation
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyRequest"
+
+      responses:
+        "200":
+          description: Verification receipt
+
+        "400":
+          description: Verification failed
+
+  /token:
+    post:
+      operationId: createExecutionToken
+      tags:
+        - Execution
+      summary: Create execution token
+
+      responses:
+        "200":
+          description: Execution token
+
+        "404":
+          description: Receipt not found
+
+  /execute:
+    post:
+      operationId: recordExecution
+      tags:
+        - Execution
+      summary: Record execution
+
+      responses:
+        "200":
+          description: Execution record
+
+        "400":
+          description: Invalid execution request
+
+        "403":
+          description: Invalid execution token
+
+        "404":
+          description: Receipt not found
+
+  /override:
+    post:
+      operationId: createOverrideDecision
+      tags:
+        - Override
+      summary: Create override decision
+
+      responses:
+        "200":
+          description: Override decision
+
+        "400":
+          description: Invalid override request
+
+  /override/attest:
+    post:
+      operationId: createOverrideAttestation
+      tags:
+        - Override
+      summary: Create override attestation
+
+      responses:
+        "200":
+          description: Override attestation
+
+        "400":
+          description: Invalid override attestation request
+
+  /override/verify:
+    post:
+      operationId: verifyOverrideAttestation
+      tags:
+        - Override
+      summary: Verify override attestation
+
+      responses:
+        "200":
+          description: Override verification receipt
+
+        "400":
+          description: Invalid override verification request
+
+  /trust-chain/{businessTransactionId}:
+    get:
+      operationId: getTrustChain
+      tags:
+        - Trust Chain
+      summary: Retrieve execution trust chain
+
+      parameters:
+        - name: businessTransactionId
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Trust chain
+
+        "404":
+          description: Trust chain not found
+
+components:
+
+  securitySchemes:
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    AttestRequest:
+      type: object
+
+      required:
+        - task
+        - signals
+
+      properties:
+
+        task:
+          type: string
+
+        signals:
+          type: object
+
+    VerifyRequest:
+      type: object
+
+      required:
+        - attestation
+        - policy
+
+      properties:
+
+        attestation:
+          type: object
+
+        policy:
+          type: object
