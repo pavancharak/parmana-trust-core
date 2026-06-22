@@ -45,9 +45,11 @@ import {
   TrustChainResponseSchema,
 } from "../schemas/trust-chain-response.js";
 
+
 const registry = new OpenAPIRegistry();
 
-//registry.register("AttestRequest", AttestRequestSchema);
+
+
 
 registry.registerPath({
   method: "post",
