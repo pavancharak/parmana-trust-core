@@ -29,6 +29,21 @@ import {
 import {
   TrustChainParamsSchema,
 } from "../schemas/trust-chain.js";
+import {
+  AttestResponseSchema,
+} from "../schemas/attest-response.js";
+import {
+  VerifyResponseSchema,
+} from "../schemas/verify-response.js";
+import {
+  TokenResponseSchema,
+} from "../schemas/token-response.js";
+import {
+  ExecuteResponseSchema,
+} from "../schemas/execute-response.js";
+import {
+  TrustChainResponseSchema,
+} from "../schemas/trust-chain-response.js";
 
 const registry = new OpenAPIRegistry();
 
@@ -53,10 +68,16 @@ registry.registerPath({
   },
 
   responses: {
-    200: {
-      description: "Decision attestation",
+  200: {
+    description: "Decision attestation",
+
+    content: {
+      "application/json": {
+        schema: AttestResponseSchema,
+      },
     },
   },
+},
 });
 registry.registerPath({
   method: "post",
@@ -77,10 +98,16 @@ registry.registerPath({
   },
 
   responses: {
-    200: {
-      description: "Verification receipt",
+  200: {
+    description: "Verification receipt",
+
+    content: {
+      "application/json": {
+        schema: VerifyResponseSchema,
+      },
     },
   },
+},
 });
 registry.registerPath({
   method: "post",
@@ -101,10 +128,16 @@ registry.registerPath({
   },
 
   responses: {
-    200: {
-      description: "Execution token",
+  200: {
+    description: "Execution token",
+
+    content: {
+      "application/json": {
+        schema: TokenResponseSchema,
+      },
     },
   },
+},
 });
 registry.registerPath({
   method: "post",
@@ -125,10 +158,16 @@ registry.registerPath({
   },
 
   responses: {
-    200: {
-      description: "Execution record",
+  200: {
+    description: "Execution record",
+
+    content: {
+      "application/json": {
+        schema: ExecuteResponseSchema,
+      },
     },
   },
+},
 });
 registry.registerPath({
   method: "get",
@@ -143,14 +182,20 @@ registry.registerPath({
   },
 
   responses: {
-    200: {
-      description: "Trust chain",
-    },
+  200: {
+    description: "Trust chain",
 
-    404: {
-      description: "Trust chain not found",
+    content: {
+      "application/json": {
+        schema: TrustChainResponseSchema,
+      },
     },
   },
+
+  404: {
+    description: "Trust chain not found",
+  },
+},
 });
 const generator =
   new OpenApiGeneratorV31(
