@@ -2,345 +2,208 @@ openapi: 3.1.0
 
 info:
   title: Parmana Trust Core API
-  version: 0.3.0
-  description: >
-    Parmana verifies human-defined authority before execution.
+  version: 0.4.0
+  description: |
+    Parmana prevents unauthorized autonomous actions.
+
+    Parmana verifies human-defined authority and
+    organizational policy before autonomous systems act.
+
+  license:
+    name: Apache License 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
 
 servers:
-  - url: http://localhost:3000
+  - url: https://api.parmana.ai
+
 security:
   - bearerAuth: []
 
 tags:
-  - name: Authority
   - name: Attestation
+    description: Decision attestation APIs
+
   - name: Verification
+    description: Verification receipt APIs
+
   - name: Execution
-  - name: Transparency
-  - name: Trust Roots
-  - name: Invariants
+    description: Execution authorization and execution APIs
+
+  - name: Override
+    description: Override authority workflows
+
+  - name: Trust Chain
+    description: Trust chain retrieval APIs
+
+  - name: System
+    description: Operational endpoints
 
 paths:
 
-  /evaluate:
-    post:
-      tags:
-        - Authority
-      operationId: evaluateAuthority
-      summary: Evaluate authority
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EvaluateRequest'
-      responses:
-        '200':
-          description: Authority decision
-
-  /attest:
-    post:
-      tags:
-        - Attestation
-      operationId: createAttestation
-      summary: Create attestation
-      responses:
-        '200':
-          description: Attestation created
-  /verify-attestation:
-    post:
-      tags:
-        - Verification
-
-      operationId: verifyAttestation
-
-      summary: Verify attestation signature set
-
-      requestBody:
-        required: true
-
-        content:
-          application/json:
-
-            schema:
-              $ref: '#/components/schemas/Attestation'
-      responses:
-        '200':
-          description: Verification result
-  /receipt:
-    post:
-      tags:
-        - Verification
-
-      operationId: createReceipt
-
-      summary: Generate verification receipt
-
-      requestBody:
-        required: true
-
-        content:
-          application/json:
-
-            schema:
-              $ref: '#/components/schemas/Attestation'
-
-      responses:
-        '200':
-
-          description: Verification receipt
-
-          content:
-            application/json:
-
-              schema:
-                $ref: '#/components/schemas/VerificationReceipt'
-  /verify:
-    post:
-      tags:
-        - Verification
-      operationId: verifyDecision
-      summary: Verify attestation
-
-      requestBody:
-        required: true
-
-        content:
-          application/json:
-
-            schema:
-              type: object
-
-              required:
-                - attestation
-                - policy
-
-              properties:
-
-                attestation:
-                  $ref: '#/components/schemas/Attestation'
-
-                policy:
-                  type: object
-                  
-      responses:
-        '200':
-          description: Verification receipt
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VerificationReceipt'
-
-  /execute:
-    post:
-      tags:
-        - Execution
-
-      operationId: executeDecision
-
-      summary: Record execution
-
-      requestBody:
-        required: true
-
-        content:
-          application/json:
-
-            schema:
-              type: object
-
-              required:
-                - receiptId
-                - executionSystem
-                - executionReference
-
-              properties:
-
-                receiptId:
-                  type: string
-
-                executionSystem:
-                  type: string
-
-                executionReference:
-                  type: string
-      responses:
-        '200':
-          description: Execution recorded
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExecutionRecord'
-
-  /execution/{executionId}:
-    get:
-      tags:
-        - Execution
-      operationId: getExecution
-      summary: Retrieve execution record
-      parameters:
-        - name: executionId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Execution record
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExecutionRecord'
-  /transparency:
-    post:
-      tags:
-        - Transparency
-
-      operationId: appendTransparencyEntry
-
-      summary: Append transparency entry
-
-      requestBody:
-        required: true
-
-        content:
-          application/json:
-
-            schema:
-              $ref: '#/components/schemas/TransparencyRequest'
-
-      responses:
-        '200':
-          description: Transparency entry created
-  /trust-root/current:
-    get:
-      tags:
-        - Trust Roots
-
-      operationId: getCurrentTrustRoot
-
-      summary: Retrieve current trust root
-
-      responses:
-        '200':
-          description: Current trust root
-
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrustRoot'
-
-  /trust-root/publish:
-    post:
-      tags:
-        - Trust Roots
-
-      operationId: publishTrustRoot
-
-      summary: Publish trust root
-
-      responses:
-        '200':
-          description: Published trust root
-
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrustRoot'
-  /transparency/{receiptId}:
-    get:
-      tags:
-        - Transparency
-
-      operationId: getTransparencyEntry
-
-      summary: Retrieve transparency entry
-
-      parameters:
-        - name: receiptId
-          in: path
-          required: true
-          schema:
-            type: string
-
-      responses:
-        '200':
-          description: Transparency entry
-
-  /transparency/proof/{receiptId}:
-    get:
-      tags:
-        - Transparency
-
-      operationId: getTransparencyProof
-
-      summary: Retrieve inclusion proof
-
-      parameters:
-        - name: receiptId
-          in: path
-          required: true
-          schema:
-            type: string
-
-      responses:
-        '200':
-          description: Inclusion proof
   /health:
     get:
-      tags:
-        - Invariants
       operationId: healthCheck
+      security: []
+      tags:
+        - System
       summary: Health check
       responses:
-        '200':
-          description: OK
+        "200":
+          description: Service healthy
+        "404":
+          description: Endpoint not found
 
   /version:
     get:
-      tags:
-        - Invariants
       operationId: getVersion
-      summary: Version
-      responses:
-        '200':
-          description: Version info
-  /invariants:
-    get:
+      security: []
       tags:
-        - Invariants
+        - System
+      summary: Service version
+      responses:
+        "200":
+          description: Version information
+        "404":
+          description: Endpoint not found
 
-      operationId: listInvariants
+  /attest:
+    post:
+      operationId: createAttestation
+      tags:
+        - Attestation
+      summary: Create decision attestation
 
-      summary: List all Trust Core invariants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttestRequest"
 
       responses:
-        '200':
-          description: Invariant registry
+        "200":
+          description: Decision attestation
 
-  /invariants/{id}:
-    get:
+        "400":
+          description: Invalid attestation request
+
+  /verify:
+    post:
+      operationId: verifyAttestation
       tags:
-        - Invariants
+        - Verification
+      summary: Verify decision attestation
 
-      operationId: getInvariant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyRequest"
 
-      summary: Get invariant by ID
+      responses:
+        "200":
+          description: Verification receipt
+
+        "400":
+          description: Verification failed
+
+  /token:
+    post:
+      operationId: createExecutionToken
+      tags:
+        - Execution
+      summary: Create execution token
+
+      responses:
+        "200":
+          description: Execution token
+
+        "404":
+          description: Receipt not found
+
+  /execute:
+    post:
+      operationId: recordExecution
+      tags:
+        - Execution
+      summary: Record execution
+
+      responses:
+        "200":
+          description: Execution record
+
+        "400":
+          description: Invalid execution request
+
+        "403":
+          description: Invalid execution token
+
+        "404":
+          description: Receipt not found
+
+  /override:
+    post:
+      operationId: createOverrideDecision
+      tags:
+        - Override
+      summary: Create override decision
+
+      responses:
+        "200":
+          description: Override decision
+
+        "400":
+          description: Invalid override request
+
+  /override/attest:
+    post:
+      operationId: createOverrideAttestation
+      tags:
+        - Override
+      summary: Create override attestation
+
+      responses:
+        "200":
+          description: Override attestation
+
+        "400":
+          description: Invalid override attestation request
+
+  /override/verify:
+    post:
+      operationId: verifyOverrideAttestation
+      tags:
+        - Override
+      summary: Verify override attestation
+
+      responses:
+        "200":
+          description: Override verification receipt
+
+        "400":
+          description: Invalid override verification request
+
+  /trust-chain/{businessTransactionId}:
+    get:
+      operationId: getTrustChain
+      tags:
+        - Trust Chain
+      summary: Retrieve execution trust chain
 
       parameters:
-        - name: id
+        - name: businessTransactionId
           in: path
           required: true
-
           schema:
             type: string
 
       responses:
-        '200':
-          description: Invariant definition
+        "200":
+          description: Trust chain
 
-        '404':
-          description: Invariant not found
+        "404":
+          description: Trust chain not found
 
 components:
 
@@ -353,180 +216,32 @@ components:
 
   schemas:
 
-  EvaluateRequest:
-    type: object
-
-    required:
-      - taskId
-
-    properties:
-
-      subjectId:
-        type: string
-
-      taskId:
-        type: string
-
-      signals:
-        type: object
-        additionalProperties: true
-
-    Attestation:
-      type: object
-      required:
-        - decisionId
-        - subjectId
-        - taskId
-        - policyId
-        - policyVersion
-      properties:
-        decisionId:
-          type: string
-        subjectId:
-          type: string
-        taskId:
-          type: string
-        policyId:
-          type: string
-        policyVersion:
-          type: string
-
-    VerificationReceipt:
+    AttestRequest:
       type: object
 
       required:
-        - receiptId
-        - subjectId
-        - decisionId
-        - taskId
+        - task
+        - signals
 
       properties:
 
-        receiptId:
+        task:
           type: string
 
-        subjectId:
-          type: string
+        signals:
+          type: object
 
-        decisionId:
-          type: string
-
-        taskId:
-          type: string
-
-        policyId:
-          type: string
-
-        policyVersion:
-          type: string
-
-        valid:
-          type: boolean
-
-        verifiedAlgorithms:
-          type: array
-
-          items:
-            type: string
-
-        failedAlgorithms:
-          type: array
-
-          items:
-            type: string
-
-        verifiedAt:
-          type: string
-          format: date-time
-
-        receiptHash:
-          type: string
-      
-    ExecutionRecord:
+    VerifyRequest:
       type: object
 
       required:
-        - executionId
-        - subjectId
-        - decisionId
-        - receiptId
-        - taskId
-        - policyId
-        - policyVersion
-        - executionSystem
-        - executionReference
-        - executionStatus
-        - executedAt
+        - attestation
+        - policy
 
       properties:
 
-        executionId:
-          type: string
+        attestation:
+          type: object
 
-        subjectId:
-          type: string
-
-        decisionId:
-          type: string
-
-        receiptId:
-          type: string
-
-        taskId:
-          type: string
-
-        policyId:
-          type: string
-
-        policyVersion:
-          type: string
-
-        executionSystem:
-          type: string
-
-        executionReference:
-          type: string
-
-        executionStatus:
-          type: string
-
-        executedAt:
-          type: string
-          format: date-time
-
-
-    TransparencyRequest:
-      type: object
-
-      required:
-        - receiptId
-        - receiptHash
-
-      properties:
-
-        receiptId:
-          type: string
-
-        receiptHash:
-          type: string
-
-    TrustRoot:
-      type: object
-
-      properties:
-
-        rootId:
-          type: string
-
-        algorithm:
-          type: string
-
-        receiptCount:
-          type: integer
-
-        rootHash:
-          type: string
-
-        publishedAt:
-          type: string
-          format: date-time
+        policy:
+          type: object
