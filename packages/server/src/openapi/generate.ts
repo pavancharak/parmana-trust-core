@@ -44,6 +44,29 @@ import {
 import {
   TrustChainResponseSchema,
 } from "../schemas/trust-chain-response.js";
+import {
+  OverrideRequestSchema,
+} from "../schemas/override.js";
+
+import {
+  OverrideAttestRequestSchema,
+} from "../schemas/override-attest.js";
+
+import {
+  OverrideVerifyRequestSchema,
+} from "../schemas/override-verify.js";
+
+import {
+  OverrideResponseSchema,
+} from "../schemas/override-response.js";
+
+import {
+  OverrideAttestResponseSchema,
+} from "../schemas/override-attest-response.js";
+
+import {
+  OverrideVerifyResponseSchema,
+} from "../schemas/override-verify-response.js";
 
 
 const registry = new OpenAPIRegistry();
@@ -198,6 +221,97 @@ registry.registerPath({
     description: "Trust chain not found",
   },
 },
+});
+registry.registerPath({
+  method: "post",
+  path: "/override",
+
+  tags: ["Override"],
+
+  summary: "Create override decision",
+
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: OverrideRequestSchema,
+        },
+      },
+    },
+  },
+
+  responses: {
+    200: {
+      description: "Override decision",
+
+      content: {
+        "application/json": {
+          schema: OverrideResponseSchema,
+        },
+      },
+    },
+  },
+});
+registry.registerPath({
+  method: "post",
+  path: "/override/attest",
+
+  tags: ["Override"],
+
+  summary: "Create override attestation",
+
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: OverrideAttestRequestSchema,
+        },
+      },
+    },
+  },
+
+  responses: {
+    200: {
+      description: "Override attestation",
+
+      content: {
+        "application/json": {
+          schema: OverrideAttestResponseSchema,
+        },
+      },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/override/verify",
+
+  tags: ["Override"],
+
+  summary: "Verify override attestation",
+
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: OverrideVerifyRequestSchema,
+        },
+      },
+    },
+  },
+
+  responses: {
+    200: {
+      description: "Override verification receipt",
+
+      content: {
+        "application/json": {
+          schema: OverrideVerifyResponseSchema,
+        },
+      },
+    },
+  },
 });
 const generator =
   new OpenApiGeneratorV31(
