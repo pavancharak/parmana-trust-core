@@ -87,6 +87,9 @@ router.post(
 
         policyVersion:
           req.body.attestation.policyVersion,
+        
+        intentHash:
+  req.body.attestation.intent?.intentHash,
 
         valid:
           result.valid,

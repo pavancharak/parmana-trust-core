@@ -52,6 +52,9 @@ export class AuditDbClient {
   policy_version:
     receipt.policyVersion,
 
+intent_hash:
+  receipt.intentHash,
+
   valid:
     receipt.valid,
 

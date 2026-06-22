@@ -54,7 +54,10 @@ export async function getReceiptById(
     policyVersion:
       row.policy_version,
 
-    valid:
+intentHash:
+  row.intent_hash,
+    
+valid:
       row.valid,
 
     verifiedAlgorithms:

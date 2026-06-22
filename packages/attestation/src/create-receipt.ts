@@ -22,9 +22,12 @@ export function createReceipt(
 
   policyVersion: string,
 
+  intentHash: string,
+
   valid: boolean
 
-): VerificationReceipt {
+): VerificationReceipt
+{
 
   enforceInvariant(
     "INV-102",
@@ -33,22 +36,24 @@ export function createReceipt(
 
   return {
 
-    receiptId:
-      crypto.randomUUID(),
+  receiptId:
+    crypto.randomUUID(),
 
-   businessTransactionId,
+  businessTransactionId,
 
-    subjectId,
+  subjectId,
 
-    decisionId,
+  decisionId,
 
-    taskId,
+  taskId,
 
-    policyId,
+  policyId,
 
-    policyVersion,
+  policyVersion,
 
-    valid,
+  intentHash,
+
+  valid,
 
     verifiedAlgorithms: [
       "attestation-verification"
@@ -76,6 +81,8 @@ export function createReceipt(
   policyId,
 
   policyVersion,
+
+  intentHash,
 
   valid
 

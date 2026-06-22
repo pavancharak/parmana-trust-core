@@ -25,3 +25,5 @@ token.json
 Thumbs.db
 packages/trust-anchor/keys/root-private.pem
 token.json
+keys/root-private.pem
+keys/root-public.pem

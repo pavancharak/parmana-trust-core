@@ -27,63 +27,78 @@ export function createAttestation(
     new Date().toISOString();
 
   const outcome = {
+    result:
+      evaluation.decision
+  };
 
-  result:
-    evaluation.decision
-
-};
+  const intentHash =
+    evaluation.executionIntent
+      ? crypto
+          .createHash("sha256")
+          .update(
+            JSON.stringify(
+              evaluation.executionIntent
+            )
+          )
+          .digest("hex")
+      : undefined;
 
   const attestationHash =
     crypto
       .createHash("sha256")
       .update(
-
         JSON.stringify({
+          businessTransactionId:
+            evaluation.businessTransactionId,
 
-   businessTransactionId:
-    evaluation.businessTransactionId,
+          subjectId:
+            evaluation.subjectId,
 
-  subjectId:
-    evaluation.subjectId,
+          taskId:
+            evaluation.taskId,
 
-  taskId:
-    evaluation.taskId,
+          policyId:
+            evaluation.policyId,
 
-  policyId:
-    evaluation.policyId,
+          policyVersion:
+            evaluation.policyVersion,
 
-  policyVersion:
-    evaluation.policyVersion,
+          intentHash,
 
-  outcome,
+          outcome,
 
-  createdAt
-
-})
-
+          createdAt
+        })
       )
       .digest("hex");
 
   const signature =
-  provider.sign(
-    attestationHash
-  );
+    provider.sign(
+      attestationHash
+    );
 
   const attestation: DecisionAttestation = {
 
-  schemaVersion: "2",
+    schemaVersion: "2",
 
-  decisionId:
-    evaluation.decisionId,
+    decisionId:
+      evaluation.decisionId,
 
-   businessTransactionId:
-    evaluation.businessTransactionId,
+    businessTransactionId:
+      evaluation.businessTransactionId,
 
-  subjectId:
-    evaluation.subjectId,
+    subjectId:
+      evaluation.subjectId,
 
-  taskId:
-    evaluation.taskId,
+    taskId:
+      evaluation.taskId,
+
+    intent: intentHash
+      ? {
+          hashAlgorithm: "sha256",
+          intentHash
+        }
+      : undefined,
 
     policyId:
       evaluation.policyId,
@@ -92,48 +107,36 @@ export function createAttestation(
       evaluation.policyVersion,
 
     evidence: [
-
       {
         id: "attestation-hash",
         hash: attestationHash,
         hashAlgorithm: "sha256"
       }
-
     ],
 
     signatures: {
+      signatures: [
+        {
+          algorithm:
+            provider.algorithm(),
 
-  signatures: [
+          keyId:
+            "parmana-root-key",
 
-    {
+          value:
+            signature,
 
-      algorithm:
-  provider.algorithm(),
-
-      keyId:
-        "parmana-root-key",
-
-      value:
-        signature,
-
-      createdAt
-
-    }
-
-  ]
-
-},
+          createdAt
+        }
+      ]
+    },
 
     metadata: {
-
       profile: "default",
-
       createdAt
-
     },
 
     outcome
-
   };
 
   enforceInvariant(
@@ -144,5 +147,4 @@ export function createAttestation(
   );
 
   return attestation;
-
 }

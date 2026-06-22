@@ -24,5 +24,7 @@ export interface VerificationReceipt {
 
   verifiedAt: string;
 
+  intentHash: string;
+
   receiptHash: string;
 }

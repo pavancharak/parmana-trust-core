@@ -20,10 +20,11 @@ export function createReceipt(
 
   policyVersion: string,
 
+  intentHash: string,
+
   valid: boolean
 
 ): VerificationReceipt {
-
   return {
 
     receiptId:
@@ -40,6 +41,8 @@ export function createReceipt(
     policyId,
 
     policyVersion,
+
+    intentHash,
 
     valid,
 

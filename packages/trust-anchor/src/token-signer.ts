@@ -1,20 +1,34 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
+import path from "node:path";
+
+const keyDir =
+
+  process.env.PARMANA_KEY_DIR ??
+
+  path.resolve(
+    process.cwd(),
+    "keys"
+  );
 
 const privateKey =
   fs.readFileSync(
-    new URL(
-      "../keys/root-private.pem",
-      import.meta.url
+
+    path.join(
+      keyDir,
+      "root-private.pem"
     )
+
   );
 
 const publicKey =
   fs.readFileSync(
-    new URL(
-      "../keys/root-public.pem",
-      import.meta.url
+
+    path.join(
+      keyDir,
+      "root-public.pem"
     )
+
   );
 
 export function signPayload(
@@ -34,6 +48,7 @@ export function signPayload(
   ).toString(
     "base64"
   );
+
 }
 
 export function verifyPayload(
@@ -60,6 +75,7 @@ export function verifyPayload(
     )
 
   );
+
 }
 
 export function getPublicKey(): string {

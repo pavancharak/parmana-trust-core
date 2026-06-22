@@ -47,6 +47,9 @@ export function verifyExecutionToken(
     policyVersion:
       token.policyVersion,
 
+intentHash:
+  token.intentHash,
+
     issuedAt:
       token.issuedAt,
 

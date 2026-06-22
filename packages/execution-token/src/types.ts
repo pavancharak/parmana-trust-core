@@ -16,6 +16,8 @@ export interface ExecutionToken {
 
   issuedAt: string;
 
+  intentHash: string;
+
   expiresAt: string;
 
   signature: string;

@@ -44,6 +44,9 @@ export function createExecutionToken(
     policyVersion:
       receipt.policyVersion,
 
+   intentHash:
+  receipt.intentHash,
+
     issuedAt,
 
     expiresAt
@@ -76,6 +79,9 @@ const signature =
 
     policyVersion:
       receipt.policyVersion,
+
+  intentHash:
+  receipt.intentHash,
 
     issuedAt,
 

@@ -46,6 +46,8 @@ router.post(
 
     attestation.policyVersion,
 
+    attestation.intent.intentHash,
+
     verified
 
   );

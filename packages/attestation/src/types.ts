@@ -19,6 +19,11 @@ export interface DecisionOutcome {
   confidence?: number;
 }
 
+export interface IntentBinding {
+  hashAlgorithm: string;
+  intentHash: string;
+}
+
 export interface DecisionAttestation {
 
   schemaVersion: "2";
@@ -30,9 +35,12 @@ export interface DecisionAttestation {
   subjectId?: string;
 
   taskId: string;
+
   policyId: string;
 
   policyVersion: string;
+
+  intent?: IntentBinding;
 
   evidence: EvidenceRecord[];
 

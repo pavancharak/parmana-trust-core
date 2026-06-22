@@ -37,8 +37,10 @@ router.post(
   businessTransactionId,
   subjectId,
   taskId,
-  signals
+  signals,
+  executionIntent
 } = req.body;
+
 if (!businessTransactionId) {
 
   return res
@@ -108,19 +110,21 @@ await saveSignalEvidence({
       });
 
       const attestation =
-        createAttestation(
-          result
-        );
+  createAttestation({
+    ...result,
+    executionIntent
+  });
 
       await saveAttestation(
         attestation
       );
 
       return res
-        .status(200)
-        .json(
-          result
-        );
+  .status(200)
+  .json({
+    result,
+    attestation
+  });
 
     } catch (error) {
 

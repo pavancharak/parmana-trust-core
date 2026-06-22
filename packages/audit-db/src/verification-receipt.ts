@@ -14,6 +14,8 @@ export interface VerificationReceipt {
 
   policyVersion: string;
 
+  intentHash: string;
+
   valid: boolean;
 
   verifiedAlgorithms:
