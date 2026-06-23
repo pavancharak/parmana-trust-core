@@ -1,604 +1,307 @@
-\# Getting Started with Parmana Trust Core
+# Getting Started with Parmana Trust Core
 
+Welcome to Parmana Trust Core.
 
+This guide helps you install, run, and explore the platform.
 
-\## Introduction
+---
 
+# What Is Parmana?
 
+Parmana Trust Core is an open-source trust infrastructure platform focused on Authorization → Intent → Execution verification.
 
-Parmana Trust Core provides cryptographic evidence that authorized intent resulted in authorized execution.
+Traditional systems prove:
 
+* Who approved
+* When approval occurred
 
+Parmana additionally preserves and verifies:
 
-The system is built around a simple principle:
+* What was authorized
+* What execution was expected
+* Whether execution matched authorization
 
+---
 
+# Core Trust Model
 
 ```text
+Authority
+      ↓
+Policy
+      ↓
+Decision
+      ↓
+Intent
+      ↓
+Attestation
+      ↓
+Verification Receipt
+      ↓
+Execution Token
+      ↓
+Execution Record
+      ↓
+Execution Trust Chain
+```
 
+Canonical principle:
+
+```text
 Decisions authorize Intent.
-
-
 
 Intent authorizes Execution.
 
+Execution Trust verifies that execution matched intent.
 ```
 
+---
 
+# Prerequisites
 
-Parmana creates verifiable evidence connecting those stages.
+Required:
 
+* Node.js 20+
+* npm 10+
+* Git
 
+Verify installation:
 
-\---
-
-
-
-\# What You Will Learn
-
-
-
-This guide demonstrates:
-
-
-
-1\. Starting the Parmana API
-
-2\. Creating an attestation
-
-3\. Retrieving the Parmana trust anchor
-
-4\. Independently verifying an attestation
-
-5\. Exploring the API documentation
-
-
-
-Expected outcome:
-
-
-
-```text
-
-Verification Result:
-
-VALID
-
+```bash
+node --version
+npm --version
+git --version
 ```
 
+---
 
+# Clone Repository
 
-\---
+```bash
+git clone https://github.com/pavancharak/parmana-trust-core.git
 
-
-
-\# Prerequisites
-
-
-
-Requirements:
-
-
-
-\* Node.js
-
-\* npm
-
-\* Git
-
-\* PowerShell (Windows)
-
-
-
-Repository:
-
-
-
-```text
-
-D:\\last\\parmana-trust-core
-
+cd parmana-trust-core
 ```
 
+---
 
+# Install Dependencies
 
-\---
-
-
-
-\# Step 1 — Install Dependencies
-
-
-
-Open PowerShell:
-
-
-
-```powershell
-
-cd D:\\last\\parmana-trust-core
-
-```
-
-
-
-Install packages:
-
-
-
-```powershell
-
+```bash
 npm install
-
 ```
 
+---
 
+# Build Project
 
-\---
-
-
-
-\# Step 2 — Start Parmana
-
-
-
-Run:
-
-
-
-```powershell
-
-npm run dev
-
+```bash
+npm run build
 ```
 
+---
 
+# Run Services
 
-Expected:
-
-
-
-```text
-
-Parmana API listening on 3000
-
+```bash
+npm run start
 ```
 
+---
 
+# Verify Trust Anchor
 
-Keep this terminal open.
+Retrieve the published trust anchor:
 
-
-
-\---
-
-
-
-\# Step 3 — Open API Documentation
-
-
-
-Open a browser:
-
-
-
-```text
-
-http://localhost:3000/docs
-
-```
-
-
-
-Swagger UI provides access to every API endpoint.
-
-
-
-\---
-
-
-
-\# Step 4 — Create an Attestation
-
-
-
-Open a second PowerShell window.
-
-
-
-Create request body:
-
-
-
-```powershell
-
-$body = @{
-
-&#x20; task = "payment-release"
-
-&#x20; signals = @{
-
-&#x20;   role = "finance-manager"
-
-&#x20; }
-
-} | ConvertTo-Json -Depth 5
-
-```
-
-
-
-Submit request:
-
-
-
-```powershell
-
-$attestation = Invoke-RestMethod `
-
-&#x20; -Method POST `
-
-&#x20; -Uri http://localhost:3000/attest `
-
-&#x20; -ContentType "application/json" `
-
-&#x20; -Body $body
-
-```
-
-
-
-Inspect result:
-
-
-
-```powershell
-
-$attestation | ConvertTo-Json -Depth 20
-
-```
-
-
-
-Expected output contains:
-
-
-
-```text
-
-decisionId
-
-evidence.hash
-
-signatures.signatures\[0].value
-
-```
-
-
-
-\---
-
-
-
-\# Step 5 — Retrieve Trust Anchor
-
-
-
-Request:
-
-
-
-```powershell
-
+```bash
 curl http://localhost:3000/trust-anchor/public-key
-
 ```
 
-
-
-Expected:
-
-
+Expected response:
 
 ```json
-
 {
-
-&#x20; "keyId": "parmana-root-key",
-
-&#x20; "algorithm": "ed25519",
-
-&#x20; "publicKey": "-----BEGIN PUBLIC KEY-----..."
-
+  "keyId": "example-key",
+  "algorithm": "ed25519",
+  "publicKey": "..."
 }
-
 ```
 
+---
 
+# Verify Attestation
 
-This endpoint publishes Parmana's verification key.
+Example verification workflow:
 
-
-
-\---
-
-
-
-\# Step 6 — Extract Verification Data
-
-
-
-Attestation hash:
-
-
-
-```powershell
-
-$attestation.evidence\[0].hash
-
+```bash
+npm run verify
 ```
 
+Verification validates:
 
+* Signature integrity
+* Trust Anchor identity
+* Attestation authenticity
 
-Signature:
+---
 
+# Explore OpenAPI
 
-
-```powershell
-
-$attestation.signatures.signatures\[0].value
-
-```
-
-
-
-Important:
-
-
+Canonical specification:
 
 ```text
-
-Hash and signature must originate from the same attestation.
-
+/openapi/openapi.yaml
 ```
 
-
-
-\---
-
-
-
-\# Step 7 — Verify Independently
-
-
-
-Run:
-
-
-
-```powershell
-
-npx tsx examples\\verify-attestation.ts
-
-```
-
-
-
-Expected:
-
-
+Supporting assets:
 
 ```text
-
-Trust Anchor:
-
-{
-
-&#x20; keyId: 'parmana-root-key',
-
-&#x20; algorithm: 'ed25519'
-
-}
-
-
-
-Verification Result:
-
-VALID
-
+/openapi/components
+/openapi/paths
+/openapi/schemas
+/openapi/examples
 ```
 
+---
 
+# Explore Documentation
 
-\---
-
-
-
-\# What Was Proven
-
-
-
-The verifier:
-
-
-
-1\. Retrieved Parmana's trust anchor
-
-2\. Loaded an attestation hash
-
-3\. Loaded a digital signature
-
-4\. Verified the signature using Ed25519
-
-5\. Produced a VALID result
-
-
-
-Verification occurred independently of Parmana verification services.
-
-
-
-\---
-
-
-
-\# Canonical Trust Flow
-
-
+Documentation index:
 
 ```text
-
-Decision
-
-&#x20;   ↓
-
-Attestation
-
-&#x20;   ↓
-
-Verification
-
-&#x20;   ↓
-
-Execution Token
-
-&#x20;   ↓
-
-Execution
-
-&#x20;   ↓
-
-Trust Chain
-
+docs/README.md
 ```
-
-
-
-\---
-
-
-
-\# Documentation Map
-
-
-
-Read next:
-
-
-
-```text
-
-docs/guides/quick-start.md
-
-```
-
-
-
-Developer workflow:
-
-
-
-```text
-
-docs/guides/using-parmana-trust-core.md
-
-```
-
-
 
 Architecture:
 
-
-
 ```text
-
-docs/guides/architecture-overview.md
-
+docs/architecture/
 ```
 
-
-
-API reference:
-
-
+Trust Lifecycle:
 
 ```text
-
-docs/guides/api-reference.md
-
+docs/phases/
 ```
 
-
-
-Trust foundation:
-
-
+Reference Specifications:
 
 ```text
-
-docs/trust-foundation/README.md
-
+docs/reference/
 ```
 
-
-
-Roadmap:
-
-
+Integration Guides:
 
 ```text
-
-docs/roadmap/trust-foundation-roadmap.md
-
+docs/integrations/
 ```
 
+---
 
+# Example Assets
 
-\---
+Examples:
 
+```text
+examples/
+```
 
+Test fixtures:
 
-\# Current Trust Foundation Status
+```text
+tests/fixtures/
+```
 
+Test scripts:
 
+```text
+tests/scripts/
+```
+
+---
+
+# Current Capabilities
 
 Completed:
 
+* Trust Anchor Publication
+* External Verification
+* Execution Trust Architecture
+* Trust Chain Architecture
 
+In Progress:
 
-```text
-
-✓ Public Key Endpoint
-
-✓ External Verification Example
-
-```
-
-
+* Key Rotation
+* Historical Verification
 
 Planned:
 
+* Trust Root Publication
+* Trust Root Verification
+* Federated Trust
 
+---
+
+# Recommended Reading Order
+
+For architects:
 
 ```text
-
-→ Key Rotation
-
-→ Trust Root Rotation
-
+docs/architecture/
+docs/reference/
+docs/phases/
 ```
 
+For developers:
 
+```text
+docs/guides/
+openapi/
+examples/
+```
 
-\---
+For integrators:
 
+```text
+docs/integrations/
+openapi/
+```
 
+---
 
-\# Canonical Trust Claim
+# Project Status
 
+Current release:
 
+```text
+v0.1.0
+```
 
-Parmana trust artifacts can be independently verified using Parmana's published trust anchor.
+Status:
 
+```text
+Open Source Developer Preview
+```
 
+The platform is intended for evaluation, experimentation, integration development, and community feedback.
 
+---
+
+# Next Steps
+
+1. Explore the architecture documentation
+2. Review trust artifacts
+3. Verify example attestations
+4. Explore OpenAPI specifications
+5. Integrate external verification
+6. Follow roadmap progress
+
+---
+
+# Parmana Thesis
+
+Authorization is not the trust problem.
+
+The trust gap exists between authorized decisions and actual execution.
+
+Parmana exists to make that gap independently verifiable.
