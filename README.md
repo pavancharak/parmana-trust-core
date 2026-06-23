@@ -2,43 +2,34 @@
 
 Open-source trust infrastructure for Authorization → Intent → Execution verification.
 
-Parmana helps organizations independently verify that execution matched what was authorized.
+## Overview
 
-Traditional systems answer:
-
-```text
-Who Approved?
-```
-
-Parmana answers:
-
-```text
-What Exactly Was Supposed To Happen?
-
-Did Execution Match It?
-```
-
----
-
-# Why Parmana Exists
-
-Most systems can prove:
+Traditional systems can prove:
 
 * Who approved
 * When approval occurred
-* Which policy was evaluated
 
-Most systems cannot prove:
+They typically cannot prove:
 
 * What was actually authorized
 * What execution was expected
 * Whether execution matched authorization
 
-Parmana introduces a trust architecture that preserves authorization intent and execution evidence as a verifiable trust chain.
+Parmana Trust Core introduces an execution trust architecture that preserves intent and enables independent verification of execution outcomes.
 
 ---
 
-# Core Architecture
+## Core Thesis
+
+Authorization is not the trust problem.
+
+The trust gap exists between authorized decisions and actual execution.
+
+Parmana exists to make that gap independently verifiable.
+
+---
+
+## Trust Lifecycle
 
 ```text
 Authority
@@ -60,7 +51,7 @@ Execution Record
 Execution Trust Chain
 ```
 
-Canonical principle:
+Principle:
 
 ```text
 Decisions authorize Intent.
@@ -72,206 +63,159 @@ Execution Trust verifies that execution matched intent.
 
 ---
 
-# Current Capabilities
+## Why Parmana?
 
-## Trust Anchor Publication
+Modern organizations increasingly rely on:
 
-Publish verification identity:
+* Automated systems
+* Workflow engines
+* Autonomous services
+* AI-assisted systems
+* Agentic architectures
 
-```http
-GET /trust-anchor/public-key
-```
+These systems often execute actions after an approval decision has been made.
 
-Returns:
-
-```json
-{
-  "keyId": "parmana-root-key",
-  "algorithm": "ed25519",
-  "publicKey": "..."
-}
-```
+Parmana provides cryptographic trust artifacts and verification mechanisms that preserve evidence from authorization through execution.
 
 ---
 
-## Independent Verification
+## Package Architecture
 
-Verify attestations without calling Parmana internals.
+Parmana Trust Core is organized as a modular trust infrastructure platform.
 
-Supported:
+### Core Trust Packages
 
-* Signature verification
-* Trust Anchor validation
-* External verification workflows
+| Package            | Purpose                                          |
+| ------------------ | ------------------------------------------------ |
+| authority-engine   | Authority evaluation and authorization decisions |
+| policy-registry    | Policy registration and retrieval                |
+| task-registry      | Task definitions and lifecycle management        |
+| signal-registry    | Signal registration and evaluation               |
+| attestation        | Cryptographic attestation generation             |
+| verifier           | Attestation verification                         |
+| execution-token    | Execution authorization tokens                   |
+| execution-verifier | Execution token verification                     |
+| execution-gateway  | Execution trust gateway                          |
+| trust-anchor       | Trust anchor publication and verification        |
+| trust-federation   | Federated trust architecture                     |
+| trust-profiles     | Trust profile definitions                        |
+| transparency-log   | Transparency and audit logging                   |
+| evidence           | Evidence generation and preservation             |
+| provenance         | Provenance tracking and lineage                  |
+| audit-db           | Audit persistence and retrieval                  |
+
+### Platform Packages
+
+| Package         | Purpose                            |
+| --------------- | ---------------------------------- |
+| contracts       | Shared platform contracts          |
+| bundle          | Policy and trust bundles           |
+| crypto          | Cryptographic primitives           |
+| database        | Persistence abstractions           |
+| sdk             | Developer SDK                      |
+| server          | API server implementation          |
+| override-engine | Controlled override workflows      |
+| schema-registry | Schema registration and validation |
 
 ---
 
-## Execution Trust Architecture
+## Architecture Documentation
 
-Support for:
-
-* Decision lineage
-* Intent preservation
-* Attestation generation
-* Verification receipts
-* Execution tokens
-* Execution records
-* Trust chains
-
----
-
-# Documentation
-
-## Getting Started
-
-```text
-docs/guides/
-```
-
-## Architecture
+Architecture documentation is available in:
 
 ```text
 docs/architecture/
 ```
 
-## Trust Lifecycle
+Key documents:
 
 ```text
-docs/phases/
+architecture-overview.md
+authorization-model.md
+intent-model.md
+execution-trust-model.md
+execution-trust-chain-model.md
+trust-anchor-model.md
+trust-root-model.md
+trust-federation-model.md
+key-rotation-model.md
 ```
 
-## Integrations
+---
+
+## OpenAPI Specifications
+
+Canonical specification:
 
 ```text
+openapi/openapi.yaml
+```
+
+Supporting assets:
+
+```text
+openapi/components/
+openapi/paths/
+openapi/schemas/
+openapi/examples/
+```
+
+---
+
+## Documentation
+
+Documentation index:
+
+```text
+docs/README.md
+```
+
+Documentation areas:
+
+```text
+docs/architecture/
+docs/guides/
 docs/integrations/
-```
-
-## Artifact Reference
-
-```text
+docs/phases/
 docs/reference/
 ```
 
 ---
 
-# Quick Start
+## Integrations
 
-Install dependencies:
+Documented integration patterns include:
 
-```bash
-npm install
-```
-
-Build:
-
-```bash
-npm run build
-```
-
-Start services:
-
-```bash
-npm run start
-```
-
-Retrieve trust anchor:
-
-```bash
-curl http://localhost:3000/trust-anchor/public-key
-```
-
-Verify an attestation:
-
-```bash
-npm run verify
-```
+* REST APIs
+* Event-Driven Systems
+* Workflow Engines
+* AI Agent Systems
+* ServiceNow
+* Salesforce
+* Banking Systems
+* Federated Trust Domains
 
 ---
 
-# Trust Foundation Roadmap
+## Examples
 
-## Milestone 001
-
-Trust Anchor Publication
-
-Status:
+Reference artifacts:
 
 ```text
-COMPLETE
+examples/
 ```
+
+Includes:
+
+* Attestations
+* Trust Roots
+* Verification Examples
+* Policy Bundles
+* Execution Tokens
 
 ---
 
-## Milestone 002
-
-External Verification
-
-Status:
-
-```text
-COMPLETE
-```
-
----
-
-## Milestone 003
-
-Key Rotation
-
-Planned:
-
-* keyId versioning
-* trust-anchor history
-* historical verification
-* trust-root lineage
-
-Status:
-
-```text
-IN PROGRESS
-```
-
----
-
-## Future Milestones
-
-* Trust Root Publication
-* Trust Root Verification
-* Federation Discovery
-* Federated Trust Exchange
-
----
-
-# Security
-
-Example keys contained in:
-
-```text
-keys/
-```
-
-are public demonstration keys used for:
-
-* Examples
-* Documentation
-* Automated tests
-* Local development
-
-They must never be used in production.
-
-Generate unique signing keys for every deployment.
-
----
-
-# Open Source
-
-Contributions are welcome.
-
-See:
-
-```text
-CONTRIBUTING.md
-```
+## Security
 
 Security policy:
 
@@ -279,18 +223,103 @@ Security policy:
 SECURITY.md
 ```
 
-License:
+Important:
+
+* Example keys are provided for demonstration purposes only.
+* Production deployments must generate their own signing keys.
+* Production private keys must never be committed to source control.
+
+---
+
+## Contributing
+
+Contribution guide:
 
 ```text
-Apache License 2.0
+CONTRIBUTING.md
+```
+
+Code of conduct:
+
+```text
+CODE_OF_CONDUCT.md
+```
+
+Roadmap:
+
+```text
+ROADMAP.md
+```
+
+Repository status:
+
+```text
+REPOSITORY-STATUS.md
 ```
 
 ---
 
-# Parmana Thesis
+## Repository Statistics
 
-Authorization is not the trust problem.
+Current repository snapshot:
 
-The trust gap exists between authorized decisions and actual execution.
+* 101 commits
+* 686 tracked files
+* 24 packages
+* 158 documentation files
+* 74 architecture documents
 
-Parmana exists to make that gap independently verifiable.
+---
+
+## Current Status
+
+Open Source Developer Preview
+
+Completed:
+
+* Trust Anchor Publication
+* Public Key Distribution
+* Independent Verification
+* Attestation Verification
+* Execution Trust Tokens
+* Execution Records
+* Execution Trust Chains
+* OpenAPI Specifications
+
+In Progress:
+
+* Key Rotation
+* Historical Verification
+* Trust Anchor Lineage
+
+Planned:
+
+* Trust Root Publication
+* Trust Root Verification
+* Trust Root Lineage
+* Federated Trust Discovery
+* Federated Trust Exchange
+
+---
+
+## License
+
+Apache License 2.0
+
+See:
+
+```text
+LICENSE.txt
+```
+
+---
+
+## Vision
+
+Organizations define authority.
+
+Organizations define policy.
+
+Parmana preserves intent and enables independent verification that execution matched authorization.
+
+The goal is to establish open trust infrastructure for Authorization → Intent → Execution verification.
