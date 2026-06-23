@@ -1,958 +1,758 @@
-\# Key Rotation Model
+# Key Rotation Model
 
+## Purpose
 
+The Key Rotation Model defines how Parmana preserves trust continuity while cryptographic identities evolve over time.
 
-\## Purpose
+Trust Anchors should not remain static forever.
 
-
-
-The Key Rotation Model defines how Parmana evolves trust anchors without breaking verification of previously authorized executions.
-
-
-
-The objective is:
-
-
+Keys may be rotated because of:
 
 ```text
+Security Requirements
 
-Rotate Keys
+Operational Policies
 
-Without Breaking Trust
+Cryptographic Upgrades
 
+Compromise Recovery
 ```
 
+The challenge is preserving trust while identity changes.
 
+Key Rotation solves this problem.
 
-Key rotation allows Parmana to:
+---
 
+# Canonical Principle
 
+Trust Identity May Change.
+
+Trust Continuity Must Not.
+
+---
+
+# Core Architectural Question
+
+Key Rotation answers:
 
 ```text
-
-Replace Compromised Keys
-
-Upgrade Cryptography
-
-Expire Old Keys
-
-Maintain Trust Continuity
-
+How Can Trust Remain Verifiable
+When Signing Keys Change?
 ```
 
+---
 
+# Why Key Rotation Exists
 
-while preserving historical verification.
+Every cryptographic system eventually requires key replacement.
 
+Reasons include:
 
+```text
+Scheduled Rotation
 
-\---
+Algorithm Upgrades
 
+Key Compromise
 
+Governance Requirements
 
-\# Problem Statement
-
-
+Regulatory Requirements
+```
 
 Without rotation:
 
+```text
+Long-Term Trust Becomes Risky
+```
 
+---
+
+# The Verification Problem
+
+Suppose:
 
 ```text
-
-One Root Key
-
-&#x20;     ↓
-
-Forever
-
+Attestation
+      ↓
+Signed By Key A
 ```
 
-
-
-creates:
-
-
+Years later:
 
 ```text
-
-Key Compromise Risk
-
-Operational Risk
-
-Compliance Risk
-
+Key A
 ```
 
-
-
-A production trust system must support controlled root evolution.
-
-
-
-\---
-
-
-
-\# Architectural Position
-
-
+has been replaced by:
 
 ```text
-
-Trust Root v1
-
-&#x20;     │
-
-&#x20;     ▼
-
-Trust Root v2
-
-&#x20;     │
-
-&#x20;     ▼
-
-Trust Root v3
-
+Key B
 ```
 
-
-
-Every version extends trust history.
-
-
-
-\---
-
-
-
-\# Design Goals
-
-
-
-\## Trust Continuity
-
-
-
-Previously issued tokens must remain verifiable.
-
-
+Question:
 
 ```text
-
-Token Issued Under v1
-
-&#x20;       ↓
-
-Root Rotated To v2
-
-&#x20;       ↓
-
-Verification Still Works
-
+How Can Historical Evidence
+Still Be Verified?
 ```
 
+Key Rotation provides the answer.
 
+---
 
-\---
+# Canonical Principle
 
+Historical verification must survive identity evolution.
 
+---
 
-\## Forward Security
-
-
-
-New tokens should use:
-
-
+# Position In Architecture
 
 ```text
-
-Latest Active Root
-
+Trust Anchor
+       ↓
+Key Rotation
+       ↓
+Trust Root
+       ↓
+Verification
+       ↓
+Federation
 ```
 
+Key Rotation sits between identity and verification.
 
+---
 
-only.
-
-
-
-\---
-
-
-
-\## Historical Auditability
-
-
-
-Auditors must be able to verify:
-
-
+# Trust Identity Lifecycle
 
 ```text
-
-Past Tokens
-
-Past Receipts
-
-Past Decisions
-
+Key A
+   ↓
+Key B
+   ↓
+Key C
+   ↓
+Key D
 ```
 
+Identity evolves.
 
+Trust remains continuous.
 
-using historical trust roots.
+---
 
+# Definition
 
+Key Rotation is the controlled replacement of a Trust Domain's signing key while preserving historical verification and trust continuity.
 
-\---
+---
 
+# What Changes
 
-
-\## Deterministic Verification
-
-
-
-Verification result must not depend on:
-
-
+During rotation:
 
 ```text
+Private Key
 
-Current Root Only
+Public Key
 
+Key Identifier
 ```
 
+may change.
 
+---
 
-Verification must use:
-
-
+# What Must Not Change
 
 ```text
+Trust Domain Identity
 
-Token Root Version
+Verification Capability
 
+Historical Trust
 ```
 
+must remain intact.
 
+---
 
-\---
+# Canonical Principle
 
+Keys Rotate.
 
+Trust Persists.
 
-\# Trust Root
+---
 
-
-
-\## Definition
-
-
-
-A Trust Root represents the active set of trusted anchors.
-
-
-
-```typescript
-
-interface TrustRoot {
-
-
-
-&#x20; id: string;
-
-
-
-&#x20; version: string;
-
-
-
-&#x20; previousVersion?: string;
-
-
-
-&#x20; anchors: TrustAnchor\[];
-
-
-
-&#x20; createdAt: string;
-
-
-
-}
-
-```
-
-
-
-\---
-
-
-
-\# Root Evolution
-
-
+# Trust Anchor Evolution
 
 Example:
 
-
-
-```text
-
-v1
-
-&#x20;│
-
-&#x20;▼
-
-v2
-
-&#x20;│
-
-&#x20;▼
-
-v3
-
-```
-
-
-
-Chain:
-
-
-
-```text
-
-v3
-
-&#x20;↓
-
-v2
-
-&#x20;↓
-
-v1
-
-```
-
-
-
-Every root references its predecessor.
-
-
-
-\---
-
-
-
-\# Rotation Flow
-
-
-
-\## Before Rotation
-
-
-
-```text
-
-Current Root
-
-&#x20;     ↓
-
-v1
-
-```
-
-
-
-\---
-
-
-
-\## Rotation Event
-
-
-
-```text
-
-rotateTrustRoot()
-
-```
-
-
-
-creates:
-
-
-
-```text
-
-v2
-
-```
-
-
-
-with:
-
-
-
-```text
-
-previousVersion = v1
-
-```
-
-
-
-\---
-
-
-
-\## After Rotation
-
-
-
-```text
-
-v1
-
-&#x20;│
-
-&#x20;▼
-
-v2
-
-```
-
-
-
-Both remain verifiable.
-
-
-
-\---
-
-
-
-\# Token Requirements
-
-
-
-Execution Tokens must include:
-
-
-
-```typescript
-
-keyId: string;
-
-
-
-rootVersion: string;
-
-```
-
-
-
-Example:
-
-
+Version 1:
 
 ```json
-
 {
-
-&#x20; "keyId": "parmana-root-key-v2",
-
-&#x20; "rootVersion": "v2"
-
+  "keyId": "key-v1"
 }
-
 ```
 
-
-
-\---
-
-
-
-\# Verification Flow
-
-
-
-Verifier receives:
-
-
+Version 2:
 
 ```json
-
 {
-
-&#x20; "rootVersion": "v2"
-
+  "keyId": "key-v2"
 }
-
 ```
 
+Version 3:
 
-
-Verifier:
-
-
-
-```text
-
-Find Root v2
-
-&#x20;     ↓
-
-Find Key
-
-&#x20;     ↓
-
-Verify Signature
-
+```json
+{
+  "keyId": "key-v3"
+}
 ```
 
+Each represents a new trust anchor.
 
+---
 
-Historical verification remains possible.
+# Key Lineage
 
-
-
-\---
-
-
-
-\# Root Registry
-
-
-
-Future registry:
-
-
-
-```text
-
-trust\_roots
-
-```
-
-
-
-Columns:
-
-
-
-| Column           | Type        |
-
-| ---------------- | ----------- |
-
-| root\_id          | text        |
-
-| version          | text        |
-
-| previous\_version | text        |
-
-| created\_at       | timestamptz |
-
-| status           | text        |
-
-
-
-\---
-
-
-
-\# Anchor Registry
-
-
-
-Future registry:
-
-
-
-```text
-
-trust\_anchors
-
-```
-
-
-
-Columns:
-
-
-
-| Column       | Type |
-
-| ------------ | ---- |
-
-| key\_id       | text |
-
-| root\_version | text |
-
-| algorithm    | text |
-
-| public\_key   | text |
-
-| status       | text |
-
-
-
-\---
-
-
-
-\# Root States
-
-
-
-\## Active
-
-
-
-```text
-
-Used For Signing
-
-Used For Verification
-
-```
-
-
-
-\---
-
-
-
-\## Retired
-
-
-
-```text
-
-Not Used For Signing
-
-Still Used For Verification
-
-```
-
-
-
-\---
-
-
-
-\## Revoked
-
-
-
-```text
-
-Not Used For Signing
-
-Not Trusted For Verification
-
-```
-
-
-
-Used only during compromise scenarios.
-
-
-
-\---
-
-
-
-\# Compromise Recovery
-
-
+Keys form lineage.
 
 Example:
 
-
-
 ```text
-
-Root v2 Compromised
-
+key-v1
+   ↓
+key-v2
+   ↓
+key-v3
 ```
-
-
-
-Response:
-
-
-
-```text
-
-Create v3
-
-Retire v2
-
-Issue New Tokens
-
-```
-
-
-
-Existing v1 tokens remain valid.
-
-
-
-\---
-
-
-
-\# Root Verification
-
-
-
-Implementation:
-
-
-
-```typescript
-
-verifyChain(
-
-&#x20; roots
-
-)
-
-```
-
-
 
 Purpose:
 
-
-
 ```text
-
-Verify Trust Continuity
-
-Detect Broken History
-
+Trust Continuity
 ```
 
+---
 
+# Canonical Rule
 
-\---
+Key lineage must be preserved permanently.
 
+---
 
+# Trust Anchor History
 
-\# Trust Chain Example
-
-
+A Trust Domain must maintain:
 
 ```text
+Current Key
 
+Historical Keys
+```
+
+Example:
+
+```text
+key-v1
+
+key-v2
+
+key-v3
+```
+
+Historical keys remain verifiable.
+
+---
+
+# Why History Matters
+
+Consider:
+
+```text
+Attestation Created:
+January 2026
+
+Signed By:
+key-v1
+```
+
+Verification in:
+
+```text
+January 2029
+```
+
+must still succeed.
+
+---
+
+# Canonical Principle
+
+Historical evidence must remain independently verifiable.
+
+---
+
+# Key Discovery
+
+Current endpoint:
+
+```http
+GET /trust-anchor/public-key
+```
+
+returns:
+
+```text
+Current Trust Anchor
+```
+
+---
+
+# Future Endpoint
+
+```http
+GET /trust-anchor/{keyId}
+```
+
+Purpose:
+
+```text
+Historical Key Retrieval
+```
+
+---
+
+# Trust Anchor History Endpoint
+
+Future endpoint:
+
+```http
+GET /trust-anchor/history
+```
+
+Example response:
+
+```json
+[
+  {
+    "keyId": "key-v1"
+  },
+  {
+    "keyId": "key-v2"
+  },
+  {
+    "keyId": "key-v3"
+  }
+]
+```
+
+---
+
+# Verification During Rotation
+
+Verification flow:
+
+```text
+Read keyId
+      ↓
+Retrieve Matching Trust Anchor
+      ↓
+Verify Signature
+      ↓
+VALID
+```
+
+Verification remains deterministic.
+
+---
+
+# Canonical Verification Principle
+
+Verification uses the signing key that created the evidence.
+
+Not the current key.
+
+---
+
+# Attestation Example
+
+Attestation:
+
+```json
+{
+  "keyId": "key-v1",
+  "signature": "..."
+}
+```
+
+Verifier:
+
+```text
+Reads keyId
+      ↓
+Retrieves key-v1
+      ↓
+Verifies Signature
+```
+
+Result:
+
+```text
+VALID
+```
+
+---
+
+# Trust Root Rotation
+
+Trust Roots must record:
+
+```text
+keyId
+```
+
+Example:
+
+```json
+{
+  "rootVersion": 7,
+  "keyId": "key-v2"
+}
+```
+
+This enables historical verification.
+
+---
+
+# Canonical Principle
+
+Every signed artifact must identify the key that signed it.
+
+---
+
+# Rotation Workflow
+
+```text
+Generate New Key Pair
+          ↓
+Assign New KeyId
+          ↓
+Publish New Trust Anchor
+          ↓
+Begin Signing New Artifacts
+          ↓
+Retain Historical Keys
+```
+
+---
+
+# Rotation Event
+
+Example:
+
+Before:
+
+```text
+Current Key:
+key-v1
+```
+
+After:
+
+```text
+Current Key:
+key-v2
+```
+
+Result:
+
+```text
+New Evidence
+      ↓
+Signed By key-v2
+
+Old Evidence
+      ↓
+Verified By key-v1
+```
+
+---
+
+# Trust Root Lineage
+
+Trust Roots also evolve.
+
+Example:
+
+```text
+Root v1
+     ↓
+Root v2
+     ↓
+Root v3
+```
+
+Each root may reference:
+
+```text
+keyId
+```
+
+used during publication.
+
+---
+
+# Combined Lineage
+
+```text
+Key v1
+      ↓
 Root v1
 
-&#x20;   │
-
-&#x20;   ▼
-
+Key v2
+      ↓
 Root v2
 
-&#x20;   │
-
-&#x20;   ▼
-
+Key v3
+      ↓
 Root v3
-
 ```
 
+This creates trust continuity.
 
+---
 
-Verification:
+# Federation Impact
 
-
+Federated participants must support:
 
 ```text
-
-v3
-
-&#x20;↓
-
-v2
-
-&#x20;↓
-
-v1
-
+Historical Key Retrieval
 ```
 
-
-
-Chain must remain intact.
-
-
-
-\---
-
-
-
-\# Future Multi-Key Model
-
-
-
-Future root:
-
-
+Otherwise:
 
 ```text
-
-Root v5
-
+Historical Verification Fails
 ```
 
+---
 
-
-may contain:
-
-
+# Federation Verification Flow
 
 ```text
-
-Ed25519
-
-Post-Quantum Key
-
-Regional Key
-
+Receive Trust Root
+          ↓
+Read keyId
+          ↓
+Retrieve Historical Key
+          ↓
+Verify Signature
 ```
 
+Trust survives rotation.
 
+---
 
-simultaneously.
+# Compromise Recovery
 
-
-
-\---
-
-
-
-\# Compliance Benefits
-
-
-
-Supports:
-
-
+Rotation may occur because:
 
 ```text
-
-SOC 2
-
-ISO 27001
-
-PCI DSS
-
-Financial Services Controls
-
+Key Compromise
 ```
 
-
-
-through controlled key lifecycle management.
-
-
-
-\---
-
-
-
-\# Invariants
-
-
-
-\## INV-700
-
-
+Workflow:
 
 ```text
-
-Trust Roots must be versioned.
-
+Revoke Compromised Key
+         ↓
+Publish New Trust Anchor
+         ↓
+Publish New Trust Root
 ```
 
+Future evidence uses the new key.
 
+Historical evidence remains traceable.
 
-\## INV-701
+---
 
+# Revocation
 
+Future architecture may support:
+
+```json
+{
+  "keyId": "key-v1",
+  "status": "revoked"
+}
+```
+
+Purpose:
 
 ```text
-
-Trust Roots must preserve lineage.
-
+Compromise Transparency
 ```
 
+---
 
-
-\## INV-702
-
-
+# Trust Continuity Model
 
 ```text
-
-Historical verification must remain possible.
-
+Trust Domain
+      ↓
+Trust Anchor Lineage
+      ↓
+Trust Root Lineage
+      ↓
+Historical Verification
 ```
 
+This preserves continuity.
 
+---
 
-\## INV-703
+# Security Benefits
 
-
+Key Rotation provides:
 
 ```text
+Cryptographic Agility
 
-Retired roots remain verifiable.
+Compromise Recovery
 
+Long-Term Trust
+
+Operational Governance
 ```
 
+---
 
+# Operational Benefits
 
-\## INV-704
-
-
+Organizations gain:
 
 ```text
+Controlled Identity Evolution
 
-New authorization artifacts use the latest active root.
+Historical Auditability
 
+Verification Stability
+
+Federation Compatibility
 ```
 
+---
 
+# Relationship To Trust Anchors
 
-\## INV-705
-
-
+Trust Anchors provide:
 
 ```text
-
-Root compromise must not invalidate historical trust.
-
+Identity
 ```
 
+Key Rotation manages:
 
+```text
+Identity Evolution
+```
 
-\---
+---
 
+# Relationship To Trust Roots
 
+Trust Roots publish:
 
-\# Canonical Statement
+```text
+Trust State
+```
 
+Key Rotation ensures trust state remains verifiable across identity changes.
 
+---
 
-The Key Rotation Model enables Parmana to evolve trust anchors while preserving cryptographic verification of historical authorization artifacts and maintaining continuous trust across root generations.
+# Relationship To Federation
 
+Federation depends upon:
 
+```text
+Historical Verification
+```
 
+Key Rotation makes historical verification possible.
+
+---
+
+# Relationship To Parmana Roadmap
+
+Key Rotation is the third trust-foundation milestone.
+
+Dependencies:
+
+```text
+Trust Anchor Publication
+        ↓
+External Verification
+        ↓
+Key Rotation
+```
+
+Future milestones build on it.
+
+---
+
+# Questions Key Rotation Answers
+
+```text
+How Can Keys Change Safely?
+
+How Is Historical Verification Preserved?
+
+How Does Trust Survive Identity Changes?
+
+How Are Historical Signatures Verified?
+
+How Does Federation Survive Rotation?
+```
+
+---
+
+# Questions Key Rotation Does Not Answer
+
+```text
+What Trust State Exists?
+
+Did Execution Match Intent?
+
+Was A Specific Decision Authorized?
+```
+
+Those remain responsibilities of other trust artifacts.
+
+---
+
+# Canonical Outcome
+
+The Key Rotation Model enables Parmana Trust Domains to evolve cryptographic identities without losing trust continuity.
+
+Trust Anchors may change.
+
+Trust Roots may evolve.
+
+Historical evidence remains independently verifiable.
+
+Trust survives identity evolution through key lineage, historical retrieval, and deterministic verification.
+
+Keys rotate.
+
+Trust persists.
