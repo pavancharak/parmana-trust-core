@@ -1622,7 +1622,100 @@ What Is The Current Trust Root?
 
 
 
-Those belong to higher-level trust architecture components.
+Those belo# Example Keys
+
+## Purpose
+
+The files in this directory are provided exclusively for local development, testing, examples, demonstrations, and documentation.
+
+These keys exist so that developers can immediately run Parmana Trust Core examples without generating cryptographic material during initial setup.
+
+---
+
+# Important Warning
+
+The keys in this directory are public.
+
+They are committed to the repository intentionally and must be treated as compromised by design.
+
+Do not use these keys for:
+
+* Production environments
+* Real trust domains
+* Customer environments
+* Staging environments
+* Security testing
+* Any deployment requiring cryptographic trust
+
+---
+
+# Included Files
+
+```text
+attestation-private.pem
+attestation-public.pem
+```
+
+These files form an Ed25519 key pair used by examples, tests, and documentation throughout the repository.
+
+---
+
+# Intended Usage
+
+These keys may be used for:
+
+* Local development
+* Example attestation generation
+* Verification demonstrations
+* Documentation examples
+* Automated tests
+* Tutorial walkthroughs
+
+---
+
+# Production Deployments
+
+Production deployments must generate unique signing keys.
+
+Example:
+
+```bash
+openssl genpkey -algorithm Ed25519 -out attestation-private.pem
+
+openssl pkey \
+  -in attestation-private.pem \
+  -pubout \
+  -out attestation-public.pem
+```
+
+Generated keys should be stored securely and must never be committed to source control.
+
+---
+
+# Security Model
+
+Parmana Trust Core assumes that every production Trust Domain owns and controls its own signing keys.
+
+Trust Anchors published by a Trust Domain should be derived from keys generated and managed by that domain.
+
+Repository example keys do not represent a production trust anchor.
+
+---
+
+# Open Source Policy
+
+The keys in this directory are intentionally published as example artifacts to support reproducible demonstrations and developer onboarding.
+
+Because these keys are public, any signatures generated using them should be considered demonstration signatures only.
+
+---
+
+# Canonical Rule
+
+Example keys may be public.
+
+Production keys must remain private.
+ng to higher-level trust architecture components.
 
 
 
