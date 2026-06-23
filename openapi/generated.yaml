@@ -201,6 +201,23 @@ components:
         - overrideAttestationId
       example:
         overrideAttestationId: ovr-att-001
+    PublicKeyResponse:
+      type: object
+      properties:
+        keyId:
+          type: string
+        algorithm:
+          type: string
+        publicKey:
+          type: string
+      required:
+        - keyId
+        - algorithm
+        - publicKey
+      example:
+        keyId: root-key-1
+        algorithm: Ed25519
+        publicKey: MCowBQYDK2VwAyEAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   parameters: {}
 paths:
   /attest:
@@ -342,4 +359,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OverrideVerifyResponse"
+  /trust-anchor/public-key:
+    get:
+      tags:
+        - Trust Anchor
+      summary: Retrieve Parmana public key
+      responses:
+        "200":
+          description: Trust anchor public key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicKeyResponse"
+              example:
+                keyId: parmana-root-key
+                algorithm: ed25519
+                publicKey: |-
+                  -----BEGIN PUBLIC KEY-----
+                  ...
+                  -----END PUBLIC KEY-----
 webhooks: {}

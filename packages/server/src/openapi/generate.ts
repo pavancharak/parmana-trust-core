@@ -68,6 +68,9 @@ import {
   OverrideVerifyResponseSchema,
 } from "../schemas/override-verify-response.js";
 
+import {
+  PublicKeyResponseSchema,
+} from "../schemas/public-key-response.js";
 
 const registry = new OpenAPIRegistry();
 
@@ -308,6 +311,33 @@ registry.registerPath({
       content: {
         "application/json": {
           schema: OverrideVerifyResponseSchema,
+        },
+      },
+    },
+  },
+});
+registry.registerPath({
+  method: "get",
+  path: "/trust-anchor/public-key",
+
+  tags: ["Trust Anchor"],
+
+  summary: "Retrieve Parmana public key",
+
+  responses: {
+    200: {
+      description: "Trust anchor public key",
+
+      content: {
+        "application/json": {
+          schema: PublicKeyResponseSchema,
+
+          example: {
+            keyId: "parmana-root-key",
+            algorithm: "ed25519",
+            publicKey:
+              "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----",
+          },
         },
       },
     },

@@ -66,6 +66,8 @@ import overrideAttestRouter
   from "./routes/override-attest.js";
 import overrideVerifyRouter
   from "./routes/override-verify.js";
+import trustAnchorPublicKeyRouter
+  from "./routes/trust-anchor-public-key.js";
 app.use(
   policiesRoute
 );
@@ -74,6 +76,9 @@ app.use(
 );
 app.use(
   overrideVerifyRouter
+);
+app.use(
+  trustAnchorPublicKeyRouter
 );
 app.use(
   overrideAttestRouter
