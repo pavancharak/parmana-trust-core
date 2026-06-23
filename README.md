@@ -1,4 +1,5 @@
 # Parmana Trust Core
+Parmana ensures human-defined authority governs autonomous and AI-enabled systems through verifiable execution trust. 
 
 Open-source trust infrastructure for Authorization → Intent → Execution verification.
 
