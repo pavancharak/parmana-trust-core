@@ -22,7 +22,6 @@ export interface TrustCoreInvariant {
 
 export const INVARIANT_REGISTRY = {
 
-
   "INV-100": {
 
     id: "INV-100",
@@ -34,7 +33,6 @@ export const INVARIANT_REGISTRY = {
       "decision"
 
   },
-
 
   "INV-101": {
 
@@ -48,7 +46,6 @@ export const INVARIANT_REGISTRY = {
 
   },
 
-
   "INV-102": {
 
     id: "INV-102",
@@ -60,7 +57,6 @@ export const INVARIANT_REGISTRY = {
       "receipt"
 
   },
-
 
   "INV-103": {
 
@@ -74,7 +70,6 @@ export const INVARIANT_REGISTRY = {
 
   },
 
-
   "INV-104": {
 
     id: "INV-104",
@@ -86,187 +81,195 @@ export const INVARIANT_REGISTRY = {
       "trust-root"
 
   },
-"INV-105": {
 
-  id: "INV-105",
+  "INV-105": {
 
-  description:
-    "Trust root generation is reproducible",
+    id: "INV-105",
 
-  boundary:
-    "trust-root"
+    description:
+      "Trust root generation is reproducible",
 
-},
+    boundary:
+      "trust-root"
 
+  },
 
-"INV-120": {
+  "INV-120": {
 
-  id: "INV-120",
+    id: "INV-120",
 
-  description:
-    "Attestation signatures are cryptographically valid",
+    description:
+      "Attestation signatures are cryptographically valid",
 
-  boundary:
-    "attestation"
+    boundary:
+      "attestation"
 
-},
+  },
 
+  "INV-121": {
 
-"INV-121": {
+    id: "INV-121",
 
-  id: "INV-121",
+    description:
+      "Attestation signatures are independently verifiable",
 
-  description:
-    "Attestation signatures are independently verifiable",
+    boundary:
+      "attestation"
 
-  boundary:
-    "attestation"
+  },
 
-},
+  "INV-130": {
 
+    id: "INV-130",
 
-"INV-130": {
+    description:
+      "Published trust roots are signed",
 
-  id: "INV-130",
+    boundary:
+      "trust-root"
 
-  description:
-    "Published trust roots are signed",
+  },
 
-  boundary:
-    "trust-root"
+  "INV-131": {
 
-},
+    id: "INV-131",
 
+    description:
+      "Trust root signatures are independently verifiable",
 
-"INV-131": {
+    boundary:
+      "trust-root"
 
-  id: "INV-131",
+  },
 
-  description:
-    "Trust root signatures are independently verifiable",
+  "INV-140": {
 
-  boundary:
-    "trust-root"
+    id: "INV-140",
 
-},
-"INV-140": {
+    description:
+      "Evidence hashes are immutable and verifiable",
 
-  id: "INV-140",
+    boundary:
+      "attestation"
 
-  description:
-    "Evidence hashes are immutable and verifiable",
+  },
 
-  boundary:
-    "attestation"
+  "INV-150": {
 
-},
-"INV-150": {
+    id: "INV-150",
 
-  id: "INV-150",
+    description:
+      "Evidence content changes invalidate existing attestations",
 
-  description:
-    "Evidence content changes invalidate existing attestations",
+    boundary:
+      [
+        "attestation",
+        "verification"
+      ]
 
-  boundary:
-    [
-      "attestation",
-      "verification"
-    ]
+  },
 
-},
-"INV-160": {
+  "INV-160": {
 
-  id: "INV-160",
+    id: "INV-160",
 
-  description:
-    "Verification receipts are cryptographically bound to verified attestations",
+    description:
+      "Verification receipts are cryptographically bound to verified attestations",
 
-  boundary:
-    [
-      "receipt",
-      "verification"
-    ]
+    boundary:
+      [
+        "receipt",
+        "verification"
+      ]
 
-},
+  },
 
-"INV-170": {
+  "INV-170": {
 
-  id: "INV-170",
+    id: "INV-170",
 
-  description:
-    "Receipt history is append-only and cryptographically linked",
+    description:
+      "Receipt history is append-only and cryptographically linked",
 
-  boundary:
-    [
-      "receipt",
-      "transparency"
-    ]
+    boundary:
+      [
+        "receipt",
+        "transparency"
+      ]
 
-},
-"INV-180": {
+  },
 
-  id: "INV-180",
+  "INV-180": {
 
-  description:
-    "Authority decisions are deterministic. Identical task, policy and trusted signals MUST produce identical decisions.",
+    id: "INV-180",
 
-  boundary:
-    "decision"
+    description:
+      "Authority decisions are deterministic. Identical task, policy and trusted signals MUST produce identical decisions.",
 
-},
-"INV-181": {
+    boundary:
+      "decision"
 
-  id: "INV-181",
+  },
 
-  description:
-    "Lineage identifiers are outside decision scope and MUST NOT influence authority evaluation.",
+  "INV-181": {
 
-  boundary:
-    "decision"
+    id: "INV-181",
 
-},
-"INV-199": {
+    description:
+      "Lineage identifiers are outside decision scope and MUST NOT influence authority evaluation.",
 
-  id: "INV-199",
+    boundary:
+      "decision"
 
-  description:
-    "Execution is fail-closed. An action MUST NOT execute unless a valid verification receipt exists and required lineage identifiers are present.",
+  },
 
-  boundary:
-    [
-      "verification",
-      "receipt"
-    ]
+  "INV-199": {
 
-},
-"INV-200": {
+    id: "INV-199",
 
-  id: "INV-200",
+    description:
+      "Parmana Execution Boundary. An action MUST NOT execute unless a valid verification receipt exists, a valid Execution Trust Token exists, the decision is approved, and the authorized intent is preserved.",
 
-  description:
-    "Execution payloads MUST match the authorized intent. Execution authorization MUST fail when the execution payload hash differs from the authorized intent hash.",
+    boundary:
+      [
+        "verification",
+        "receipt"
+      ]
 
-  boundary: [
-    "verification",
-    "receipt"
-  ]
+  },
 
-},
-"INV-204": {
+  "INV-200": {
 
-  id: "INV-204",
+    id: "INV-200",
 
-  description:
-    "Verification receipts are single-use governance artifacts and may be consumed for execution only once.",
+    description:
+      "Execution payloads MUST match the authorized intent. Execution authorization MUST fail when the execution payload hash differs from the authorized intent hash.",
 
-  boundary:
-    [
-      "receipt",
-      "verification"
-    ]
+    boundary:
+      [
+        "verification",
+        "receipt"
+      ]
 
-},
+  },
+
+  "INV-204": {
+
+    id: "INV-204",
+
+    description:
+      "Verification receipts are single-use governance artifacts and may be consumed for execution only once.",
+
+    boundary:
+      [
+        "receipt",
+        "verification"
+      ]
+
+  },
+
   "META-010": {
+
     id: "META-010",
 
     description:
@@ -282,7 +285,6 @@ export const INVARIANT_REGISTRY = {
     ]
 
   }
-
 
 } as const satisfies Record<
   string,

@@ -67,7 +67,7 @@ Intent defines what is supposed to happen.
 
 Execution produces observable outcomes.
 
-Parmana makes execution verifiable.
+Parmana ensures only authorized intent may execute.
 ```
 
 ```text
@@ -95,14 +95,75 @@ Verification Receipt
    ↓
 Execution Trust Token
    ↓
+Execution Authorization
+   ↓
 Execution
    ↓
 Execution Record
    ↓
 Evidence
+
 ```
 
 Each stage contributes to a cryptographically verifiable execution trust chain.
+
+---
+## Parmana Execution Boundary
+
+Parmana establishes trust between authority and execution through the Parmana Execution Boundary.
+
+The Parmana Execution Boundary is the trust boundary between authorized intent and execution.
+
+Within the Parmana Execution Boundary, every execution must:
+
+* Reference an approved decision
+* Reference a valid verification receipt
+* Possess a valid Execution Trust Token
+* Match the authorized intent
+* Pass execution authorization
+
+```text
+Authority
+   ↓
+Policy
+   ↓
+Decision
+   ↓
+Intent
+
+══════════════════════════════════
+     PARMANA EXECUTION BOUNDARY
+══════════════════════════════════
+
+Verification Receipt
+   ↓
+Execution Trust Token
+   ↓
+Execution Authorization
+
+══════════════════════════════════
+
+   ↓
+Execution
+   ↓
+Execution Record
+
+```
+The Parmana Execution Boundary establishes enforcement before execution rather than evidence after execution.
+
+Within the Parmana Execution Boundary:
+
+* Nothing executes without an approved decision.
+* Nothing executes without a valid verification receipt.
+* Nothing executes without a valid Execution Trust Token.
+* Nothing executes differently from authorized intent.
+
+This enforcement is formalized through:
+
+```text
+INV-199 — Parmana Execution Boundary
+INV-200 — Execution Must Match Authorized Intent
+```
 
 ---
 
@@ -128,9 +189,9 @@ If execution differs from the authorized intent, execution is denied.
 
 This enforcement is formalized through:
 
-```text
-INV-200 — Intent-Bound Execution
-```
+INV-199 — Parmana Execution Boundary
+
+INV-200 — Execution Must Match Authorized Intent
 
 ---
 
@@ -401,10 +462,10 @@ Implemented:
 Core Invariants:
 
 ```text
-INV-170  Execution Token Authenticity
-INV-199  Verified Receipt Required
+INV-170  Append-Only Receipt History
+INV-199  Parmana Execution Boundary
 INV-200  Execution Must Match Authorized Intent
-INV-201  Decision Must Be Approved
+INV-204  Single-Use Receipt
 ```
 
 Repository Snapshot:
@@ -504,7 +565,7 @@ Authority defines what is allowed.
 
 Intent defines what is supposed to happen.
 
-Parmana makes execution verifiable.
+Parmana ensures only authorized intent may execute.
 ```
 
 ```text

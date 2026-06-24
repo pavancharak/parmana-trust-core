@@ -5,7 +5,10 @@
 A decision MUST exist before an attestation can be issued.
 
 Trust Boundary:
-Decision → Attestation
+
+Decision
+↓
+Attestation
 
 ---
 
@@ -14,6 +17,7 @@ Decision → Attestation
 Every attestation MUST reference exactly one decision.
 
 Trust Boundary:
+
 Attestation
 
 ---
@@ -23,6 +27,7 @@ Attestation
 Every verification receipt MUST reference a valid decision lineage.
 
 Trust Boundary:
+
 Receipt
 
 ---
@@ -32,6 +37,7 @@ Receipt
 Transparency entries MUST reference valid receipt hashes.
 
 Trust Boundary:
+
 Transparency
 
 ---
@@ -41,6 +47,7 @@ Transparency
 Trust roots MUST be deterministically derived from receipt hashes.
 
 Trust Boundary:
+
 Trust Root
 
 ---
@@ -50,6 +57,7 @@ Trust Root
 Trust root generation MUST be reproducible.
 
 Trust Boundary:
+
 Trust Root
 
 ---
@@ -59,6 +67,7 @@ Trust Root
 Attestation signatures MUST be cryptographically valid.
 
 Trust Boundary:
+
 Attestation
 
 ---
@@ -68,6 +77,7 @@ Attestation
 Attestation signatures MUST be independently verifiable.
 
 Trust Boundary:
+
 Attestation
 
 ---
@@ -77,6 +87,7 @@ Attestation
 Published trust roots MUST be signed.
 
 Trust Boundary:
+
 Trust Root
 
 ---
@@ -86,6 +97,7 @@ Trust Root
 Trust root signatures MUST be independently verifiable.
 
 Trust Boundary:
+
 Trust Root
 
 ---
@@ -95,6 +107,7 @@ Trust Root
 Evidence hashes MUST be immutable and verifiable.
 
 Trust Boundary:
+
 Attestation
 
 ---
@@ -104,6 +117,7 @@ Attestation
 Any change to evidence content MUST invalidate existing attestations.
 
 Trust Boundary:
+
 Attestation → Verification
 
 ---
@@ -113,6 +127,7 @@ Attestation → Verification
 Verification receipts MUST be cryptographically bound to verified attestations.
 
 Trust Boundary:
+
 Verification → Receipt
 
 ---
@@ -122,6 +137,7 @@ Verification → Receipt
 Receipt history MUST be append-only and cryptographically linked.
 
 Trust Boundary:
+
 Receipt → Transparency
 
 ---
@@ -137,6 +153,7 @@ Identical:
 MUST produce identical decisions.
 
 Trust Boundary:
+
 Decision
 
 ---
@@ -153,24 +170,36 @@ Examples:
 * transactionId
 
 Trust Boundary:
+
 Decision
 
 ---
 
-## INV-199 — Fail-Closed Execution
+## INV-199 — Parmana Execution Boundary
 
-An action MUST NOT execute unless:
+### Description
+
+The Parmana Execution Boundary is the trust boundary between authorized intent and execution.
+
+An action MUST NOT execute unless all execution boundary requirements are satisfied.
+
+### Boundary Requirements
+
+A protected execution MUST satisfy all of the following:
 
 * A valid verification receipt exists.
 * Required lineage identifiers are present.
-* A valid execution token exists.
+* A valid Execution Trust Token exists.
+* The decision is approved.
 * The authorized intent is preserved.
 
-Trust Boundary:
-Verification → Receipt → Execution
+### Enforcement
 
-Guarantee:
+Protected execution follows the chain:
 
+```text
+Authority
+↓
 Policy
 ↓
 Decision
@@ -181,17 +210,43 @@ Verification
 ↓
 Receipt(valid=true)
 ↓
-Execution Token
+Execution Trust Token
+↓
+Execution Authorization
 ↓
 Execution
+```
 
-No Verified Receipt
-↓
-No Execution Token
-↓
-No Execution
+### Failure Conditions
+
+Execution MUST be denied when:
+
+* The Execution Trust Token is invalid.
+* The verification receipt is invalid.
+* The decision is not approved.
+* The execution payload does not match authorized intent.
+
+### Guarantee
+
+Within the Parmana Execution Boundary:
+
+* Nothing executes without an approved decision.
+* Nothing executes without a valid verification receipt.
+* Nothing executes without a valid Execution Trust Token.
+* Nothing executes differently from authorized intent.
+
+### Trust Gap Addressed
+
+Traditional systems prove who approved an action.
+
+Parmana verifies that execution matches what was approved before execution is authorized.
+
+Trust Boundary:
+
+Verification → Receipt → Execution
 
 ---
+
 ## INV-200 — Execution Must Match Authorized Intent
 
 ### Description
@@ -238,12 +293,19 @@ Execution Denied
 
 Parmana provides cryptographic evidence that the executed action matches the authorized intent.
 
+### Relationship to INV-199
+
+INV-199 establishes the Parmana Execution Boundary.
+
+INV-200 enforces execution fidelity within that boundary.
+
 ### Trust Gap Addressed
 
 Traditional systems record approvals.
 
 Parmana verifies that execution matched what was authorized.
 
+---
 
 ## INV-204 — Single-Use Receipt
 
@@ -252,6 +314,7 @@ Verification receipts are single-use governance artifacts.
 A receipt MAY authorize execution only once.
 
 Trust Boundary:
+
 Receipt → Verification
 
 ---
@@ -266,6 +329,7 @@ Parmana evaluates trusted signals against policy before execution.
 
 Trust Boundary:
 
+```text
 Authority
 ↓
 Policy
@@ -277,6 +341,21 @@ Intent
 Execution
 ↓
 Verification
+```
+
+### Core Principle
+
+Humans define what should happen.
+
+Parmana ensures only authorized intent can execute within the Parmana Execution Boundary.
+
+### Trust Model
+
+Authority defines what is allowed.
+
+Intent defines what is supposed to happen.
+
+Parmana establishes a verifiable trust chain between authority, intent, and execution.
 
 
 Actual file : packages/contracts/src/invariants.ts
