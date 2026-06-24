@@ -40,7 +40,7 @@ const executionIntent = {
 
 const executionPayload = {
 
-  amount: 1900,
+  amount: 1000,
 
   currency: "INR",
 

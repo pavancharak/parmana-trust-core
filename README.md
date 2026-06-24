@@ -1,12 +1,168 @@
 # Parmana Trust Core
 
-**Execution Trust Infrastructure**
+# Parmana Trust Core
 
-Parmana establishes trust between authority and execution.
+## Execution Trust Infrastructure
 
-Traditional systems can prove who approved a decision and when it was approved. They rarely prove whether execution matched what was authorized.
+AI may be non-deterministic.
 
-Parmana closes that gap.
+Execution should not be.
+
+Parmana establishes a verifiable trust chain between authority, intent, and execution.
+
+Traditional systems prove who approved a decision and when it was approved.
+
+Parmana proves whether execution honored that decision.
+
+As AI agents, autonomous workflows, and AI-enabled systems gain the ability to execute actions, organizations face a new challenge:
+
+**Can execution be proven to match authorized intent?**
+
+Parmana answers that question.
+
+It establishes a deterministic execution boundary between AI reasoning and real-world execution, ensuring only authorized intent may execute.
+
+```text
+Authority → Intent → Execution → Evidence → Verification
+```
+
+Open Source.
+
+Production Ready.
+
+Deployable Today.
+
+---
+
+## Why Parmana Exists
+
+The AI industry has invested heavily in:
+
+* AI Governance
+* AI Safety
+* AI Security
+* AI Observability
+
+These systems answer important questions:
+
+```text
+Who approved this?
+Which policy allowed it?
+When did it happen?
+```
+
+But a more important question often remains unanswered:
+
+```text
+Did execution honor the authorized intent?
+```
+
+This is the trust gap between decision and execution.
+
+Parmana was built to close that gap.
+
+Not by monitoring execution after the fact.
+
+By enforcing trust before execution occurs.
+
+---
+## A New Category: Execution Trust Infrastructure
+
+The AI industry has built:
+
+- Governance Infrastructure
+- Security Infrastructure
+- Observability Infrastructure
+
+Parmana introduces a new category:
+
+Execution Trust Infrastructure.
+
+Execution Trust Infrastructure establishes a verifiable trust chain between authority, intent, execution, and evidence.
+
+Its purpose is not to control how AI thinks.
+
+Its purpose is to prove that execution honored authorized intent.
+
+AI may be non-deterministic.
+
+Execution should not be. 
+
+## Run a Complete End-to-End Example
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run:
+
+```bash
+npx tsx examples/end-to-end/payment-release-flow.ts
+```
+
+The example demonstrates:
+
+✓ Authorization
+
+✓ Intent Creation
+
+✓ Decision Attestation
+
+✓ Verification Receipt
+
+✓ Execution Trust Token
+
+✓ Intent-Bound Execution
+
+✓ Trust Chain Verification
+
+Expected flow:
+
+```text
+STEP 1: EVALUATE
+STEP 2: POLICY
+STEP 3: VERIFY
+STEP 4: TOKEN
+STEP 5: EXECUTE
+STEP 6: TRUST CHAIN
+```
+
+To test enforcement, modify the execution payload and rerun.
+
+Parmana will reject execution with:
+
+```text
+INV-200 violation:
+execution payload does not match authorized intent
+```
+
+Because execution is cryptographically bound to authorized intent.
+
+Trust should not depend on belief.
+
+Trust should depend on verification.
+
+---
+
+## Core Principle
+
+Parmana is built around a simple trust model.
+
+```text
+Authority defines what is allowed.
+
+Intent defines what is supposed to happen.
+
+Execution produces observable outcomes.
+
+Parmana ensures only authorized intent may execute.
+```
+
+```text
+Authority → Intent → Execution → Evidence → Verification
+```
 
 It establishes a verifiable trust chain between:
 
@@ -558,18 +714,22 @@ LICENSE.txt
 
 ## Vision
 
-Parmana establishes trust between authority and execution.
+Parmana proves execution honored authorized intent.
 
 ```text
 Authority defines what is allowed.
 
 Intent defines what is supposed to happen.
 
-Parmana ensures only authorized intent may execute.
+Execution produces outcomes.
+
+Evidence establishes trust.
+
+Verification proves execution honored intent.Parmana ensures only authorized intent may execute.
 ```
 
 ```text
-Authorization → Intent → Execution
+Authority → Intent → Execution → Evidence → Verification
 ```
 
 Execution Trust Infrastructure for autonomous, agentic, and AI-enabled systems.
