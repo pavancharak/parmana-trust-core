@@ -55,6 +55,9 @@ export class AuditDbClient {
 intent_hash:
   receipt.intentHash,
 
+intent_id:
+  receipt.intentId,
+
   valid:
     receipt.valid,
 

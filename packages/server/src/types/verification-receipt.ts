@@ -8,7 +8,9 @@ export interface VerificationReceipt {
 
   decisionId: string;
 
-  taskId: string;
+intentId: string;
+
+taskId: string;
 
   policyId: string;
 

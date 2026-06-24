@@ -20,10 +20,19 @@ router.post(
   async (req, res) => {
 
     try {
-
+console.log(
+  "RECEIPT ROUTE HIT"
+);
       const attestation =
         req.body;
-
+console.log(
+  "ATTESTATION:",
+  JSON.stringify(
+    attestation,
+    null,
+    2
+  )
+);
 
       const verified =
         verifyAttestation(
@@ -40,6 +49,8 @@ router.post(
 
     attestation.decisionId,
 
+    attestation.intent.intentId,
+
     attestation.taskId,
 
     attestation.policyId,
@@ -50,7 +61,7 @@ router.post(
 
     verified
 
-  );
+  ); 
 
 
       verifyReceipt(
@@ -61,7 +72,14 @@ router.post(
       await saveReceipt(
         receipt
       );
-
+console.log(
+  "RECEIPT BEFORE SAVE:",
+  JSON.stringify(
+    receipt,
+    null,
+    2
+  )
+);
 
       res.json(
         receipt

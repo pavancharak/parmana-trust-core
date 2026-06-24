@@ -20,6 +20,14 @@ import {
 import {
   evaluateAuthority
 } from "@parmana/authority-engine";
+import {
+  createIntent
+} from "@parmana/intent";
+
+import {
+  saveIntent
+} from "@parmana/audit-db";
+
 
 const router =
   Router();
@@ -109,10 +117,42 @@ await saveSignalEvidence({
 
       });
 
+const intent =
+  createIntent({
+
+    businessTransactionId,
+
+    decisionId:
+      result.decisionId,
+
+    taskId:
+      result.taskId,
+
+    policyId:
+      result.policyId,
+
+    policyVersion:
+      result.policyVersion,
+
+    payload:
+      executionIntent ?? {}
+
+  });
+
+await saveIntent(
+  intent
+);
+
       const attestation =
   createAttestation({
+
     ...result,
+
+    intentId:
+      intent.intentId,
+
     executionIntent
+
   });
 
       await saveAttestation(
@@ -122,8 +162,13 @@ await saveSignalEvidence({
       return res
   .status(200)
   .json({
+
     result,
+
+    intent,
+
     attestation
+
   });
 
     } catch (error) {

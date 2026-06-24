@@ -21,12 +21,109 @@ async function main() {
     "PAYMENT-E2E-001";
 
   /*
+ * AUTHORIZED INTENT
+ */
+
+const executionIntent = {
+
+  amount: 1000,
+
+  currency: "INR",
+
+  recipient: "merchant-123"
+
+};
+
+/*
+ * TAMPERED EXECUTION
+ */
+
+const executionPayload = {
+
+  amount: 1900,
+
+  currency: "INR",
+
+  recipient: "merchant-123"
+
+};
+
+  /*
    * STEP 1
+   * EVALUATE
+   */
+
+  console.log(
+    "STEP 1: EVALUATE"
+  );
+
+  const evaluation =
+    await axios.post(
+
+      `${BASE_URL}/evaluate`,
+
+      {
+
+        businessTransactionId,
+
+        subjectId:
+          "user-001",
+
+        taskId:
+          "payment.release",
+
+        signals: {
+
+  managerApproved: true,
+
+  kycVerified: true
+
+},
+
+        executionIntent
+
+      }
+
+    );
+console.log(
+  "DECISION:"
+);
+
+console.log(
+  evaluation.data.result
+);
+
+  const attestation =
+    evaluation.data
+      .attestation;
+
+  console.log(
+    "ATTESTATION CREATED"
+  );
+
+  /*
+   * STEP 2
+   * LOAD POLICY
+   */
+
+  console.log(
+    "\nSTEP 2: POLICY"
+  );
+
+  const policy =
+    await axios.get(
+
+      `${BASE_URL}/policies/${attestation.policyId}`
+
+    );
+
+  /*
+   * STEP 3
    * VERIFY
    */
 
   console.log(
-    "STEP 1: VERIFYING"
+    "\nSTEP 3: VERIFY"
   );
 
   const receipt =
@@ -35,7 +132,12 @@ async function main() {
       `${BASE_URL}/verify`,
 
       {
-        businessTransactionId
+
+        attestation,
+
+        policy:
+          policy.data
+
       }
 
     );
@@ -44,17 +146,13 @@ async function main() {
     "RECEIPT CREATED"
   );
 
-  console.log(
-    receipt.data
-  );
-
   /*
-   * STEP 2
+   * STEP 4
    * TOKEN
    */
 
   console.log(
-    "\nSTEP 2: TOKEN"
+    "\nSTEP 4: TOKEN"
   );
 
   const token =
@@ -73,20 +171,16 @@ async function main() {
     );
 
   console.log(
-    "TOKEN ISSUED"
-  );
-
-  console.log(
-    token.data
+    "TOKEN CREATED"
   );
 
   /*
-   * STEP 3
+   * STEP 5
    * EXECUTE
    */
 
   console.log(
-    "\nSTEP 3: EXECUTE"
+    "\nSTEP 5: EXECUTE"
   );
 
   const execution =
@@ -98,6 +192,8 @@ async function main() {
 
         executionToken:
           token.data,
+
+        executionPayload,
 
         executionSystem:
           "stripe",
@@ -118,12 +214,12 @@ async function main() {
   );
 
   /*
-   * STEP 4
+   * STEP 6
    * TRUST CHAIN
    */
 
   console.log(
-    "\nSTEP 4: TRUST CHAIN"
+    "\nSTEP 6: TRUST CHAIN"
   );
 
   const trustChain =
@@ -146,52 +242,6 @@ async function main() {
     )
 
   );
-
-  /*
-   * STEP 5
-   * VALIDATION
-   */
-
-  if (
-
-    !trustChain.data
-      .decision
-
-  ) {
-
-    throw new Error(
-      "decision missing"
-    );
-
-  }
-
-  if (
-
-    !trustChain.data
-      .receipts
-      ?.length
-
-  ) {
-
-    throw new Error(
-      "receipts missing"
-    );
-
-  }
-
-  if (
-
-    !trustChain.data
-      .executions
-      ?.length
-
-  ) {
-
-    throw new Error(
-      "executions missing"
-    );
-
-  }
 
   console.log(
     "\n================================="

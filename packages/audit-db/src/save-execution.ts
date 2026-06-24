@@ -35,6 +35,9 @@ export async function saveExecution(
       receipt_id:
         execution.receiptId,
 
+     intent_id:
+  execution.intentId,
+
       task_id:
         execution.taskId,
 

@@ -9,10 +9,18 @@ import type {
 import type {
   ExecutionToken
 } from "./types.js";
+import {
+  enforceInvariant
+} from "@parmana/contracts";
 
 export function createExecutionToken(
   receipt: VerificationReceipt
 ): ExecutionToken {
+
+   enforceInvariant(
+  "INV-199",
+  receipt.valid === true
+  );
 
   const issuedAt =
     new Date().toISOString();
@@ -33,10 +41,13 @@ export function createExecutionToken(
       receipt.decisionId,
 
     receiptId:
-      receipt.receiptId,
+  receipt.receiptId,
 
-    taskId:
-      receipt.taskId,
+intentId:
+  receipt.intentId,
+
+taskId:
+  receipt.taskId,
 
     policyId:
       receipt.policyId,
@@ -69,10 +80,13 @@ const signature =
       receipt.decisionId,
 
     receiptId:
-      receipt.receiptId,
+  receipt.receiptId,
 
-    taskId:
-      receipt.taskId,
+intentId:
+  receipt.intentId,
+
+taskId:
+  receipt.taskId,
 
     policyId:
       receipt.policyId,

@@ -11,6 +11,9 @@ import {
 import type {
   ExecutionAuthorizationResult
 } from "./types.js";
+import {
+  enforceInvariant
+} from "@parmana/contracts";
 
 export function authorizeExecution(
 

@@ -14,7 +14,9 @@ export function createReceipt(
 
   decisionId: string,
 
-  taskId: string,
+intentId: string,
+
+taskId: string,
 
   policyId: string,
 
@@ -36,7 +38,9 @@ export function createReceipt(
 
     decisionId,
 
-    taskId,
+intentId,
+
+taskId,
 
     policyId,
 

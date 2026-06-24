@@ -43,10 +43,13 @@ export async function getReceiptById(
       row.subject_id,
 
     decisionId:
-      row.decision_id,
+  row.decision_id,
 
-    taskId:
-      row.task_id,
+intentId:
+  row.intent_id,
+
+taskId:
+  row.task_id,
 
     policyId:
       row.policy_id,

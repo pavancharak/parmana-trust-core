@@ -11,8 +11,13 @@ import {
 
 import {
   getReceipt,
+  getDecision,
   saveExecution
 } from "@parmana/audit-db";
+
+import {
+  authorizeExecution
+} from "@parmana/execution-gateway";
 
 const router =
   Router();
@@ -30,15 +35,27 @@ router.post(
 
         executionToken,
 
+        executionPayload,
+
         executionSystem,
 
         executionReference
 
       } = req.body;
+console.log(
+  "EXECUTION TOKEN:",
+  JSON.stringify(
+    executionToken,
+    null,
+    2
+  )
+);
 
       if (
 
         !executionToken ||
+
+        !executionPayload ||
 
         !executionSystem ||
 
@@ -51,7 +68,7 @@ router.post(
           .json({
 
             error:
-              "executionToken, executionSystem and executionReference are required"
+              "executionToken, executionPayload, executionSystem and executionReference are required"
 
           });
 
@@ -95,12 +112,80 @@ router.post(
 
       if (!receipt.valid) {
 
+  return res
+    .status(403)
+    .json({
+
+      error:
+        "INV-199 violation: receipt is not valid"
+
+    });
+
+}
+
+const decision =
+  await getDecision(
+    executionToken.decisionId
+  );
+
+if (!decision) {
+
+  return res
+    .status(404)
+    .json({
+
+      error:
+        "decision not found"
+
+    });
+
+}
+
+if (
+
+  decision.action !==
+  "approved"
+
+) {
+
+  return res
+    .status(403)
+    .json({
+
+      error:
+        "INV-201 violation: decision is not approved"
+
+    });
+
+}
+
+const authorization =
+  authorizeExecution(
+
+    executionToken,
+
+    executionPayload
+
+  );
+
+      if (
+
+        !authorization.authorized
+
+      ) {
+
         return res
           .status(403)
           .json({
 
             error:
-              "INV-199 violation: receipt is not valid"
+              "INV-200 violation: execution payload does not match authorized intent",
+
+            expectedHash:
+              authorization.expectedHash,
+
+            actualHash:
+              authorization.actualHash
 
           });
 
@@ -123,6 +208,9 @@ router.post(
         receiptId:
           executionToken.receiptId,
 
+       intentId:
+  executionToken.intentId,
+
         taskId:
           executionToken.taskId,
 
@@ -144,7 +232,14 @@ router.post(
             .toISOString()
 
       };
-
+console.log(
+  "EXECUTION OBJECT:",
+  JSON.stringify(
+    execution,
+    null,
+    2
+  )
+);
       await saveExecution(
         execution
       );

@@ -239,6 +239,19 @@ export const INVARIANT_REGISTRY = {
     ]
 
 },
+"INV-200": {
+
+  id: "INV-200",
+
+  description:
+    "Execution payloads MUST match the authorized intent. Execution authorization MUST fail when the execution payload hash differs from the authorized intent hash.",
+
+  boundary: [
+    "verification",
+    "receipt"
+  ]
+
+},
 "INV-204": {
 
   id: "INV-204",

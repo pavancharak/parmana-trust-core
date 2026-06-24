@@ -14,7 +14,7 @@ const router =
 const openApiPath =
   path.resolve(
     process.cwd(),
-    "../../openapi/generated.yaml"
+     "../../openapi/openapi.yaml"
   );
 
 const spec =

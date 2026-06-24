@@ -7,6 +7,7 @@ export interface VerificationReceipt {
   subjectId?: string;
 
   decisionId: string;
+  intentId: string;
 
   taskId: string;
 

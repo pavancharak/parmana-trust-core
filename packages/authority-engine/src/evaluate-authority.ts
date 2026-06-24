@@ -21,6 +21,9 @@ import {
 import {
   validateSignals
 } from "./validate-signals.js";
+import {
+  evaluatePolicy
+} from "./evaluate-policy.js";
 
 export async function evaluateAuthority(
 
@@ -160,16 +163,40 @@ export async function evaluateAuthority(
 
     );
 
-  const reasons = [
+  const validationErrors = [
 
-    ...schemaErrors,
+  ...schemaErrors,
 
-    ...signalErrors
+  ...signalErrors
 
-  ];
+];
+console.log(
+  "POLICY:",
+  JSON.stringify(
+    policy,
+    null,
+    2
+  )
+);
 
-  const decisionId =
-    randomUUID();
+const policyResult =
+
+  evaluatePolicy(
+
+    policy.definition,
+
+    signals
+
+  );
+
+const decisionId =
+  randomUUID();
+
+if (
+
+  validationErrors.length > 0
+
+) {
 
   return {
 
@@ -188,15 +215,60 @@ export async function evaluateAuthority(
       policy.version,
 
     decision:
+      "rejected",
 
-      reasons.length === 0
+    requiresOverride:
+      false,
 
-        ? "approved"
+    matchedRuleId:
+      "validation-failed",
 
-        : "denied",
-
-    reasons
+    reasons:
+      validationErrors
 
   };
+
+}
+
+return {
+
+  decisionId,
+
+  businessTransactionId,
+
+  subjectId,
+
+  taskId,
+
+  policyId:
+    policy.policyId,
+
+  policyVersion:
+    policy.version,
+
+  decision:
+
+    policyResult.action ===
+    "approve"
+
+      ? "approved"
+
+      : "rejected",
+
+  requiresOverride:
+    policyResult
+      .requiresOverride,
+
+  matchedRuleId:
+    policyResult
+      .matchedRuleId,
+
+  reasons: [
+
+    policyResult.reason
+
+  ]
+
+};
 
 }

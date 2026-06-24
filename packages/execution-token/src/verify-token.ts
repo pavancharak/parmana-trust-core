@@ -38,6 +38,9 @@ export function verifyExecutionToken(
     receiptId:
       token.receiptId,
 
+    intentId:
+      token.intentId,
+
     taskId:
       token.taskId,
 
@@ -47,8 +50,8 @@ export function verifyExecutionToken(
     policyVersion:
       token.policyVersion,
 
-intentHash:
-  token.intentHash,
+    intentHash:
+      token.intentHash,
 
     issuedAt:
       token.issuedAt,

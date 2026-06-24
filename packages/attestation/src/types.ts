@@ -20,8 +20,13 @@ export interface DecisionOutcome {
 }
 
 export interface IntentBinding {
+
+  intentId: string;
+
   hashAlgorithm: string;
+
   intentHash: string;
+
 }
 
 export interface DecisionAttestation {

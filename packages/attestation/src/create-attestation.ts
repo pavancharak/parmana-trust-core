@@ -94,11 +94,18 @@ export function createAttestation(
       evaluation.taskId,
 
     intent: intentHash
-      ? {
-          hashAlgorithm: "sha256",
-          intentHash
-        }
-      : undefined,
+  ? {
+
+      intentId:
+        evaluation.intentId,
+
+      hashAlgorithm:
+        "sha256",
+
+      intentHash
+
+    }
+  : undefined,
 
     policyId:
       evaluation.policyId,

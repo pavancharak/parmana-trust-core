@@ -54,7 +54,10 @@
 
       "@parmana/audit-db": [
         "packages/audit-db/src/index.ts"
-      ]
+      ],
+      "@parmana/intent": [
+  "packages/intent/src/index.ts"
+]
     }
   }
 }

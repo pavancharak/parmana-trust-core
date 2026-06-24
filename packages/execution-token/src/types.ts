@@ -8,6 +8,8 @@ export interface ExecutionToken {
 
   receiptId: string;
 
+  intentId: string;
+
   taskId: string;
 
   policyId: string;

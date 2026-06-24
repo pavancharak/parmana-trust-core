@@ -1,428 +1,282 @@
-This is actually a very strong invariant registry.
+# Parmana Trust Core Invariants
 
+## INV-100 — Decision Required for Attestation
 
+A decision MUST exist before an attestation can be issued.
 
-For Parmana Trust Core, I would classify them into three groups:
+Trust Boundary:
+Decision → Attestation
 
+---
 
+## INV-101 — Single Decision Reference
 
-\## Already Directly Applicable to Trust Core
+Every attestation MUST reference exactly one decision.
 
-
-
-These map almost 1:1 to what you've just built:
-
-
-
-```text
-
-INV-022
-
-Every policy decision is derivable from the policy document and input signals
-
-
-
-INV-024
-
-Decision values are semantically unambiguous strings
-
-
-
-INV-030
-
-Every attestation contains a runtimeHash binding it to a specific runtime version
-
-
-
-INV-034
-
-Any verifier holding the correct public key can independently verify an attestation
-
-
-
-INV-035
-
-Verification is reproducible
-
-
-
-INV-060
-
-Attestation verification is idempotent
-
-
-
-META-001
-
-Every governed execution produces a signed, independently verifiable attestation
-
-
-
-META-004
-
-Invariant violations always fail closed
-
-```
-
-
-
-These align almost perfectly with:
-
-
-
-```text
-
-Task
-
-&#x20;↓
-
-Policy
-
-&#x20;↓
-
-Decision
-
-&#x20;↓
-
+Trust Boundary:
 Attestation
 
-&#x20;↓
+---
 
+## INV-102 — Receipt References Decision Lineage
+
+Every verification receipt MUST reference a valid decision lineage.
+
+Trust Boundary:
+Receipt
+
+---
+
+## INV-103 — Transparency Integrity
+
+Transparency entries MUST reference valid receipt hashes.
+
+Trust Boundary:
+Transparency
+
+---
+
+## INV-104 — Deterministic Trust Root Derivation
+
+Trust roots MUST be deterministically derived from receipt hashes.
+
+Trust Boundary:
+Trust Root
+
+---
+
+## INV-105 — Trust Root Reproducibility
+
+Trust root generation MUST be reproducible.
+
+Trust Boundary:
+Trust Root
+
+---
+
+## INV-120 — Signature Validity
+
+Attestation signatures MUST be cryptographically valid.
+
+Trust Boundary:
+Attestation
+
+---
+
+## INV-121 — Independent Signature Verification
+
+Attestation signatures MUST be independently verifiable.
+
+Trust Boundary:
+Attestation
+
+---
+
+## INV-130 — Signed Trust Roots
+
+Published trust roots MUST be signed.
+
+Trust Boundary:
+Trust Root
+
+---
+
+## INV-131 — Trust Root Verification
+
+Trust root signatures MUST be independently verifiable.
+
+Trust Boundary:
+Trust Root
+
+---
+
+## INV-140 — Evidence Integrity
+
+Evidence hashes MUST be immutable and verifiable.
+
+Trust Boundary:
+Attestation
+
+---
+
+## INV-150 — Evidence Mutation Detection
+
+Any change to evidence content MUST invalidate existing attestations.
+
+Trust Boundary:
+Attestation → Verification
+
+---
+
+## INV-160 — Receipt Binding
+
+Verification receipts MUST be cryptographically bound to verified attestations.
+
+Trust Boundary:
+Verification → Receipt
+
+---
+
+## INV-170 — Append-Only History
+
+Receipt history MUST be append-only and cryptographically linked.
+
+Trust Boundary:
+Receipt → Transparency
+
+---
+
+## INV-180 — Deterministic Authority
+
+Identical:
+
+* Policy
+* Task
+* Trusted Signals
+
+MUST produce identical decisions.
+
+Trust Boundary:
+Decision
+
+---
+
+## INV-181 — Lineage Isolation
+
+Lineage identifiers MUST NOT influence authority evaluation.
+
+Examples:
+
+* decisionId
+* receiptId
+* executionId
+* transactionId
+
+Trust Boundary:
+Decision
+
+---
+
+## INV-199 — Fail-Closed Execution
+
+An action MUST NOT execute unless:
+
+* A valid verification receipt exists.
+* Required lineage identifiers are present.
+* A valid execution token exists.
+* The authorized intent is preserved.
+
+Trust Boundary:
+Verification → Receipt → Execution
+
+Guarantee:
+
+Policy
+↓
+Decision
+↓
+Intent
+↓
 Verification
+↓
+Receipt(valid=true)
+↓
+Execution Token
+↓
+Execution
 
+No Verified Receipt
+↓
+No Execution Token
+↓
+No Execution
+
+---
+## INV-200 — Execution Must Match Authorized Intent
+
+### Description
+
+An execution MUST NOT be authorized unless the execution payload matches the authorized intent.
+
+### Rationale
+
+Authority defines what is allowed.
+
+Intent defines what is supposed to happen.
+
+Execution must match the authorized intent.
+
+### Enforcement
+
+```text
+Intent
+↓
+Execution
 ```
 
-
-
-\---
-
-
-
-\## Missing Trust Core Invariants
-
-
-
-Your new architecture introduces concepts that do not exist in the old ParmanaSystems registry.
-
-
-
-I would add:
-
-
-
-```ts
-
-INV-100
-
-Decision must exist before attestation issuance
-
-boundary: execute
-
+```text
+SHA256(Intent)
+==
+SHA256(Execution Payload)
 ```
 
+### Violation
 
-
-```ts
-
-INV-101
-
-Attestation must reference exactly one decision
-
-boundary: execute
-
+```text
+SHA256(Intent)
+!=
+SHA256(Execution Payload)
 ```
 
+Result:
 
-
-```ts
-
-INV-102
-
-Verification receipt must reference exactly one attestation
-
-boundary: verify
-
+```text
+Execution Denied
 ```
 
+### Guarantee
 
+Parmana provides cryptographic evidence that the executed action matches the authorized intent.
 
-```ts
+### Trust Gap Addressed
 
-INV-103
+Traditional systems record approvals.
 
-Transparency log entries must reference a valid receipt hash
+Parmana verifies that execution matched what was authorized.
 
-boundary: verify
 
-```
+## INV-204 — Single-Use Receipt
 
+Verification receipts are single-use governance artifacts.
 
+A receipt MAY authorize execution only once.
 
-```ts
+Trust Boundary:
+Receipt → Verification
 
-INV-104
+---
 
-Trust root is deterministically derived from receipt\_hash values
+# Meta Invariant
 
-boundary: canonicalize
+## META-010 — Human Authority
 
-```
-
-
-
-```ts
-
-INV-105
-
-Trust root generation is reproducible from identical receipt sets
-
-boundary: canonicalize
-
-```
-
-
-
-```ts
-
-INV-106
-
-Transparency proof inclusion is deterministic
-
-boundary: verify
-
-```
-
-
-
-```ts
-
-INV-107
-
-Published trust roots are immutable
-
-boundary: sign
-
-```
-
-
-
-```ts
-
-INV-108
-
-Receipt hashes are included in at most one trust root publication cycle
-
-boundary: execute
-
-```
-
-
-
-\---
-
-
-
-\## Quantum-Era Invariants Missing
-
-
-
-Your registry is classical-crypto focused.
-
-
-
-For future ML-DSA support I'd add:
-
-
-
-```ts
-
-INV-200
-
-Signature algorithm is explicitly declared in every attestation
-
-boundary: sign
-
-```
-
-
-
-```ts
-
-INV-201
-
-Verification outcome is independent of signature algorithm implementation
-
-boundary: verify
-
-```
-
-
-
-```ts
-
-INV-202
-
-Cryptographic provider replacement does not alter authority semantics
-
-boundary: verify
-
-```
-
-
-
-```ts
-
-INV-203
-
-Authority derives from policy evaluation, not cryptographic signature validity alone
-
-boundary: execute
-
-```
-
-
-
-This last one is probably the most important Parmana-specific invariant.
-
-
-
-\---
-
-
-
-\## Canonical Parmana Meta Invariant
-
-
-
-If I were evolving this registry for Trust Core, I'd add:
-
-
-
-```ts
-
-META-010
-
-Organizations define authority.
+Organizations decide what to trust.
 
 Parmana evaluates trusted signals against policy before execution.
 
-Every decision must be attestable, verifiable, auditable, and transparently publishable.
+Trust Boundary:
 
-```
-
-
-
-Boundary:
-
-
-
-```ts
-
-\[
-
-&#x20; "validate",
-
-&#x20; "verify",
-
-&#x20; "execute",
-
-&#x20; "sign"
-
-]
-
-```
-
-
-
-\---
-
-
-
-\## Overall Assessment
-
-
-
-The uploaded registry is roughly:
-
-
-
-```text
-
-80% Execution Governance
-
-10% Cryptographic Verification
-
-10% Runtime Determinism
-
-```
-
-
-
-Your new Trust Core adds an entirely new layer:
-
-
-
-```text
-
-Authority Transparency
-
-```
-
-
-
-So the next evolution should be:
-
-
-
-```text
-
-Canonicalization
-
-&#x20;↓
-
-Validation
-
-&#x20;↓
-
+Authority
+↓
+Policy
+↓
+Decision
+↓
+Intent
+↓
+Execution
+↓
 Verification
 
-&#x20;↓
 
-Decision
-
-&#x20;↓
-
-Attestation
-
-&#x20;↓
-
-Receipt
-
-&#x20;↓
-
-Transparency
-
-&#x20;↓
-
-Trust Root
-
-```
-
-
-
-with a new invariant range:
-
-
-
-```text
-
-INV-100 → INV-199
-
-```
-
-
-
-reserved for Trust Core and Authority Transparency invariants.
-
-
-
+Actual file : packages/contracts/src/invariants.ts

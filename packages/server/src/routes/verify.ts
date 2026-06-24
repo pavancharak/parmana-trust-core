@@ -29,6 +29,10 @@ import type {
   VerificationReceipt
 } from "../types/verification-receipt.js";
 
+import {
+  TRUST_PROFILES
+} from "@parmana/trust-profiles";
+
 const auditDb =
   new AuditDbClient();
 
@@ -45,24 +49,40 @@ router.post(
     try {
 
       if (
-        !req.body?.attestation ||
-        !req.body?.policy
-      ) {
+  !req.body?.attestation
+) {
 
-        return res
-          .status(400)
-          .json({
-            error:
-              "attestation and policy are required"
-          });
+  return res
+    .status(400)
+    .json({
+      error:
+        "attestation is required"
+    });
 
-      }
+}
 
-      const result =
-        verifyDecision(
-          req.body.attestation,
-          req.body.policy
-        );
+      const profileName =
+
+  req.body.attestation
+    ?.metadata
+    ?.profile ??
+
+  "default";
+
+const trustProfile =
+
+  TRUST_PROFILES[
+    profileName
+  ];
+
+const result =
+  verifyDecision(
+
+    req.body.attestation,
+
+    trustProfile
+
+  );
 
       const receipt:
         VerificationReceipt = {
@@ -77,10 +97,13 @@ router.post(
           req.body.attestation.subjectId,
 
         decisionId:
-          req.body.attestation.decisionId,
+  req.body.attestation.decisionId,
 
-        taskId:
-          req.body.attestation.taskId,
+intentId:
+  req.body.attestation.intent?.intentId,
+
+taskId:
+  req.body.attestation.taskId,
 
         policyId:
           req.body.attestation.policyId,
